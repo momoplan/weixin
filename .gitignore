@@ -1,0 +1,7 @@
+/target
+/.classpath
+/.project
+/.springBeans
+/log.roo
+/.settings
+catalina.base_IS_UNDEFINED
