@@ -516,7 +516,7 @@
 			</activation>
 			<properties>
 				<log4jdbc.sqlonly>INFO</log4jdbc.sqlonly>
-				<database.url>jdbc:mysql://192.168.0.92:3306/o2o</database.url>
+				<database.url>jdbc:mysql://202.43.152.164:13306/weixin?characterEncoding=utf8</database.url>
 				<database.driverClassName>com.mysql.jdbc.Driver</database.driverClassName>
 				<database.username>jrtConsole</database.username>
 				<database.password>jrtConsole</database.password>
@@ -531,7 +531,7 @@
 		<profile>
 			<id>prelaunch</id>
 			<properties>
-				<database.url>jdbc:mysql://192.168.0.92:3306/o2o</database.url>
+				<database.url>jdbc:mysql://192.168.0.92:3306/weixin?characterEncoding=utf8</database.url>
 				<database.driverClassName>com.mysql.jdbc.Driver</database.driverClassName>
 				<database.username>jrtConsole</database.username>
 				<database.password>jrtConsole</database.password>
@@ -546,7 +546,7 @@
 		<profile>
 			<id>ruyicai_product</id>
 			<properties>
-				<database.url>jdbc:mysql://192.168.99.33:3306/o2o?rewriteBatchedStatements=true</database.url>
+				<database.url>jdbc:mysql://192.168.99.33:3306/weixin?characterEncoding=utf8</database.url>
 				<database.driverClassName>com.mysql.jdbc.Driver</database.driverClassName>
 				<database.username>jrtConsole</database.username>
 				<database.password>jrtConsole</database.password>
