@@ -6,11 +6,14 @@ package com.ruyicai.weixin.domain;
 import com.ruyicai.weixin.domain.AppUser;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.Version;
 
 privileged aspect AppUser_Roo_Jpa_Entity {
     
     declare @type: AppUser: @Entity;
+    
+    declare @type: AppUser: @Table(name = "appuser");
     
     @Version
     @Column(name = "version")
