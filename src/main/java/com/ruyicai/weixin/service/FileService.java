@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.ruyicai.weixin.util.FileUtil;
 import com.ruyicai.weixin.util.ImageMagickTools;
 
 @Service
@@ -58,6 +59,7 @@ public class FileService {
 				src = imageLocation + "\\" + splits[0] + "_" + width + "_" + height + "." + splits[1];
 			}
 		}
+		src = FileUtil.formatePath(src);
 		File file = new File(src);
 		if (file.exists() == false) { // 目标尺寸图片不存在，则由原图创建目标尺寸
 			file = new File(originalSrc);
