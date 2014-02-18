@@ -42,7 +42,7 @@ public class TextHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("双色球开奖公告");
 			a.setDescription("双色球开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/o2o/static/wininfo?lotno=F47104&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=F47104&timestamp=" + DateUtil.gettimeStamp());
 			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
 			list.add(a);
 			rnm.setArticles(list);
@@ -57,7 +57,7 @@ public class TextHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("福彩3D开奖公告");
 			a.setDescription("福彩3D开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/o2o/static/wininfo?lotno=F47103&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=F47103&timestamp=" + DateUtil.gettimeStamp());
 			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
 			list.add(a);
 			rnm.setArticles(list);
@@ -72,7 +72,7 @@ public class TextHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("七乐彩开奖公告");
 			a.setDescription("七乐彩开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/o2o/static/wininfo?lotno=F47102&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=F47102&timestamp=" + DateUtil.gettimeStamp());
 			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
 			list.add(a);
 			rnm.setArticles(list);
@@ -87,7 +87,7 @@ public class TextHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("大乐透开奖公告");
 			a.setDescription("大乐透开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/o2o/static/wininfo?lotno=T01001&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01001&timestamp=" + DateUtil.gettimeStamp());
 			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
 			list.add(a);
 			rnm.setArticles(list);
@@ -102,7 +102,7 @@ public class TextHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("排列三开奖公告");
 			a.setDescription("排列三开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/o2o/static/wininfo?lotno=T01002&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01002&timestamp=" + DateUtil.gettimeStamp());
 			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
 			list.add(a);
 			rnm.setArticles(list);
@@ -117,7 +117,7 @@ public class TextHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("排列五开奖公告");
 			a.setDescription("排列五开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/o2o/static/wininfo?lotno=T01011&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01011&timestamp=" + DateUtil.gettimeStamp());
 			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
 			list.add(a);
 			rnm.setArticles(list);
@@ -132,7 +132,7 @@ public class TextHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("七星彩开奖公告");
 			a.setDescription("七星彩开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/o2o/static/wininfo?lotno=T01009&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01009&timestamp=" + DateUtil.gettimeStamp());
 			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
 			list.add(a);
 			rnm.setArticles(list);
@@ -147,7 +147,7 @@ public class TextHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("22选5开奖公告");
 			a.setDescription("22选5开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/o2o/static/wininfo?lotno=T01013&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01013&timestamp=" + DateUtil.gettimeStamp());
 			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
 			list.add(a);
 			rnm.setArticles(list);

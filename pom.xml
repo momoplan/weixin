@@ -523,7 +523,7 @@
 				<database.pool.maxActive>10</database.pool.maxActive>
 				<database.pool.maxIdle>10</database.pool.maxIdle>
 				<weixinName>ruyicai</weixinName>
-				<lotteryurl>http://192.168.0.42:8080/lottery</lotteryurl>
+				<lotteryurl>http://202.43.152.173:8080/lottery</lotteryurl>
 				<imageMagickPath>D:\Tools\ImageMagick-6.8.7-Q8</imageMagickPath>
 				<imageLocation>D:\image</imageLocation>
 			</properties>
