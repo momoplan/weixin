@@ -49,7 +49,7 @@ public class EventHandler implements IMsgHandler {
 			a.setTitle("欢迎关注如意彩官方微信");
 			a.setDescription("“如意彩”是经过我国福利彩票、体育彩票发行机构官方授权的正规合法的手机投注平台。");
 			a.setPicUrl("http://www.ruyicai.com/weixin/images/login.png");
-			a.setUrl("http://3g.ruyicai.com/w3g/");
+			a.setUrl("http://iphone.ruyicai.com/index.html");
 			list.add(a);
 			rnm.setArticles(list);
 			return rnm;
@@ -72,7 +72,7 @@ public class EventHandler implements IMsgHandler {
 			a.setTitle("双色球开奖公告");
 			a.setDescription("双色球开奖公告");
 			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=F47104&timestamp=" + DateUtil.gettimeStamp());
-			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
+			a.setUrl("http://iphone.ruyicai.com/html/lottery/kjgg.html");
 			list.add(a);
 			rnm.setArticles(list);
 			return rnm;
@@ -87,7 +87,7 @@ public class EventHandler implements IMsgHandler {
 			a.setTitle("福彩3D开奖公告");
 			a.setDescription("福彩3D开奖公告");
 			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=F47103&timestamp=" + DateUtil.gettimeStamp());
-			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
+			a.setUrl("http://iphone.ruyicai.com/html/lottery/dddlot.html");
 			list.add(a);
 			rnm.setArticles(list);
 			return rnm;
@@ -117,7 +117,7 @@ public class EventHandler implements IMsgHandler {
 			a.setTitle("大乐透开奖公告");
 			a.setDescription("大乐透开奖公告");
 			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01001&timestamp=" + DateUtil.gettimeStamp());
-			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
+			a.setUrl("http://iphone.ruyicai.com/html/lottery/dltlot.html");
 			list.add(a);
 			rnm.setArticles(list);
 			return rnm;

@@ -35,6 +35,7 @@
 
 	<!-- 定义无需Controller的url<->view直接映射 -->
 	<mvc:view-controller path="/" view-name="index" />
+	<mvc:view-controller path="/bingpage" view-name="bind" />
 
 	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="exceptionMappings">

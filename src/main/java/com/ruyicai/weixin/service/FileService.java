@@ -94,7 +94,9 @@ public class FileService {
 		if(file.exists() == false) {
 			throw new IllegalArgumentException("不存在" + src);
 		}
-		String filename = src.substring(src.lastIndexOf("\\"), src.length());
+		
+		logger.info("图片目录src："+src);//   /home/appusr/images_weixin/wininfo/T01001_2014045.png
+		String filename = src.substring(src.lastIndexOf("/"), src.length());
 		// 读到流中
 		InputStream inStream = new FileInputStream(src);
 		// 设置输出的格式
@@ -111,5 +113,11 @@ public class FileService {
         } catch (IOException e) {
             logger.error("输出文件错误", e);
         }
+	}
+	public static void main(String[] args) {
+		 String src ="\\home\\appusr\\images_weixin\\wininfo\\T01001_2014045.png";
+			String filename = src.substring(src.lastIndexOf("\\"), src.length());
+			String d = "filename=\"" + filename + "\"";
+			System.out.println(filename);
 	}
 }

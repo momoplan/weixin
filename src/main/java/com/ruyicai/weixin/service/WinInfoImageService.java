@@ -94,8 +94,9 @@ public class WinInfoImageService {
 					prizes = infos[1].split(";"); 
 					dest = imageLocation + "\\wininfo\\" + lotno + "_" + batchcode + "_nullinfo.png";
 				}
-				
+				logger.info("dest:"+dest);
 				dest = FileUtil.formatePath(dest);
+				logger.info("FileUtil.formatePath dest:"+dest);
 				File file = new File(dest);
 				if(file.exists() == true) {
 					fileService.downloadFile(dest, request, response);

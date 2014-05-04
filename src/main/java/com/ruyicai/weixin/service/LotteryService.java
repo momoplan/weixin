@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -98,6 +99,39 @@ public class LotteryService {
 			}
 		} catch (Exception e) {
 			logger.error("请求lottery异常url:" + url + ",params:lotno=" + lotno + "&issuenum=" + issuenum, e);
+		}
+		return result.toString();
+	}
+	
+	
+	public String selectUserinfoByOpenid(String openid) {
+		String url = lotteryurl + "/tbiguserinfoes?json&find=BigUser&outuserno="+openid+"&type=weixin";
+		String userno = "";
+		try {
+			
+			String json = Request.Get(url).execute().returnContent().asString();
+			ResponseData responseData = JsonMapper.fromJson(json, ResponseData.class);
+			if (responseData.getErrorCode().equals("0")) {
+				JSONObject value = (JSONObject) responseData.getValue();
+				userno = "";
+			}
+		} catch (Exception e) {
+			logger.error("请求lottery异常url:" + url + ",params:openid=" + openid, e);
+		}
+		return userno; 
+	}
+	public String bingUserByOpenid(String openid) {
+		StringBuilder result = new StringBuilder();
+		String url = lotteryurl + "/select/getTwininfoBylotno";
+		try {
+			String json = Request.Post(url).bodyForm(Form.form().add("openid", openid).build())
+					.execute().returnContent().asString();
+			ResponseData responseData = JsonMapper.fromJson(json, ResponseData.class);
+			if (responseData.getErrorCode().equals("0")) {
+				
+			}
+		} catch (Exception e) {
+			logger.error("请求lottery异常url:" + url + ",params:openid=" + openid, e);
 		}
 		return result.toString();
 	}
