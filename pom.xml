@@ -516,16 +516,16 @@
 			</activation>
 			<properties>
 				<log4jdbc.sqlonly>INFO</log4jdbc.sqlonly>
-				<database.url>jdbc:mysql://202.43.152.164:13306/weixin?characterEncoding=utf8</database.url>
+			<database.url>jdbc:mysql://192.168.0.92:3306/weixin?characterEncoding=utf8</database.url>
 				<database.driverClassName>com.mysql.jdbc.Driver</database.driverClassName>
 				<database.username>jrtConsole</database.username>
 				<database.password>jrtConsole</database.password>
-				<database.pool.maxActive>10</database.pool.maxActive>
-				<database.pool.maxIdle>10</database.pool.maxIdle>
+				<database.pool.maxActive>50</database.pool.maxActive>
+				<database.pool.maxIdle>50</database.pool.maxIdle>
 				<weixinName>ruyicai</weixinName>
 				<lotteryurl>http://192.168.0.42:8080/lottery</lotteryurl>
-				<imageMagickPath>D:\Tools\ImageMagick-6.8.7-Q8</imageMagickPath>
-				<imageLocation>D:\image</imageLocation>
+				<imageMagickPath>C:\Tools\ImageMagick-6.8.7-Q8</imageMagickPath>
+				<imageLocation>C:\image</imageLocation>
 			</properties>
 		</profile>
 		<profile>

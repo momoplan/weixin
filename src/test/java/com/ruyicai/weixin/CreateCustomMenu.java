@@ -130,7 +130,6 @@ public class CreateCustomMenu {
 //		b23.setName("合买活动");
 //		b23.setType("view");
 //	    b23.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6919f6fac2525c5f&redirect_uri=http://iphone.ruyicai.com/html/tog.html&response_type=code&scope=snsapi_base&state=1#wechat_redirect");
-	  
 //	    ViewButton b24 = new ViewButton();
 //	    b24.setName("UC绑定");
 //	    b24.setType("view");
