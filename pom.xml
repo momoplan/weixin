@@ -523,9 +523,15 @@
 				<database.pool.maxActive>50</database.pool.maxActive>
 				<database.pool.maxIdle>50</database.pool.maxIdle>
 				<weixinName>ruyicai</weixinName>
+<<<<<<< HEAD
 				<lotteryurl>http://192.168.0.42:8080/lottery</lotteryurl>
 				<imageMagickPath>C:\Tools\ImageMagick-6.8.7-Q8</imageMagickPath>
 				<imageLocation>C:\image</imageLocation>
+=======
+				<lotteryurl>http://202.43.152.173:8080/lottery</lotteryurl>
+				<imageMagickPath>D:\Tools\ImageMagick-6.8.7-Q8</imageMagickPath>
+				<imageLocation>D:\image</imageLocation>
+>>>>>>> fe988107c1bf318bfd5e9e6c6ef88c4ef4e9f3af
 			</properties>
 		</profile>
 		<profile>
