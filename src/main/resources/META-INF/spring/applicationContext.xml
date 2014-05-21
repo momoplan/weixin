@@ -12,7 +12,7 @@
 		<context:exclude-filter expression=".*_Roo_.*" type="regex" />
 		<context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation" />
 	</context:component-scan>
-	<task:executor id="executorWithPoolSizeRange" pool-size="20-100" queue-capacity="1000" keep-alive="20" />
+	<task:executor id="executorWithPoolSizeRange" pool-size="5-10" queue-capacity="100" keep-alive="5" />
 	<task:annotation-driven executor="executorWithPoolSizeRange" />
 	<bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dataSource">
 		<property name="driverClassName" value="${database.driverClassName}" />
