@@ -1,5 +1,7 @@
 package com.ruyicai.weixin.service;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +66,7 @@ public class AsyncService {
 			if (chancesDetail != null) {
 				if (chancesDetail.getState() == 0) {
 					chancesDetail.setState(1);
+					chancesDetail.setSuccessTime(new Date());
 					chancesDetail.merge();
 					CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo.findCaseLotUserinfo(new CaseLotUserinfoPK(userno,
 							orderid), true);
