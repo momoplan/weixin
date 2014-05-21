@@ -48,4 +48,8 @@ public class TogetorActivity {
 	@NotNull
 	@Column(name = "state", length = 50)
 	private int state;
+	
+	@NotNull
+	@Column(name = "headimgurl", length = 50)
+	private int headimgurl;
 }
