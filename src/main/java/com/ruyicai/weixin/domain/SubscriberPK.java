@@ -3,9 +3,12 @@ package com.ruyicai.weixin.domain;
 import java.io.Serializable;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 
-@Embeddable
+import org.springframework.roo.addon.jpa.identifier.RooIdentifier;
+import org.springframework.roo.addon.tostring.RooToString;
+
+@RooIdentifier
+@RooToString
 public class SubscriberPK implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -15,28 +18,6 @@ public class SubscriberPK implements Serializable {
 
 	@Column(name = "WEIXINNO", length = 50)
 	private String weixinno;
-
-	public SubscriberPK(String userno, String weixinno) {
-		super();
-		this.userno = userno;
-		this.weixinno = weixinno;
-	}
-
-	public String getUserno() {
-		return userno;
-	}
-
-	public void setUserno(String userno) {
-		this.userno = userno;
-	}
-
-	public String getWeixinno() {
-		return weixinno;
-	}
-
-	public void setWeixinno(String weixinno) {
-		this.weixinno = weixinno;
-	}
 
 	@Override
 	public boolean equals(Object obj) {

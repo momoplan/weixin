@@ -5,9 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ruyicai.weixin.dao.RequestMessageDetailDao;
 import com.ruyicai.weixin.dao.SubscriberDao;
+import com.ruyicai.weixin.domain.CaseLotUserinfo;
+import com.ruyicai.weixin.domain.CaseLotUserinfoPK;
+import com.ruyicai.weixin.domain.ChancesDetail;
+import com.ruyicai.weixin.domain.ChancesDetailPK;
 import com.ruyicai.weixin.dto.RequestMessage;
 
 @Service
@@ -47,6 +52,37 @@ public class AsyncService {
 			subscriberDao.unsubscribe(userno, weixinno);
 		} catch (Exception e) {
 			logger.error("unsubscribe异常:userno:" + userno + ",weixinno:" + weixinno, e);
+		}
+	}
+
+	@Async
+	@Transactional
+	public void addChanceDetail(String userno, String fromUserno, String orderid) {
+		try {
+			ChancesDetail chancesDetail = ChancesDetail.findChancesDetail(new ChancesDetailPK(userno, fromUserno,
+					orderid));
+			if (chancesDetail != null) {
+				if (chancesDetail.getState() == 0) {
+					chancesDetail.setState(1);
+					chancesDetail.merge();
+					CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo.findCaseLotUserinfo(new CaseLotUserinfoPK(userno,
+							orderid), true);
+					if (caseLotUserinfo != null) {
+						int linkTimes = caseLotUserinfo.getLinkTimes() + 1;
+						if (linkTimes % 3 == 0) {
+							caseLotUserinfo.setChances(caseLotUserinfo.getChances() + 1);
+							caseLotUserinfo.setLinkTimes(0);
+							logger.info("增加用户抽奖机会 userno:{} fromUserno:{} orderid:{}", userno, fromUserno, orderid);
+						} else {
+							caseLotUserinfo.setLinkTimes(linkTimes);
+							logger.info("增加用户链接次数 userno:{} fromUserno:{} orderid:{}", userno, fromUserno, orderid);
+						}
+						caseLotUserinfo.merge();
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("增加用户领取次数异常", e);
 		}
 	}
 }

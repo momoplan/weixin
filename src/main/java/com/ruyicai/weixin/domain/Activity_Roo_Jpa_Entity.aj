@@ -3,27 +3,27 @@
 
 package com.ruyicai.weixin.domain;
 
-import com.ruyicai.weixin.domain.TogetorActivity;
+import com.ruyicai.weixin.domain.Activity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
-privileged aspect TogetorActivity_Roo_Jpa_Entity {
+privileged aspect Activity_Roo_Jpa_Entity {
     
-    declare @type: TogetorActivity: @Entity;
+    declare @type: Activity: @Entity;
     
-    declare @type: TogetorActivity: @Table(name = "togetoractivity");
+    declare @type: Activity: @Table(name = "Activity");
     
     @Version
     @Column(name = "version")
-    private Integer TogetorActivity.version;
+    private Integer Activity.version;
     
-    public Integer TogetorActivity.getVersion() {
+    public Integer Activity.getVersion() {
         return this.version;
     }
     
-    public void TogetorActivity.setVersion(Integer version) {
+    public void Activity.setVersion(Integer version) {
         this.version = version;
     }
     

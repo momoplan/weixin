@@ -102,57 +102,59 @@ public class LotteryService {
 		}
 		return result.toString();
 	}
+
 	/**
 	 * 注册微信账户
 	 * 
 	 * @param accessToken
 	 *            有效的access_token
-	 *            
+	 * 
 	 * @return
 	 */
-	public String dowxregister(String username,String nickname) {
+	public String dowxregister(String username, String nickname) {
 		String userno = "";
 		try {
-			if("".equals(username)){
+			if ("".equals(username)) {
 				logger.info("参数username为空，查询用户信息失败");
 				return null;
 			}
-			//获取到用户的username之后查询此用户名是否注册过
-			String lotteryuserinfourl = lotteryurl + "/tuserinfoes?json&find=ByUserName&userName="+username;
+			// 获取到用户的username之后查询此用户名是否注册过
+			String lotteryuserinfourl = lotteryurl + "/tuserinfoes?json&find=ByUserName&userName=" + username;
 			String userinfo = Request.Get(lotteryuserinfourl).execute().returnContent().asString();
-			logger.info("查询用户"+username+"的详细信息请求返回内容："+userinfo);
+			logger.info("查询用户" + username + "的详细信息请求返回内容：" + userinfo);
 			JSONObject userinfojson = new JSONObject(userinfo).getJSONObject("value");
-			
-			if(userinfojson == null){
-				String url =lotteryurl +"/tuserinfoes/register"; 
+
+			if (userinfojson == null) {
+				String url = lotteryurl + "/tuserinfoes/register";
 				// 调用接口创建菜单
-				logger.info("用户详细信息请求连接"+url);
-				String	json = Request.Post(url).bodyForm(Form.form().add("userName", username)
-						.add("password", "123456").add("nickname", nickname).add("accesstype", "WX").add("agencyno", "000000").add("certid", "")
-						.add("channel", "").add("info", "weixin").add("leave", "1").add("type", "1").build())
-						.execute().returnContent().asString();
-				
-				logger.info("调用lottery注册接口， 注册结果返回："+json);
-				JSONObject registerobj= new JSONObject(json);
-				if(registerobj.getString("errorCode").equals("0")){
-				   JSONObject user = registerobj.getJSONObject("value");
-				   userno =user.getString("userno");
+				logger.info("用户详细信息请求连接" + url);
+				String json = Request
+						.Post(url)
+						.bodyForm(
+								Form.form().add("userName", username).add("password", "123456")
+										.add("nickname", nickname).add("accesstype", "WX").add("agencyno", "000000")
+										.add("certid", "").add("channel", "").add("info", "weixin").add("leave", "1")
+										.add("type", "1").build()).execute().returnContent().asString();
+
+				logger.info("调用lottery注册接口， 注册结果返回：" + json);
+				JSONObject registerobj = new JSONObject(json);
+				if (registerobj.getString("errorCode").equals("0")) {
+					JSONObject user = registerobj.getJSONObject("value");
+					userno = user.getString("userno");
 				}
-				
-			}else{
-				   userno =userinfojson.getString("userno");
+			} else {
+				userno = userinfojson.getString("userno");
 			}
 		} catch (Exception e) {
 			logger.error("微信创建如意彩用户失败：", e);
 		}
 		return userno;
 	}
-	
+
 	public String selectUserinfoByOpenid(String openid) {
-		String url = lotteryurl + "/tbiguserinfoes?json&find=BigUser&outuserno="+openid+"&type=weixin";
+		String url = lotteryurl + "/tbiguserinfoes?json&find=BigUser&outuserno=" + openid + "&type=weixin";
 		String userno = "";
 		try {
-			
 			String json = Request.Get(url).execute().returnContent().asString();
 			ResponseData responseData = JsonMapper.fromJson(json, ResponseData.class);
 			if (responseData.getErrorCode().equals("0")) {
@@ -162,17 +164,18 @@ public class LotteryService {
 		} catch (Exception e) {
 			logger.error("请求lottery异常url:" + url + ",params:openid=" + openid, e);
 		}
-		return userno; 
+		return userno;
 	}
+
 	public String bingUserByOpenid(String openid) {
 		StringBuilder result = new StringBuilder();
 		String url = lotteryurl + "/select/getTwininfoBylotno";
 		try {
-			String json = Request.Post(url).bodyForm(Form.form().add("openid", openid).build())
-					.execute().returnContent().asString();
+			String json = Request.Post(url).bodyForm(Form.form().add("openid", openid).build()).execute()
+					.returnContent().asString();
 			ResponseData responseData = JsonMapper.fromJson(json, ResponseData.class);
 			if (responseData.getErrorCode().equals("0")) {
-				
+
 			}
 		} catch (Exception e) {
 			logger.error("请求lottery异常url:" + url + ",params:openid=" + openid, e);

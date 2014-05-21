@@ -4,8 +4,17 @@
 package com.ruyicai.weixin.domain;
 
 import com.ruyicai.weixin.domain.ActivityDetail;
+import java.util.Date;
 
 privileged aspect ActivityDetail_Roo_JavaBean {
+    
+    public String ActivityDetail.getUserno() {
+        return this.userno;
+    }
+    
+    public void ActivityDetail.setUserno(String userno) {
+        this.userno = userno;
+    }
     
     public String ActivityDetail.getOrderid() {
         return this.orderid;
@@ -15,20 +24,12 @@ privileged aspect ActivityDetail_Roo_JavaBean {
         this.orderid = orderid;
     }
     
-    public String ActivityDetail.getLaveport() {
-        return this.laveport;
+    public Date ActivityDetail.getJoinTime() {
+        return this.joinTime;
     }
     
-    public void ActivityDetail.setLaveport(String laveport) {
-        this.laveport = laveport;
-    }
-    
-    public String ActivityDetail.getAllport() {
-        return this.allport;
-    }
-    
-    public void ActivityDetail.setAllport(String allport) {
-        this.allport = allport;
+    public void ActivityDetail.setJoinTime(Date joinTime) {
+        this.joinTime = joinTime;
     }
     
 }
