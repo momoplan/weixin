@@ -67,15 +67,14 @@ public class CaseLotActivityService {
 		}
 		caseLotUserinfo.setChances(chances - 1);
 		caseLotUserinfo.setJoinTimes(caseLotUserinfo.getJoinTimes() + 1);
+		caseLotUserinfo.merge();
+		ActivityDetail.createActivityDetail(userno, orderid);
 		if (StringUtils.isNotEmpty(linkUserno)) {
 			asyncService.addChanceDetail(linkUserno, userno, orderid);
 		}
-		caseLotUserinfo.merge();
-		ActivityDetail.createActivityDetail(userno, orderid);
 		return caseLotUserinfo;
 	}
 
-	@Transactional
 	public ChancesDetail createChanceDetail(String userno, String fromUserno, String orderid) {
 		ChancesDetail chancesDetail = ChancesDetail.findChancesDetail(new ChancesDetailPK(userno, fromUserno, orderid));
 		if (chancesDetail != null) {
