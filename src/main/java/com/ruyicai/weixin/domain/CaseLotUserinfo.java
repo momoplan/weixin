@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord
-@RooJpaEntity(table = "CaseLotUserinfo")
+@RooJpaEntity(table = "CaseLotUserinfo", versionField = "")
 public class CaseLotUserinfo {
 
 	@EmbeddedId

@@ -4,27 +4,13 @@
 package com.ruyicai.weixin.domain;
 
 import com.ruyicai.weixin.domain.ChancesDetail;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 privileged aspect ChancesDetail_Roo_Jpa_Entity {
     
     declare @type: ChancesDetail: @Entity;
     
     declare @type: ChancesDetail: @Table(name = "ChancesDetail");
-    
-    @Version
-    @Column(name = "version")
-    private Integer ChancesDetail.version;
-    
-    public Integer ChancesDetail.getVersion() {
-        return this.version;
-    }
-    
-    public void ChancesDetail.setVersion(Integer version) {
-        this.version = version;
-    }
     
 }

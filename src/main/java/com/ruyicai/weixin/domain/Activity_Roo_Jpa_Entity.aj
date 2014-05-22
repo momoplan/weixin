@@ -4,27 +4,13 @@
 package com.ruyicai.weixin.domain;
 
 import com.ruyicai.weixin.domain.Activity;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 privileged aspect Activity_Roo_Jpa_Entity {
     
     declare @type: Activity: @Entity;
     
     declare @type: Activity: @Table(name = "Activity");
-    
-    @Version
-    @Column(name = "version")
-    private Integer Activity.version;
-    
-    public Integer Activity.getVersion() {
-        return this.version;
-    }
-    
-    public void Activity.setVersion(Integer version) {
-        this.version = version;
-    }
     
 }

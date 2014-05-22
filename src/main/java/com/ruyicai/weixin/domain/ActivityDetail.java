@@ -12,7 +12,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord
-@RooJpaEntity(table = "ActivityDetail")
+@RooJpaEntity(table = "ActivityDetail", versionField = "")
 public class ActivityDetail {
 
 	@Column(name = "userno", length = 50)

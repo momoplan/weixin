@@ -3,14 +3,14 @@
 
 package com.ruyicai.weixin.domain;
 
-import com.ruyicai.weixin.domain.CaseLotUserinfo;
+import com.ruyicai.weixin.domain.BigUserInfo;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-privileged aspect CaseLotUserinfo_Roo_Jpa_Entity {
+privileged aspect BigUserInfo_Roo_Jpa_Entity {
     
-    declare @type: CaseLotUserinfo: @Entity;
+    declare @type: BigUserInfo: @Entity;
     
-    declare @type: CaseLotUserinfo: @Table(name = "CaseLotUserinfo");
+    declare @type: BigUserInfo: @Table(name = "BigUserInfo");
     
 }

@@ -17,7 +17,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord
-@RooJpaEntity(table = "Activity")
+@RooJpaEntity(table = "Activity", versionField = "")
 public class Activity {
 
 	@Id
