@@ -30,7 +30,7 @@ public class Activity {
 	private Integer remainingShare;
 
 	@NotNull
-	@Column(name = "remainingShare")
+	@Column(name = "allShare")
 	private Integer allShare;
 
 	public static Activity findActivity(String orderid, boolean lock) {

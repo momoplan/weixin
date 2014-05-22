@@ -82,13 +82,13 @@ public class StaticController {
 			String rejson = weixinService.toauth2(code);
 			logger.info("bind 获得了openid参数：" + rejson);
 			    JSONObject js =	new JSONObject(rejson);
-//				String access_token = (String) js.get("access_token");
-//				String openid = (String) js.get("openid");
-//				JSONObject userinfo=new JSONObject(weixinService.getuserinfo(access_token, openid));
-//				logger.info("获取到的微信用户信息："+userinfo);
+				String access_token = (String) js.get("access_token");
+				String openid = (String) js.get("openid");
+				JSONObject userinfo=new JSONObject(weixinService.getuserinfo(access_token, openid));
+				logger.info("获取到的微信用户信息："+userinfo);
 				response.setContentType("text/javascript");
 				PrintWriter out = response.getWriter();
-				out.println(callback + "(" + js + ")");
+				out.println(callback + "(" + userinfo + ")");
 		} catch (Exception e) {
 			logger.error("获取openid异常", e);
 		}
