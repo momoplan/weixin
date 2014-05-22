@@ -88,7 +88,11 @@ public class StaticController {
 				logger.info("获取到的微信用户信息："+userinfo);
 				response.setContentType("text/javascript");
 				PrintWriter out = response.getWriter();
-				out.println(callback + "(" + userinfo + ")");
+				if(userinfo.getString("errcode").equals("48001")){//{"errmsg":"api unauthorized","errcode":48001}
+					out.println(callback + "(" + js + ")");
+				}else{
+					out.println(callback + "(" + userinfo + ")");
+				}
 		} catch (Exception e) {
 			logger.error("获取openid异常", e);
 		}
