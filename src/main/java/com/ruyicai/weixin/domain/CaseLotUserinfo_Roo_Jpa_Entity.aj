@@ -4,27 +4,13 @@
 package com.ruyicai.weixin.domain;
 
 import com.ruyicai.weixin.domain.CaseLotUserinfo;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Version;
 
 privileged aspect CaseLotUserinfo_Roo_Jpa_Entity {
     
     declare @type: CaseLotUserinfo: @Entity;
     
     declare @type: CaseLotUserinfo: @Table(name = "CaseLotUserinfo");
-    
-    @Version
-    @Column(name = "version")
-    private Integer CaseLotUserinfo.version;
-    
-    public Integer CaseLotUserinfo.getVersion() {
-        return this.version;
-    }
-    
-    public void CaseLotUserinfo.setVersion(Integer version) {
-        this.version = version;
-    }
     
 }

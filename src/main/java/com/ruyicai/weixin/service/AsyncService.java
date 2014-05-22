@@ -75,7 +75,7 @@ public class AsyncService {
 						int linkTimes = caseLotUserinfo.getLinkTimes() + 1;
 						if (linkTimes % 3 == 0) {
 							caseLotUserinfo.setChances(caseLotUserinfo.getChances() + 1);
-							caseLotUserinfo.setLinkTimes(0);
+							caseLotUserinfo.setLinkTimes(linkTimes);
 							logger.info("增加用户抽奖机会 linkUserno:{} joinUserno:{} orderid:{}", linkUserno, joinUserno,
 									orderid);
 						} else {
@@ -85,7 +85,7 @@ public class AsyncService {
 						}
 						caseLotUserinfo.merge();
 					}
-				}else{
+				} else {
 					logger.info("已增加过机会，不再增加");
 				}
 			} else {

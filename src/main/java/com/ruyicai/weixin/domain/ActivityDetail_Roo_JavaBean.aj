@@ -4,6 +4,7 @@
 package com.ruyicai.weixin.domain;
 
 import com.ruyicai.weixin.domain.ActivityDetail;
+import com.ruyicai.weixin.domain.CaseLotUserinfo;
 import java.util.Date;
 
 privileged aspect ActivityDetail_Roo_JavaBean {
@@ -38,6 +39,14 @@ privileged aspect ActivityDetail_Roo_JavaBean {
     
     public void ActivityDetail.setJoinTime(Date joinTime) {
         this.joinTime = joinTime;
+    }
+    
+    public CaseLotUserinfo ActivityDetail.getCaseLotUserinfo() {
+        return this.caseLotUserinfo;
+    }
+    
+    public void ActivityDetail.setCaseLotUserinfo(CaseLotUserinfo caseLotUserinfo) {
+        this.caseLotUserinfo = caseLotUserinfo;
     }
     
 }

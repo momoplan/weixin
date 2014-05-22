@@ -15,7 +15,7 @@ import org.springframework.roo.addon.tostring.RooToString;
  */
 @RooJavaBean
 @RooToString
-@RooJpaEntity(table = "appuser")
+@RooJpaEntity(table = "appuser", versionField = "")
 public class AppUser {
 
 	@Id
