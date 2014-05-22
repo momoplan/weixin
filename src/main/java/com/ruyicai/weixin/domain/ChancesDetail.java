@@ -29,6 +29,7 @@ public class ChancesDetail {
 		detail.setId(new ChancesDetailPK(userno, fromUserno, orderid));
 		detail.setState(0);
 		detail.setCreateTime(new Date());
+		detail.persist();
 		return detail;
 	}
 }

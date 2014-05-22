@@ -50,7 +50,7 @@ public class CaselotActivityController {
 				rd.setValue("参数错误the argument userno is require.");
 			    return JsonMapper.toJsonP(callback, rd);
 			}
-			CaseLotUserinfo caselotuserinfo=  caseLotActivityService.createCaseLotUserinfo(userno, orderid, nickname, headimgurl);	
+			CaseLotUserinfo caselotuserinfo=  caseLotActivityService.findOrCreateCaseLotUserinfo(userno, orderid, nickname, headimgurl);	
 			logger.info("创建活动用户信息表："+caselotuserinfo);
 			if(caselotuserinfo != null){
 				caselotuserinfo =  caseLotActivityService.joinActivity(userno, orderid, linkUserno);
@@ -90,7 +90,7 @@ public class CaselotActivityController {
 				rd.setValue("参数错误the argument userno is require.");
 				return JsonMapper.toJsonP(callback, rd);
 			}
-			Activity activity=  caseLotActivityService.selectActivityDetail(orderid);
+			Activity activity=  caseLotActivityService.findActivityByOrderid(orderid);
 			rd.setErrorCode("0");
 			rd.setValue(activity);
 		} catch (WeixinException e) {

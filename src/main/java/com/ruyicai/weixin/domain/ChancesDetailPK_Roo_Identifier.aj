@@ -10,10 +10,10 @@ privileged aspect ChancesDetailPK_Roo_Identifier {
     
     declare @type: ChancesDetailPK: @Embeddable;
     
-    public ChancesDetailPK.new(String userno, String fromUserno, String orderid) {
+    public ChancesDetailPK.new(String linkUserno, String joinUserno, String orderid) {
         super();
-        this.userno = userno;
-        this.fromUserno = fromUserno;
+        this.linkUserno = linkUserno;
+        this.joinUserno = joinUserno;
         this.orderid = orderid;
     }
 
@@ -21,12 +21,12 @@ privileged aspect ChancesDetailPK_Roo_Identifier {
         super();
     }
 
-    public String ChancesDetailPK.getUserno() {
-        return userno;
+    public String ChancesDetailPK.getLinkUserno() {
+        return linkUserno;
     }
     
-    public String ChancesDetailPK.getFromUserno() {
-        return fromUserno;
+    public String ChancesDetailPK.getJoinUserno() {
+        return joinUserno;
     }
     
     public String ChancesDetailPK.getOrderid() {

@@ -59,30 +59,35 @@ public class AsyncService {
 
 	@Async
 	@Transactional
-	public void addChanceDetail(String userno, String fromUserno, String orderid) {
+	public void addChanceDetail(String linkUserno, String joinUserno, String orderid) {
+		logger.info("addChanceDetail linkUserno：{} joinUserno:{} orderid:{}", linkUserno, joinUserno, orderid);
 		try {
-			ChancesDetail chancesDetail = ChancesDetail.findChancesDetail(new ChancesDetailPK(userno, fromUserno,
+			ChancesDetail chancesDetail = ChancesDetail.findChancesDetail(new ChancesDetailPK(linkUserno, joinUserno,
 					orderid));
 			if (chancesDetail != null) {
 				if (chancesDetail.getState() == 0) {
 					chancesDetail.setState(1);
 					chancesDetail.setSuccessTime(new Date());
 					chancesDetail.merge();
-					CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo.findCaseLotUserinfo(new CaseLotUserinfoPK(userno,
-							orderid), true);
+					CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo.findCaseLotUserinfo(new CaseLotUserinfoPK(
+							linkUserno, orderid), true);
 					if (caseLotUserinfo != null) {
 						int linkTimes = caseLotUserinfo.getLinkTimes() + 1;
 						if (linkTimes % 3 == 0) {
 							caseLotUserinfo.setChances(caseLotUserinfo.getChances() + 1);
 							caseLotUserinfo.setLinkTimes(0);
-							logger.info("增加用户抽奖机会 userno:{} fromUserno:{} orderid:{}", userno, fromUserno, orderid);
+							logger.info("增加用户抽奖机会 linkUserno:{} joinUserno:{} orderid:{}", linkUserno, joinUserno,
+									orderid);
 						} else {
 							caseLotUserinfo.setLinkTimes(linkTimes);
-							logger.info("增加用户链接次数 userno:{} fromUserno:{} orderid:{}", userno, fromUserno, orderid);
+							logger.info("增加用户链接次数 linkUserno:{} joinUserno:{} orderid:{}", linkUserno, joinUserno,
+									orderid);
 						}
 						caseLotUserinfo.merge();
 					}
 				}
+			} else {
+				logger.info("未找到记录");
 			}
 		} catch (Exception e) {
 			logger.error("增加用户领取次数异常", e);

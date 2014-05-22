@@ -24,6 +24,14 @@ privileged aspect ActivityDetail_Roo_JavaBean {
         this.orderid = orderid;
     }
     
+    public String ActivityDetail.getFromUserno() {
+        return this.fromUserno;
+    }
+    
+    public void ActivityDetail.setFromUserno(String fromUserno) {
+        this.fromUserno = fromUserno;
+    }
+    
     public Date ActivityDetail.getJoinTime() {
         return this.joinTime;
     }

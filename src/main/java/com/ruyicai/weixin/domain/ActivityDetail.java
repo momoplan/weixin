@@ -21,13 +21,17 @@ public class ActivityDetail {
 	@Column(name = "orderid", length = 50)
 	private String orderid;
 
+	@Column(name = "fromUserno", length = 50)
+	private String fromUserno;
+
 	private Date joinTime;
 
-	public static ActivityDetail createActivityDetail(String userno, String orderid) {
+	public static ActivityDetail createActivityDetail(String userno, String orderid, String fromUserno) {
 		ActivityDetail detail = new ActivityDetail();
 		detail.setUserno(userno);
 		detail.setOrderid(orderid);
 		detail.setJoinTime(new Date());
+		detail.setFromUserno(fromUserno);
 		detail.persist();
 		return detail;
 	}

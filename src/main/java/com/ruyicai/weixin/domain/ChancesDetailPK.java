@@ -13,11 +13,13 @@ public class ChancesDetailPK implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "userno", length = 50)
-	private String userno;
+	/** 推广人用户编号 */
+	@Column(name = "linkUserno", length = 50)
+	private String linkUserno;
 
-	@Column(name = "fromUserno", length = 50)
-	private String fromUserno;
+	/** 点击链接的人用户编号 */
+	@Column(name = "joinUserno", length = 50)
+	private String joinUserno;
 
 	@Column(name = "orderid", length = 100)
 	private String orderid;
