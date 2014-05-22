@@ -148,12 +148,13 @@ public class LotteryService {
 	public String createBigUser(String openid, String nickname, String type) {
 		String userno = null;
 		try {
-			String json = Request
-					.Post(lotteryurl + "/tbiguserinfoes/registerBigUser")
-					.bodyForm(
-							Form.form().add("userName", openid).add("password", randomPwd(8)).add("channel", "2")
-									.add("nickname", nickname).add("outuserno", openid).add("type", type).build(),
-							Charset.forName("UTF-8")).execute().returnContent().asString();
+			Form form = Form.form().add("userName", openid).add("password", randomPwd(8)).add("channel", "2")
+					.add("outuserno", openid).add("type", type);
+			if (StringUtils.isNotEmpty(nickname)) {
+				form.add("nickname", nickname);
+			}
+			String json = Request.Post(lotteryurl + "/tbiguserinfoes/registerBigUser")
+					.bodyForm(form.build(), Charset.forName("UTF-8")).execute().returnContent().asString();
 			Map<String, Object> map = JsonMapper.fromJson(json, HashMap.class);
 			String errorCode = (String) map.get("errorCode");
 			if (errorCode.equals("0")) {
