@@ -100,6 +100,46 @@ public class CaselotActivityController {
 		}
 		return JsonMapper.toJsonP(callback, rd);
 	}
+	
+	
+/**
+ * 
+ * @param userno
+ * @param orderid
+ * @param nickname
+ * @param headimgurl
+ * @param callback
+ * @param request
+ * @param response
+ * @return
+ */
+	@RequestMapping(value = "/createcaselotuserinfo", method = RequestMethod.GET)
+	@ResponseBody
+	public String createcaselotuserinfo(
+			@RequestParam(value="userno") String userno,
+			@RequestParam(value="orderid") String orderid,
+			@RequestParam(value="nickname") String nickname,
+			@RequestParam(value="headimgurl") String headimgurl,
+			@RequestParam(value="callBackMethod") String callback,
+			HttpServletRequest request,HttpServletResponse response) {
+		logger.info("合买createcaselotuserinfo orderid:{},userno:{}", orderid,userno);
+		ResponseData rd = new ResponseData();
+		try {
+			if (StringUtils.isEmpty(orderid)||StringUtils.isEmpty(userno)) {
+				rd.setErrorCode("10001");
+				rd.setValue("参数错误the argument userno is require.");
+				return JsonMapper.toJsonP(callback, rd);
+			}
+			CaseLotUserinfo caseLotUserinfo = caseLotActivityService.createCaseLotUserinfo(userno, orderid, nickname, headimgurl);
+			rd.setErrorCode("0");
+			rd.setValue(caseLotUserinfo);
+		} catch (WeixinException e) {
+			logger.error("/activity/createcaselotuserinfo error", e);
+			rd.setErrorCode(e.getErrorCode().value);
+			rd.setValue(e.getMessage());
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
 	/**
 	 * 查询活动详情
 	 * @param orderid
