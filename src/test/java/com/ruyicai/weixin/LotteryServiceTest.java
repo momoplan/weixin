@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
+import com.ruyicai.weixin.consts.Const;
 import com.ruyicai.weixin.service.LotteryService;
 
 @ContextConfiguration(locations = { "classpath*:/META-INF/spring/applicationContext.xml" })
@@ -17,6 +18,12 @@ public class LotteryServiceTest extends AbstractJUnit4SpringContextTests {
 	public void selectTwininfoBylotnoTest() {
 		String string = lotteryService.selectTwininfoBylotno("F47104", "3");
 		System.out.println(string);
+	}
+
+	@Test
+	public void testFindOrCreateBigUser() {
+		String userno = lotteryService.findOrCreateBigUser("2222222222", "呵呵", Const.DEFAULT_BIGUSER_TYPE);
+		System.out.println(userno);
 	}
 
 }

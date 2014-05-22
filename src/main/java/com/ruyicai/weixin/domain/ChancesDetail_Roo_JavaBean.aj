@@ -3,6 +3,7 @@
 
 package com.ruyicai.weixin.domain;
 
+import com.ruyicai.weixin.domain.CaseLotUserinfo;
 import com.ruyicai.weixin.domain.ChancesDetail;
 import com.ruyicai.weixin.domain.ChancesDetailPK;
 import java.util.Date;
@@ -39,6 +40,14 @@ privileged aspect ChancesDetail_Roo_JavaBean {
     
     public void ChancesDetail.setSuccessTime(Date successTime) {
         this.successTime = successTime;
+    }
+    
+    public CaseLotUserinfo ChancesDetail.getJoinCaseLotUserinfo() {
+        return this.joinCaseLotUserinfo;
+    }
+    
+    public void ChancesDetail.setJoinCaseLotUserinfo(CaseLotUserinfo joinCaseLotUserinfo) {
+        this.joinCaseLotUserinfo = joinCaseLotUserinfo;
     }
     
 }

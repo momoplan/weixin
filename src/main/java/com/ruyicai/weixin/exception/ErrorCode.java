@@ -2,6 +2,8 @@ package com.ruyicai.weixin.exception;
 
 public enum ErrorCode {
 
+	OK("0", "成功"),
+	ERROR("500", "服务器错误"),
 	CASELOT_NOT_EXISTS("506", "活动不存在"),
 	CASELOTUSERINFO_NOT_EXISTS("501", "活动用户不存在"),
 	CASELOTUSERINFO_CHANCES_NOT_ENOUGH("502", "参与次数不足"),
