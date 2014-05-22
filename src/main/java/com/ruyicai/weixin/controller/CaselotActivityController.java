@@ -130,7 +130,7 @@ public class CaselotActivityController {
 				rd.setValue("参数错误the argument userno is require.");
 				return JsonMapper.toJsonP(callback, rd);
 			}
-			CaseLotUserinfo caseLotUserinfo = caseLotActivityService.createCaseLotUserinfo(userno, orderid, nickname, headimgurl);
+			CaseLotUserinfo caseLotUserinfo = caseLotActivityService.findOrCreateCaseLotUserinfo(userno, orderid, nickname, headimgurl);
 			rd.setErrorCode("0");
 			rd.setValue(caseLotUserinfo);
 		} catch (WeixinException e) {

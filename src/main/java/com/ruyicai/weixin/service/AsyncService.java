@@ -85,6 +85,8 @@ public class AsyncService {
 						}
 						caseLotUserinfo.merge();
 					}
+				}else{
+					logger.info("已增加过机会，不再增加");
 				}
 			} else {
 				logger.info("未找到记录");
