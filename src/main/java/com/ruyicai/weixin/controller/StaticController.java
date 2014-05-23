@@ -176,4 +176,44 @@ public class StaticController {
 		}
 		return JsonMapper.toJsonP(callback, rd);
 	}
+
+	/**
+	 * 根据code查询微信用户信息
+	 * 
+	 * @param openid
+	 * @param callback
+	 * @return
+	 */
+	@RequestMapping(value = "/findUserinfoByCode")
+	@ResponseBody
+	public String findUserinfoByCode(@RequestParam(value = "code", required = false) String code,
+			@RequestParam(value = "callBackMethod") String callback) {
+		logger.info("findUserinfoByCode code:{}", code);
+		ResponseData rd = new ResponseData();
+		try {
+			if (StringUtils.isEmpty(openid)) {
+				rd.setErrorCode("10001");
+				rd.setValue("参数错误the argument orderid is require.");
+				return JsonMapper.toJsonP(callback, rd);
+			}
+			String rejson = weixinService.toauth2(code);
+			logger.info("toauth2 json result:" + rejson);
+			if (rejson.contains("errcode")) {
+				rd.setErrorCode(ErrorCode.ERROR.value);
+				rd.setValue(rejson);
+			} else {
+				JSONObject js = new JSONObject(rejson);
+				String openid = (String) js.get("openid");
+				String accessToken = weixinService.getAccessToken();
+				WeixinUserDTO weixinUserDTO = weixinService.findUserinfoByOpenid(accessToken, openid);
+				rd.setErrorCode(ErrorCode.OK.value);
+				rd.setValue(weixinUserDTO);
+			}
+		} catch (Exception e) {
+			logger.error("findUserinfoByCode error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(e.getMessage());
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
 }
