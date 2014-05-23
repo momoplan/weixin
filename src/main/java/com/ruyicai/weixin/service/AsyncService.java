@@ -1,24 +1,15 @@
 package com.ruyicai.weixin.service;
 
-import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.ruyicai.weixin.dao.RequestMessageDetailDao;
 import com.ruyicai.weixin.dao.SubscriberDao;
-import com.ruyicai.weixin.domain.CaseLotUserinfo;
-import com.ruyicai.weixin.domain.CaseLotUserinfoPK;
-import com.ruyicai.weixin.domain.ChancesDetail;
-import com.ruyicai.weixin.domain.ChancesDetailPK;
 import com.ruyicai.weixin.dto.RequestMessage;
 
-@Lazy
 @Service
 public class AsyncService {
 
@@ -47,7 +38,7 @@ public class AsyncService {
 		logger.info("增加订阅:userno:" + userno + ",weixinno:" + weixinno);
 		try {
 			subscriberDao.subscribe(userno, weixinno);
-			caseLotActivityService.wxuserinfo(userno, "HM00001");
+			caseLotActivityService.createBigUserAndCaseLotUserinfo(userno, "HM00001");
 		} catch (Exception e) {
 			logger.error("subscribe异常:userno:" + userno + ",weixinno:" + weixinno, e);
 		}
@@ -60,45 +51,6 @@ public class AsyncService {
 			subscriberDao.unsubscribe(userno, weixinno);
 		} catch (Exception e) {
 			logger.error("unsubscribe异常:userno:" + userno + ",weixinno:" + weixinno, e);
-		}
-	}
-
-	@Async
-	@Transactional
-	public void addChanceDetail(String linkUserno, String joinUserno, String orderid) {
-		logger.info("addChanceDetail linkUserno：{} joinUserno:{} orderid:{}", linkUserno, joinUserno, orderid);
-		try {
-			ChancesDetail chancesDetail = ChancesDetail.findChancesDetail(new ChancesDetailPK(linkUserno, joinUserno,
-					orderid));
-			if (chancesDetail != null) {
-				if (chancesDetail.getState() == 0) {
-					chancesDetail.setState(1);
-					chancesDetail.setSuccessTime(new Date());
-					chancesDetail.merge();
-					CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo.findCaseLotUserinfo(new CaseLotUserinfoPK(
-							linkUserno, orderid), true);
-					if (caseLotUserinfo != null) {
-						int linkTimes = caseLotUserinfo.getLinkTimes() + 1;
-						if (linkTimes % 3 == 0) {
-							caseLotUserinfo.setChances(caseLotUserinfo.getChances() + 1);
-							caseLotUserinfo.setLinkTimes(linkTimes);
-							logger.info("增加用户抽奖机会 linkUserno:{} joinUserno:{} orderid:{}", linkUserno, joinUserno,
-									orderid);
-						} else {
-							caseLotUserinfo.setLinkTimes(linkTimes);
-							logger.info("增加用户链接次数 linkUserno:{} joinUserno:{} orderid:{}", linkUserno, joinUserno,
-									orderid);
-						}
-						caseLotUserinfo.merge();
-					}
-				} else {
-					logger.info("已增加过机会，不再增加");
-				}
-			} else {
-				logger.info("未找到记录");
-			}
-		} catch (Exception e) {
-			logger.error("增加用户领取次数异常", e);
 		}
 	}
 }

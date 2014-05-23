@@ -1,5 +1,7 @@
 package com.ruyicai.weixin.service;
 
+import java.util.Date;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +24,6 @@ import com.ruyicai.weixin.exception.WeixinException;
 public class CaseLotActivityService {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
-
-	@Autowired
-	private AsyncService asyncService;
 
 	@Autowired
 	private LotteryService lotteryService;
@@ -116,7 +115,7 @@ public class CaseLotActivityService {
 		logger.info("caseLotUserinfo{}", caseLotUserinfo);
 		ActivityDetail.createActivityDetail(userno, orderid, linkUserno);
 		if (StringUtils.isNotEmpty(linkUserno)) {
-			asyncService.addChanceDetail(linkUserno, userno, orderid);
+			this.addChanceDetail(linkUserno, userno, orderid);
 		}
 		return caseLotUserinfo;
 	}
@@ -134,7 +133,15 @@ public class CaseLotActivityService {
 		return ChancesDetail.createChancesDetail(linkUserno, joinUserno, orderid);
 	}
 
-	public CaseLotUserinfo wxuserinfo(String openid, String orderid) {
+	/**
+	 * 创建lottery联合用户
+	 * 创建合买活动用户
+	 * 
+	 * @param openid
+	 * @param orderid
+	 * @return
+	 */
+	public CaseLotUserinfo createBigUserAndCaseLotUserinfo(String openid, String orderid) {
 		logger.info("获取用户信息参数:openid:" + openid);
 		CaseLotUserinfo caseLotUserinfo = null;
 		try {
@@ -151,5 +158,43 @@ public class CaseLotActivityService {
 			logger.error("关注时同步执行 增加 HM00001的活动账户失败:", e.getMessage());
 		}
 		return caseLotUserinfo;
+	}
+
+	@Transactional
+	public void addChanceDetail(String linkUserno, String joinUserno, String orderid) {
+		logger.info("addChanceDetail linkUserno：{} joinUserno:{} orderid:{}", linkUserno, joinUserno, orderid);
+		try {
+			ChancesDetail chancesDetail = ChancesDetail.findChancesDetail(new ChancesDetailPK(linkUserno, joinUserno,
+					orderid));
+			if (chancesDetail != null) {
+				if (chancesDetail.getState() == 0) {
+					chancesDetail.setState(1);
+					chancesDetail.setSuccessTime(new Date());
+					chancesDetail.merge();
+					CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo.findCaseLotUserinfo(new CaseLotUserinfoPK(
+							linkUserno, orderid), true);
+					if (caseLotUserinfo != null) {
+						int linkTimes = caseLotUserinfo.getLinkTimes() + 1;
+						if (linkTimes % 3 == 0) {
+							caseLotUserinfo.setChances(caseLotUserinfo.getChances() + 1);
+							caseLotUserinfo.setLinkTimes(linkTimes);
+							logger.info("增加用户抽奖机会 linkUserno:{} joinUserno:{} orderid:{}", linkUserno, joinUserno,
+									orderid);
+						} else {
+							caseLotUserinfo.setLinkTimes(linkTimes);
+							logger.info("增加用户链接次数 linkUserno:{} joinUserno:{} orderid:{}", linkUserno, joinUserno,
+									orderid);
+						}
+						caseLotUserinfo.merge();
+					}
+				} else {
+					logger.info("已增加过机会，不再增加");
+				}
+			} else {
+				logger.info("未找到记录");
+			}
+		} catch (Exception e) {
+			logger.error("增加用户领取次数异常", e);
+		}
 	}
 }

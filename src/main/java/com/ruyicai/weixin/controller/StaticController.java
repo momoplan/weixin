@@ -122,7 +122,7 @@ public class StaticController {
 			JSONObject js = new JSONObject(rejson);
 			logger.info("获得参数 用户的openid 以及  access_token：" + rejson);
 			String openid = (String) js.get("openid");
-			CaseLotUserinfo caselotuserinfo = caseLotActivityService.wxuserinfo(openid, orderid);
+			CaseLotUserinfo caselotuserinfo = caseLotActivityService.createBigUserAndCaseLotUserinfo(openid, orderid);
 			rd.setErrorCode(ErrorCode.OK.value);
 			rd.setValue(caselotuserinfo);
 		} catch (Exception e) {
