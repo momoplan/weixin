@@ -25,7 +25,8 @@ import com.ruyicai.weixin.util.JsonMapper;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:/META-INF/spring/applicationContext.xml" })
+@ContextConfiguration(locations = {
+	"classpath:/META-INF/spring/applicationContext.xml" })
 public class CreateCustomMenu {
 
 	private Logger logger = LoggerFactory.getLogger(getClass());
@@ -60,36 +61,21 @@ public class CreateCustomMenu {
 		weixinService.findUserinfoByOpenid(accessToken, "oFYzzjg0HzgaChtJlkhy4cbrhAno");
 	}
 
-	@Test
-	public void createMenu() {
+	public static void main(String[] args) {
 		Menu menu = getMenu();
 		String jsonMenu = JsonMapper.toJson(menu);
 		System.out.println(jsonMenu);
-		String weixinName = "ruyicai";
-		logger.info("初始化" + weixinName + "用户");
-		AppUser appUser = appUserDao.findAppUser(weixinName);
-		if (appUser == null) {
-			logger.error("appUser is null");
-			return;
-		} else {
-			logger.info(appUser.toString());
-			translateService.setToken(appUser.getToken());
-			weixinService.setAppId(appUser.getAppId());
-			weixinService.setAppSecret(appUser.getAppSecret());
-		}
-
 		WeixinService ws = new WeixinService();
 		ws.setAppId("wx6919f6fac2525c5f");
 		ws.setAppSecret("4888a5883fb856751d52629b4923d11d");
 		String token = ws.getAccessToken();
 		System.out.println(token);
-
 		String selectMenu = ws.selectMenu(token);
 
-		logger.info("selectMenu:" + selectMenu);
+		System.out.println("selectMenu:" + selectMenu);
 
 		String result = ws.createMenu(menu, token);
-		logger.info("result:" + result);
+		System.out.println("result:" + result);
 	}
 
 	/**
@@ -182,18 +168,22 @@ public class CreateCustomMenu {
 
 		ComplexButton mainBtn1 = new ComplexButton();
 		mainBtn1.setName("开奖公告");
-		mainBtn1.setSub_button(new Button[] { b11, b12, b13, b14, bother });
+		mainBtn1.setSub_button(new Button[] {
+				b11, b12, b13, b14, bother });
 
 		ComplexButton mainBtn2 = new ComplexButton();
 		mainBtn2.setName("购买彩票");
-		mainBtn2.setSub_button(new ViewButton[] { b21, b22, b34 });
+		mainBtn2.setSub_button(new ViewButton[] {
+				b21, b22, b34 });
 
 		ComplexButton mainBtn3 = new ComplexButton();
 		mainBtn3.setName("彩票信息");
-		mainBtn3.setSub_button(new ViewButton[] { b31, b32, b33, b35 });
+		mainBtn3.setSub_button(new ViewButton[] {
+				b31, b32, b33, b35 });
 
 		Menu menu = new Menu();
-		menu.setButton(new Button[] { mainBtn1, mainBtn2, mainBtn3 });
+		menu.setButton(new Button[] {
+				mainBtn1, mainBtn2, mainBtn3 });
 		return menu;
 	}
 }

@@ -116,7 +116,7 @@ public class WeixinService {
 		// 调用接口创建菜单
 		String json = null;
 		try {
-			json = Request.Get(url).execute().returnContent().asString();
+			json = Request.Get(url).execute().handleResponse(new MyFluentResponseHandler());
 		} catch (Exception e) {
 			logger.error("请求微信异常url=" + url, e);
 		}
