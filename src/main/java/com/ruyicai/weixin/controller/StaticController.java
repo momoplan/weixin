@@ -129,7 +129,6 @@ public class StaticController {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("caselotuserinfo", caselotuserinfo);
 			map.put("openid", openid);
-			map.put(orderid, orderid);
 			rd.setValue(map);
 		} catch (Exception e) {
 			logger.error("获取openid异常", e);
