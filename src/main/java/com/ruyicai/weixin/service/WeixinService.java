@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.ruyicai.weixin.dto.menu.Menu;
 import com.ruyicai.weixin.util.JsonMapper;
+import com.ruyicai.weixin.util.MyFluentResponseHandler;
 
 @Service
 public class WeixinService {
@@ -24,9 +25,12 @@ public class WeixinService {
 	private static String SELECT_MENU_URL = "https://api.weixin.qq.com/cgi-bin/menu/get?access_token=ACCESS_TOKEN";
 
 	private static String DELETE_MENU_URL = "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=ACCESS_TOKEN";
+
 	private static String OPEN_oauth2_URL = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
+
 	private static String SELECT_USERINFO_URL = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
-    public String USERINFO_URL = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID";
+
+	private static String USERINFO_URL = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
 	/**
 	 * 微信认证appId,在InitAppUserService初始化
 	 */
@@ -104,13 +108,15 @@ public class WeixinService {
 		}
 		return json;
 	}
+
 	/**
 	 * 获取授权
 	 * 
 	 * @param accessToken
 	 *            有效的access_token
-	 *            
-	 *            https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code
+	 * 
+	 *            https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=
+	 *            authorization_code
 	 * @return
 	 */
 	public String toauth2(String code) {
@@ -120,7 +126,7 @@ public class WeixinService {
 		// 拼装创建菜单的url
 		String url = OPEN_oauth2_URL.replace("APPID", appId).replace("SECRET", appSecret).replace("CODE", code);
 		// 调用接口创建菜单
-		logger.info("toauth2请求连接"+url);
+		logger.info("toauth2请求连接" + url);
 		String json = null;
 		try {
 			json = Request.Get(url).execute().returnContent().asString();
@@ -129,19 +135,20 @@ public class WeixinService {
 		}
 		return json;
 	}
+
 	/**
 	 * 获取用户信息
 	 * 
 	 * @param accessToken
 	 *            有效的access_token
-	 *            
+	 * 
 	 * @return
 	 */
-	public String getuserinfo(String token,String openid) {
+	public String getuserinfo(String token, String openid) {
 		// 拼装创建菜单的url
 		String url = SELECT_USERINFO_URL.replace("ACCESS_TOKEN", token).replace("OPENID", openid);
 		// 调用接口创建菜单
-		logger.info("用户详细信息请求连接"+url);
+		logger.info("用户详细信息请求连接" + url);
 		String json = null;
 		try {
 			json = Request.Get(url).execute().returnContent().asString();
@@ -171,33 +178,28 @@ public class WeixinService {
 		}
 		return json;
 	}
-	
+
 	/**
-	 * 通过全局的access_token获取用户信息
+	 * 获取用户基本信息
+	 * 
+	 * @param accessToken
 	 * @param openid
 	 * @return
 	 */
-    public String userinfoByAccess_token(String openid){
-    	String url = AccessToken_URL.replace("APPID", appId).replace("APPSECRET", appSecret);
-		String token = null;
-		String json,userjson ="";
+	public String findUserinfoByOpenid(String accessToken, String openid) {
+		String userjson = null;
 		try {
-			json = Request.Post(url).connectTimeout(2000).socketTimeout(1000).execute().returnContent()
-						.asString();
-			logger.info("Http 获取用户access_token:" + json);
-			HashMap<String, Object> map = JsonMapper.fromJson(json, HashMap.class);
-			if (map.containsKey("access_token")) {
-				token = (String) map.get("access_token");
-			}
-			String userurl = USERINFO_URL.replace("ACCESS_TOKEN", token).replace("OPENID", openid);
-			userjson = Request.Post(userurl).connectTimeout(2000).socketTimeout(1000).execute().returnContent()
-					.asString();
+			String userurl = USERINFO_URL.replace("ACCESS_TOKEN", accessToken).replace("OPENID", openid);
+			System.out.println(userurl);
+			userjson = Request.Get(userurl).connectTimeout(2000).execute()
+					.handleResponse(new MyFluentResponseHandler());
 			logger.info("Http 获取用户信息:" + userjson);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("findUserinfoByAccessToken error", e);
 		}
-    	return userjson;
-    }
+		return userjson;
+	}
+
 	public void setAppId(String appId) {
 		this.appId = appId;
 	}

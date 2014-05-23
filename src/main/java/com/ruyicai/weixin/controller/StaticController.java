@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ruyicai.weixin.consts.Const;
 import com.ruyicai.weixin.domain.CaseLotUserinfo;
 import com.ruyicai.weixin.dto.lottery.ResponseData;
 import com.ruyicai.weixin.exception.ErrorCode;
@@ -36,8 +35,8 @@ public class StaticController {
 	private WeixinService weixinService;
 	@Autowired
 	private LotteryService lotteryService;
-    @Autowired
-    private CaseLotActivityService caseLotActivityService;
+	@Autowired
+	private CaseLotActivityService caseLotActivityService;
 	@Autowired
 	private FileService fileService;
 
@@ -74,76 +73,62 @@ public class StaticController {
 	}
 
 	@RequestMapping(value = "/getopenid")
-	public void getopenid(
-			@RequestParam(value="code") String code,
-			@RequestParam(value="callBackMethod") String callback,
-			HttpServletRequest request,HttpServletResponse response) {
+	public void getopenid(@RequestParam(value = "code") String code,
+			@RequestParam(value = "callBackMethod") String callback, HttpServletRequest request,
+			HttpServletResponse response) {
 		try {
 			logger.info("获取到code参数：" + code);
 			weixinService.setAppId("wx6919f6fac2525c5f");
 			weixinService.setAppSecret("4888a5883fb856751d52629b4923d11d");
 			String rejson = weixinService.toauth2(code);
 			logger.info("获得了openid参数：" + rejson);
-			    JSONObject js =	new JSONObject(rejson);
-				String access_token = (String) js.get("access_token");
-				String openid = (String) js.get("openid");
-				JSONObject userinfo=new JSONObject(weixinService.getuserinfo(access_token, openid));
-				logger.info("获取到的微信用户信息："+userinfo);
-				response.setContentType("text/javascript");
-				PrintWriter out = response.getWriter();
-				if(userinfo.getString("errcode").equals("48001")){//{"errmsg":"api unauthorized","errcode":48001}
-					out.println(callback + "(" + js + ")");
-				}else{
-					out.println(callback + "(" + userinfo + ")");
-				}
+			JSONObject js = new JSONObject(rejson);
+			String access_token = (String) js.get("access_token");
+			String openid = (String) js.get("openid");
+			JSONObject userinfo = new JSONObject(weixinService.getuserinfo(access_token, openid));
+			logger.info("获取到的微信用户信息：" + userinfo);
+			response.setContentType("text/javascript");
+			PrintWriter out = response.getWriter();
+			if (userinfo.getString("errcode").equals("48001")) {// {"errmsg":"api unauthorized","errcode":48001}
+				out.println(callback + "(" + js + ")");
+			} else {
+				out.println(callback + "(" + userinfo + ")");
+			}
 		} catch (Exception e) {
 			logger.error("获取openid异常", e);
 		}
 	}
-	
+
 	/***
 	 * 通过微信平台 传递code， 获取openid 并用此openid 注册大客户信息，
-	 * 创建caselotUser 
+	 * 创建caselotUser
+	 * 
 	 * @param code
-	 * @param callback 
-	 * 返回用户的基本信息   username   nickname  headimg
+	 * @param callback
+	 *            返回用户的基本信息 username nickname headimg
 	 * @param request
 	 * @param response
 	 */
 	@RequestMapping(value = "/createActivity")
 	@ResponseBody
-	public String findBigUserAndCreate(
-			@RequestParam(value="code") String code,
-			@RequestParam(value="orderid") String orderid,
-			@RequestParam(value="callBackMethod") String callback,
-			HttpServletRequest request,HttpServletResponse response) {
+	public String findBigUserAndCreate(@RequestParam(value = "code") String code,
+			@RequestParam(value = "orderid") String orderid, @RequestParam(value = "callBackMethod") String callback,
+			HttpServletRequest request, HttpServletResponse response) {
 		ResponseData rd = new ResponseData();
 		try {
-			logger.info("获取到code参数：code:{} orderid:{}" , code ,orderid);
-			String nickname = "";String userno ="",headimgurl="";
+			logger.info("获取到code参数：code:{} orderid:{}", code, orderid);
 			weixinService.setAppId("wx6919f6fac2525c5f");
 			weixinService.setAppSecret("4888a5883fb856751d52629b4923d11d");
 			String rejson = weixinService.toauth2(code);
-			JSONObject js =	new JSONObject(rejson);
+			JSONObject js = new JSONObject(rejson);
 			logger.info("获得参数 用户的openid 以及  access_token：" + rejson);
-			String access_token = (String) js.get("access_token");
 			String openid = (String) js.get("openid");
-//			JSONObject userinfo=new JSONObject(weixinService.getuserinfo(access_token, openid));
-//			logger.info("获取到的微信用户信息："+userinfo);
-//			if(userinfo.has("errcode")&&userinfo.getString("errcode").equals("48001")){//{"errmsg":"api unauthorized","errcode":48001}
-//				 logger.info("获取用户信息 未被授权，获取到openid："+ rejson);
-//				
-//			}else if (userinfo.has("nickname")){
-//				 logger.info("获取到用户的基本信息："+userinfo);
-//				 nickname = userinfo.getString("nickname");
-//				 headimgurl = userinfo.getString("headimgurl");
-//				 userno = lotteryService.findOrCreateBigUser(openid, nickname, Const.DEFAULT_BIGUSER_TYPE);
-//			}
-	    JSONObject userinfo = new JSONObject(weixinService.userinfoByAccess_token(openid));
-	    logger.info("通过全局ACCESS_TOKEN方式获取到的用户信息：userinfo:{}" ,userinfo);
-	    CaseLotUserinfo  caselotuserinfo =	lotteryService.caseLotUserinfo(userinfo, orderid);
-		rd.setErrorCode(ErrorCode.OK.value);
-		rd.setValue(caselotuserinfo);
+			String accessToken = weixinService.getAccessToken();
+			JSONObject userinfo = new JSONObject(weixinService.findUserinfoByOpenid(accessToken, openid));
+			logger.info("通过全局ACCESS_TOKEN方式获取到的用户信息：userinfo:{}", userinfo);
+			CaseLotUserinfo caselotuserinfo = lotteryService.caseLotUserinfo(userinfo, orderid);
+			rd.setErrorCode(ErrorCode.OK.value);
+			rd.setValue(caselotuserinfo);
 		} catch (Exception e) {
 			logger.error("获取openid异常", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);

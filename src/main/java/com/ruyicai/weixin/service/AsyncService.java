@@ -2,10 +2,10 @@ package com.ruyicai.weixin.service;
 
 import java.util.Date;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +18,7 @@ import com.ruyicai.weixin.domain.ChancesDetail;
 import com.ruyicai.weixin.domain.ChancesDetailPK;
 import com.ruyicai.weixin.dto.RequestMessage;
 
+@Lazy
 @Service
 public class AsyncService {
 
@@ -25,12 +26,12 @@ public class AsyncService {
 
 	@Autowired
 	private RequestMessageDetailDao requestMessageDetailDao;
-//    @Autowired
-//    private WeixinService weixinService;
-//    @Autowired
-//    private LotteryService lotteryService;
+
 	@Autowired
 	private SubscriberDao subscriberDao;
+
+	@Autowired
+	private CaseLotActivityService caseLotActivityService;
 
 	@Async
 	public void createRequestMessageDetail(RequestMessage requestMessage, String requestBody) {
@@ -46,23 +47,11 @@ public class AsyncService {
 		logger.info("增加订阅:userno:" + userno + ",weixinno:" + weixinno);
 		try {
 			subscriberDao.subscribe(userno, weixinno);
+			caseLotActivityService.wxuserinfo(userno);
 		} catch (Exception e) {
 			logger.error("subscribe异常:userno:" + userno + ",weixinno:" + weixinno, e);
 		}
 	}
-//	@Async
-//	public void wxuserinfo(String openid) {
-//		logger.info("获取用户信息参数:openid:" + openid);
-//		try {
-//			weixinService.setAppId("wx6919f6fac2525c5f");
-//			weixinService.setAppSecret("4888a5883fb856751d52629b4923d11d");
-//			String weixinuser = weixinService.userinfoByAccess_token(openid);
-//			CaseLotUserinfo caseLotUserinfo=  lotteryService.caseLotUserinfo(new JSONObject(weixinuser), "HM00001");
-//		    logger.info("关注时同步执行 增加 HM00001的活动账户：caseLotUserinfo:{}",caseLotUserinfo);
-//		} catch (Exception e) {
-//			logger.error("关注时同步执行 增加 HM00001的活动账户失败:" , e.getMessage());
-//		}
-//	}
 
 	@Async
 	public void unsubscribe(String userno, String weixinno) {

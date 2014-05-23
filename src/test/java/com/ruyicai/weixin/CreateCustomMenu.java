@@ -1,5 +1,6 @@
 package com.ruyicai.weixin;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -37,6 +38,28 @@ public class CreateCustomMenu {
 
 	@Autowired
 	private WeixinService weixinService;
+
+	@Before
+	public void initWeixinService() {
+		String weixinName = "ruyicai";
+		AppUser appUser = appUserDao.findAppUser(weixinName);
+		if (appUser == null) {
+			logger.error("appUser is null");
+			return;
+		} else {
+			logger.info(appUser.toString());
+			translateService.setToken(appUser.getToken());
+			weixinService.setAppId(appUser.getAppId());
+			weixinService.setAppSecret(appUser.getAppSecret());
+		}
+	}
+
+	@Test
+	public void testfinduserBytoken() {
+		String accessToken = weixinService.getAccessToken();
+		String weixinuser = weixinService.findUserinfoByOpenid(accessToken, "oFYzzjg0HzgaChtJlkhy4cbrhAno");
+		System.out.println(weixinuser);
+	}
 
 	@Test
 	public void createMenu() {
@@ -124,16 +147,15 @@ public class CreateCustomMenu {
 		b22.setName("合买中心");
 		b22.setType("view");
 		b22.setUrl("http://iphone.ruyicai.com/html/tog.html");
-		
-		
-//		ViewButton b23 = new ViewButton();
-//		b23.setName("合买活动");
-//		b23.setType("view");
-//	    b23.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6919f6fac2525c5f&redirect_uri=http://iphone.ruyicai.com/html/tog.html&response_type=code&scope=snsapi_base&state=1#wechat_redirect");
-//	    ViewButton b24 = new ViewButton();
-//	    b24.setName("UC绑定");
-//	    b24.setType("view");
-//	    b24.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6919f6fac2525c5f&redirect_uri=http://iphone.ruyicai.com/html/tog.html&response_type=code&scope=snsapi_base&state=1#wechat_redirect");
+
+		// ViewButton b23 = new ViewButton();
+		// b23.setName("合买活动");
+		// b23.setType("view");
+		// b23.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6919f6fac2525c5f&redirect_uri=http://iphone.ruyicai.com/html/tog.html&response_type=code&scope=snsapi_base&state=1#wechat_redirect");
+		// ViewButton b24 = new ViewButton();
+		// b24.setName("UC绑定");
+		// b24.setType("view");
+		// b24.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6919f6fac2525c5f&redirect_uri=http://iphone.ruyicai.com/html/tog.html&response_type=code&scope=snsapi_base&state=1#wechat_redirect");
 
 		ViewButton b31 = new ViewButton();
 		b31.setName("彩民趣闻");
@@ -143,7 +165,6 @@ public class CreateCustomMenu {
 		b32.setName("专家推荐");
 		b32.setType("view");
 		b32.setUrl("http://iphone.ruyicai.com/html/more/newslist.html");
-	
 
 		ViewButton b33 = new ViewButton();
 		b33.setName("优惠活动");
@@ -159,14 +180,14 @@ public class CreateCustomMenu {
 		b35.setName("我要留言");
 		b35.setType("view");
 		b35.setUrl("http://iphone.ruyicai.com/html/more/tickling.html");
-	
+
 		ComplexButton mainBtn1 = new ComplexButton();
 		mainBtn1.setName("开奖公告");
 		mainBtn1.setSub_button(new Button[] { b11, b12, b13, b14, bother });
 
 		ComplexButton mainBtn2 = new ComplexButton();
 		mainBtn2.setName("购买彩票");
-		mainBtn2.setSub_button(new ViewButton[] { b21, b22, b34});
+		mainBtn2.setSub_button(new ViewButton[] { b21, b22, b34 });
 
 		ComplexButton mainBtn3 = new ComplexButton();
 		mainBtn3.setName("彩票信息");

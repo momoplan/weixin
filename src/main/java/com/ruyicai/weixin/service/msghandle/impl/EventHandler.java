@@ -14,6 +14,7 @@ import com.ruyicai.weixin.dto.RequestMessage;
 import com.ruyicai.weixin.dto.ResponseBaseMessage;
 import com.ruyicai.weixin.dto.ResponseNewsMessage;
 import com.ruyicai.weixin.service.AsyncService;
+import com.ruyicai.weixin.service.CaseLotActivityService;
 import com.ruyicai.weixin.service.msghandle.IMsgHandler;
 import com.ruyicai.weixin.util.DateUtil;
 
@@ -34,12 +35,14 @@ public class EventHandler implements IMsgHandler {
 	@Autowired
 	private AsyncService asyncService;
 
+	@Autowired
+	private CaseLotActivityService caseLotActivityService;
+
 	@Override
 	public ResponseBaseMessage handler(RequestMessage requestMessage) {
 		String event = requestMessage.getEvent();
 		if (event.equalsIgnoreCase("subscribe")) {
 			asyncService.subscribe(requestMessage.getFromUserName(), requestMessage.getToUserName());
-//			asyncService.wxuserinfo(requestMessage.getFromUserName());
 			ResponseNewsMessage rnm = new ResponseNewsMessage();
 			rnm.setFromUserName(requestMessage.getToUserName());
 			rnm.setToUserName(requestMessage.getFromUserName());
@@ -72,7 +75,8 @@ public class EventHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("双色球开奖公告");
 			a.setDescription("双色球开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=F47104&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=F47104&timestamp="
+					+ DateUtil.gettimeStamp());
 			a.setUrl("http://iphone.ruyicai.com/html/lottery/kjgg.html");
 			list.add(a);
 			rnm.setArticles(list);
@@ -87,7 +91,8 @@ public class EventHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("福彩3D开奖公告");
 			a.setDescription("福彩3D开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=F47103&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=F47103&timestamp="
+					+ DateUtil.gettimeStamp());
 			a.setUrl("http://iphone.ruyicai.com/html/lottery/dddlot.html");
 			list.add(a);
 			rnm.setArticles(list);
@@ -102,7 +107,8 @@ public class EventHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("七乐彩开奖公告");
 			a.setDescription("七乐彩开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=F47102&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=F47102&timestamp="
+					+ DateUtil.gettimeStamp());
 			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
 			list.add(a);
 			rnm.setArticles(list);
@@ -117,7 +123,8 @@ public class EventHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("大乐透开奖公告");
 			a.setDescription("大乐透开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01001&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01001&timestamp="
+					+ DateUtil.gettimeStamp());
 			a.setUrl("http://iphone.ruyicai.com/html/lottery/dltlot.html");
 			list.add(a);
 			rnm.setArticles(list);
@@ -132,7 +139,8 @@ public class EventHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("排列三开奖公告");
 			a.setDescription("排列三开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01002&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01002&timestamp="
+					+ DateUtil.gettimeStamp());
 			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
 			list.add(a);
 			rnm.setArticles(list);
@@ -147,7 +155,8 @@ public class EventHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("排列五开奖公告");
 			a.setDescription("排列五开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01011&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01011&timestamp="
+					+ DateUtil.gettimeStamp());
 			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
 			list.add(a);
 			rnm.setArticles(list);
@@ -162,7 +171,8 @@ public class EventHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("七星彩开奖公告");
 			a.setDescription("七星彩开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01009&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01009&timestamp="
+					+ DateUtil.gettimeStamp());
 			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
 			list.add(a);
 			rnm.setArticles(list);
@@ -177,7 +187,8 @@ public class EventHandler implements IMsgHandler {
 			Article a = new Article();
 			a.setTitle("22选5开奖公告");
 			a.setDescription("22选5开奖公告");
-			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01013&timestamp=" + DateUtil.gettimeStamp());
+			a.setPicUrl("http://www.ruyicai.com/weixin/static/wininfo?lotno=T01013&timestamp="
+					+ DateUtil.gettimeStamp());
 			a.setUrl("http://3g.ruyicai.com/w3g/winInfo/selectWinInfoCenter");
 			list.add(a);
 			rnm.setArticles(list);
