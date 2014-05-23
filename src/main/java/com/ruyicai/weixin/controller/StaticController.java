@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ruyicai.weixin.domain.CaseLotUserinfo;
+import com.ruyicai.weixin.dto.WeixinUserDTO;
 import com.ruyicai.weixin.dto.lottery.ResponseData;
 import com.ruyicai.weixin.exception.ErrorCode;
 import com.ruyicai.weixin.service.CaseLotActivityService;
@@ -136,6 +138,37 @@ public class StaticController {
 				map.put("openid", openid);
 				rd.setValue(map);
 			}
+		} catch (Exception e) {
+			logger.error("createActivity error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(e.getMessage());
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
+
+	/**
+	 * 根据openid查询微信用户信息
+	 * 
+	 * @param openid
+	 * @param callback
+	 * @return
+	 */
+	@RequestMapping(value = "/findUserinfoByOpenid")
+	@ResponseBody
+	public String findUserinfoByOpenid(@RequestParam(value = "openid", required = false) String openid,
+			@RequestParam(value = "callBackMethod") String callback) {
+		logger.info("findUserinfoByOpenid openid:{}", openid);
+		ResponseData rd = new ResponseData();
+		try {
+			if (StringUtils.isEmpty(openid)) {
+				rd.setErrorCode("10001");
+				rd.setValue("参数错误the argument orderid is require.");
+				return JsonMapper.toJsonP(callback, rd);
+			}
+			String accessToken = weixinService.getAccessToken();
+			WeixinUserDTO weixinUserDTO = weixinService.findUserinfoByOpenid(accessToken, openid);
+			rd.setErrorCode(ErrorCode.OK.value);
+			rd.setValue(weixinUserDTO);
 		} catch (Exception e) {
 			logger.error("createActivity error", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
