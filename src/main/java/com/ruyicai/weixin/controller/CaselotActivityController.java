@@ -38,6 +38,14 @@ public class CaselotActivityController {
 	@Autowired
 	private LotteryService lotteryService;
 
+	/**
+	 * 查询活动参与情况带分页
+	 * @param orderid
+	 * @param startLine
+	 * @param endLine
+	 * @param callback
+	 * @return
+	 */
 	@RequestMapping(value = "/findActivityDetail", method = RequestMethod.GET)
 	@ResponseBody
 	public String findActivityDetail(@RequestParam(value = "orderid", required = false) String orderid,
@@ -120,8 +128,7 @@ public class CaselotActivityController {
 	 */
 	@RequestMapping(value = "/findOrCreateBigUser", method = RequestMethod.GET)
 	@ResponseBody
-	public String findOrCreateBigUser(
-			@RequestParam(value = "openid", required = false) String openid,
+	public String findOrCreateBigUser(@RequestParam(value = "openid", required = false) String openid,
 			@RequestParam(value = "nickname", required = false) String nickname,
 			@RequestParam(value = "callBackMethod", required = false) String callback) {
 		logger.info("findOrCreateBigUser openid:{} nickname:{}", openid, nickname);
@@ -198,6 +205,45 @@ public class CaselotActivityController {
 	}
 
 	/**
+	 * 创建用户机会
+	 * 
+	 * @param linkUserno	推广用户
+	 * @param joinUserno	点击链接的用户
+	 * @param orderid	
+	 * @param callback
+	 * @return
+	 */
+	@RequestMapping(value = "/createChanceDetail", method = RequestMethod.GET)
+	@ResponseBody
+	public String createChanceDetail(@RequestParam(value = "linkUserno", required = false) String linkUserno,
+			@RequestParam(value = "joinUserno", required = false) String joinUserno,
+			@RequestParam(value = "orderid", required = false) String orderid,
+			@RequestParam(value = "callBackMethod", required = false) String callback) {
+		logger.info("createChanceDetail linkUserno:{},joinUserno:{},orderid:{}", linkUserno, joinUserno, orderid);
+		ResponseData rd = new ResponseData();
+		try {
+			if (StringUtils.isEmpty(linkUserno) || StringUtils.isEmpty(joinUserno) || StringUtils.isEmpty(orderid)) {
+				rd.setErrorCode("10001");
+				rd.setValue("参数错误the argument linkUserno or joinUserno or orderid is require.");
+				return JsonMapper.toJsonP(callback, rd);
+			}
+			ChancesDetail createChanceDetail = caseLotActivityService.createChanceDetail(linkUserno, joinUserno,
+					orderid);
+			rd.setErrorCode("0");
+			rd.setValue(createChanceDetail);
+		} catch (WeixinException e) {
+			logger.error("/activity/createChanceDetail error", e);
+			rd.setErrorCode(e.getErrorCode().value);
+			rd.setValue(e.getMessage());
+		} catch (Exception e) {
+			logger.error("/activity/createChanceDetail error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(e.getMessage());
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
+
+	/**
 	 * 查询活动详情
 	 * 
 	 * @param orderid
@@ -232,7 +278,7 @@ public class CaselotActivityController {
 	}
 
 	/**
-	 * 
+	 * 创建合买 用户
 	 * @param userno
 	 * @param orderid
 	 * @param nickname
