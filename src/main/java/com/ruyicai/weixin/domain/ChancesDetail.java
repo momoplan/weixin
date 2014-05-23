@@ -39,7 +39,7 @@ public class ChancesDetail {
 	}
 
 	public static void findChancesDetailByPage(String orderid, String linkUserno, Page<ChancesDetail> page) {
-		String sql = "SELECT o FROM ChancesDetail o WHERE 1=1 AND o.id.orderid = :orderid AND o.id.linkUserno = :linkUserno AND o.state = 1 ORDER BY o.joinTime DESC";
+		String sql = "SELECT o FROM ChancesDetail o WHERE 1=1 AND o.id.orderid = :orderid AND o.id.linkUserno = :linkUserno AND o.state = 1 ";
 		String countSql = "SELECT count(*) FROM ChancesDetail o WHERE 1=1 AND o.id.orderid = :orderid AND o.id.linkUserno = :linkUserno AND o.state = 1 ";
 		List<ChancesDetail> resultList = entityManager().createQuery(sql, ChancesDetail.class)
 				.setParameter("orderid", orderid).setParameter("linkUserno", linkUserno).getResultList();
