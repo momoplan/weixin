@@ -1,6 +1,8 @@
 package com.ruyicai.weixin.controller;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,7 +46,8 @@ public class StaticController {
 	public @ResponseBody
 	ResponseData wininfo(@RequestParam(value = "lotno", required = false) String lotno, HttpServletRequest request,
 			HttpServletResponse response) {
-		logger.info("/static/wininfo lotno:{}", new Object[] { lotno });
+		logger.info("/static/wininfo lotno:{}", new Object[] {
+			lotno });
 		ResponseData rd = new ResponseData();
 		try {
 			Long startTime = System.currentTimeMillis();
@@ -100,8 +103,7 @@ public class StaticController {
 	}
 
 	/**
-	 * 通过微信平台 传递code， 获取openid 并用此openid 注册大客户信息，
-	 * 创建caselotUser
+	 * 通过微信平台 传递code， 获取openid 并用此openid 注册大客户信息， 创建caselotUser
 	 * 
 	 * @param code
 	 * @param orderid
@@ -124,7 +126,11 @@ public class StaticController {
 			String openid = (String) js.get("openid");
 			CaseLotUserinfo caselotuserinfo = caseLotActivityService.createBigUserAndCaseLotUserinfo(openid, orderid);
 			rd.setErrorCode(ErrorCode.OK.value);
-			rd.setValue(caselotuserinfo);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("caselotuserinfo", caselotuserinfo);
+			map.put("openid", openid);
+			map.put(orderid, orderid);
+			rd.setValue(map);
 		} catch (Exception e) {
 			logger.error("获取openid异常", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
