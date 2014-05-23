@@ -1,7 +1,6 @@
 package com.ruyicai.weixin.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import com.ruyicai.weixin.domain.CaseLotUserinfo;
 import com.ruyicai.weixin.domain.CaseLotUserinfoPK;
 import com.ruyicai.weixin.domain.ChancesDetail;
 import com.ruyicai.weixin.domain.ChancesDetailPK;
+import com.ruyicai.weixin.dto.WeixinUserDTO;
 import com.ruyicai.weixin.exception.ErrorCode;
 import com.ruyicai.weixin.exception.WeixinException;
 
@@ -134,28 +134,22 @@ public class CaseLotActivityService {
 		return ChancesDetail.createChancesDetail(linkUserno, joinUserno, orderid);
 	}
 
-	public void wxuserinfo(String openid) {
+	public CaseLotUserinfo wxuserinfo(String openid, String orderid) {
 		logger.info("获取用户信息参数:openid:" + openid);
+		CaseLotUserinfo caseLotUserinfo = null;
 		try {
 			String accessToken = weixinService.getAccessToken();
-			String weixinuser = weixinService.findUserinfoByOpenid(accessToken,openid);
-			JSONObject userinfo = new JSONObject(weixinuser);
-			String nickname = null;
-			String headimgurl = null;
-			if (userinfo.has("nickname")) {
-				logger.info("获取到用户的基本信息：" + userinfo);
-				nickname = userinfo.getString("nickname");
-				headimgurl = userinfo.getString("headimgurl");
+			WeixinUserDTO dto = weixinService.findUserinfoByOpenid(accessToken, openid);
+			if (dto != null) {
+				String nickname = StringUtils.isNotEmpty(dto.getNickname()) ? dto.getNickname() : dto.getOpenid();
+				String userno = lotteryService.findOrCreateBigUser(dto.getOpenid(), nickname,
+						Const.DEFAULT_BIGUSER_TYPE);
+				caseLotUserinfo = this.findOrCreateCaseLotUserinfo(userno, orderid, dto.getNickname(),
+						dto.getHeadimgurl());
 			}
-			String useropenid = userinfo.getString("openid");
-			if (StringUtils.isEmpty(useropenid)) {
-				logger.error("获取用户openid失败");
-				return;
-			}
-			String userno = lotteryService.findOrCreateBigUser(useropenid, nickname, Const.DEFAULT_BIGUSER_TYPE);
-			this.findOrCreateCaseLotUserinfo(userno, "HM00001", nickname, headimgurl);
 		} catch (Exception e) {
 			logger.error("关注时同步执行 增加 HM00001的活动账户失败:", e.getMessage());
 		}
+		return caseLotUserinfo;
 	}
 }

@@ -57,8 +57,7 @@ public class CreateCustomMenu {
 	@Test
 	public void testfinduserBytoken() {
 		String accessToken = weixinService.getAccessToken();
-		String weixinuser = weixinService.findUserinfoByOpenid(accessToken, "oFYzzjg0HzgaChtJlkhy4cbrhAno");
-		System.out.println(weixinuser);
+		weixinService.findUserinfoByOpenid(accessToken, "oFYzzjg0HzgaChtJlkhy4cbrhAno");
 	}
 
 	@Test

@@ -47,7 +47,7 @@ public class AsyncService {
 		logger.info("增加订阅:userno:" + userno + ",weixinno:" + weixinno);
 		try {
 			subscriberDao.subscribe(userno, weixinno);
-			caseLotActivityService.wxuserinfo(userno);
+			caseLotActivityService.wxuserinfo(userno, "HM00001");
 		} catch (Exception e) {
 			logger.error("subscribe异常:userno:" + userno + ",weixinno:" + weixinno, e);
 		}

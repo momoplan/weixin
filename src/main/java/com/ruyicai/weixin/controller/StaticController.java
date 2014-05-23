@@ -99,15 +99,16 @@ public class StaticController {
 		}
 	}
 
-	/***
+	/**
 	 * 通过微信平台 传递code， 获取openid 并用此openid 注册大客户信息，
 	 * 创建caselotUser
 	 * 
 	 * @param code
+	 * @param orderid
 	 * @param callback
-	 *            返回用户的基本信息 username nickname headimg
 	 * @param request
 	 * @param response
+	 * @return
 	 */
 	@RequestMapping(value = "/createActivity")
 	@ResponseBody
@@ -117,16 +118,11 @@ public class StaticController {
 		ResponseData rd = new ResponseData();
 		try {
 			logger.info("获取到code参数：code:{} orderid:{}", code, orderid);
-			weixinService.setAppId("wx6919f6fac2525c5f");
-			weixinService.setAppSecret("4888a5883fb856751d52629b4923d11d");
 			String rejson = weixinService.toauth2(code);
 			JSONObject js = new JSONObject(rejson);
 			logger.info("获得参数 用户的openid 以及  access_token：" + rejson);
 			String openid = (String) js.get("openid");
-			String accessToken = weixinService.getAccessToken();
-			JSONObject userinfo = new JSONObject(weixinService.findUserinfoByOpenid(accessToken, openid));
-			logger.info("通过全局ACCESS_TOKEN方式获取到的用户信息：userinfo:{}", userinfo);
-			CaseLotUserinfo caselotuserinfo = lotteryService.caseLotUserinfo(userinfo, orderid);
+			CaseLotUserinfo caselotuserinfo = caseLotActivityService.wxuserinfo(openid, orderid);
 			rd.setErrorCode(ErrorCode.OK.value);
 			rd.setValue(caselotuserinfo);
 		} catch (Exception e) {
