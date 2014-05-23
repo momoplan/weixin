@@ -16,7 +16,7 @@
 	<appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
 			<FileNamePattern>
-				${logbase}weixin.%d{yyyy-MM-dd}.log.zip
+				${logbase}weixin.%d{yyyy-MM-dd}.log
 			</FileNamePattern>
 		</rollingPolicy>
 		<encoder>
@@ -26,7 +26,7 @@
 		</encoder>
 	</appender>
 
-	<logger name="com.momoplan.addressmatch" level="INFO" />
+	<logger name="com.ruyicai.weixin" level="INFO" />
 
 	<logger name="org.apache" level="ERROR" />
 	<logger name="org.hibernate" level="ERROR" />
