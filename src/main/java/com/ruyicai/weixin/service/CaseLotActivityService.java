@@ -149,7 +149,7 @@ public class CaseLotActivityService {
 			WeixinUserDTO dto = weixinService.findUserinfoByOpenid(accessToken, openid);
 			if (dto != null) {
 				String nickname = StringUtils.isNotEmpty(dto.getNickname()) ? dto.getNickname() : dto.getOpenid();
-				logger.info("查找或穿件联合用户 openid:{} nickname:{}", dto.getOpenid(), nickname);
+				logger.info("查找或创建联合用户 openid:{} nickname:{}", dto.getOpenid(), nickname);
 				String userno = lotteryService.findOrCreateBigUser(dto.getOpenid(), nickname,
 						Const.DEFAULT_BIGUSER_TYPE);
 				caseLotUserinfo = this.findOrCreateCaseLotUserinfo(userno, orderid, dto.getNickname(),
