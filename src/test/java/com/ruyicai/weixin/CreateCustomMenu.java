@@ -64,6 +64,7 @@ public class CreateCustomMenu {
 	public static void main(String[] args) {
 		Menu menu = getMenu();
 		String jsonMenu = JsonMapper.toJson(menu);
+		//String jsonMenu = "{\"button\":[{\"type\":\"view\",\"name\":\"送彩票\",\"url\":\"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6919f6fac2525c5f&redirect_uri=http://wx.ruyicai.com/index.html&response_type=code&scope=snsapi_base&state=1#wechat_redirect\"},{\"name\":\"购买彩票\",\"sub_button\":[{\"name\":\"购彩大厅\",\"type\":\"view\",\"url\":\"http://iphone.ruyicai.com/index.html\"},{\"name\":\"合买中心\",\"type\":\"view\",\"url\":\"http://iphone.ruyicai.com/html/tog.html\"},{\"name\":\"APP下载\",\"type\":\"view\",\"url\":\"http://iphone.ruyicai.com/html/download.html\"}]},{\"name\":\"彩票信息\",\"sub_button\":[{\"name\":\"彩民趣闻\",\"type\":\"view\",\"url\":\"http://iphone.ruyicai.com/html/more/newslist.html\"},{\"name\":\"专家推荐\",\"type\":\"view\",\"url\":\"http://iphone.ruyicai.com/html/more/newslist.html\"},{\"name\":\"优惠活动\",\"type\":\"view\",\"url\":\"http://iphone.ruyicai.com/html/more/active.html\"},{\"name\":\"我要留言\",\"type\":\"view\",\"url\":\"http://iphone.ruyicai.com/html/more/tickling.html\"}]}]}";
 		System.out.println(jsonMenu);
 		WeixinService ws = new WeixinService();
 		ws.setAppId("wx6919f6fac2525c5f");
@@ -102,9 +103,13 @@ public class CreateCustomMenu {
 		b14.setName("大乐透");
 		b14.setType("click");
 		ViewButton bother = new ViewButton();
+		bother.setName("送彩票");
+		bother.setType("view");
+		bother.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6919f6fac2525c5f&redirect_uri=http://wx.ruyicai.com/index.html&response_type=code&scope=snsapi_base&state=1#wechat_redirect");
+		/*ViewButton bother = new ViewButton();
 		bother.setName("更多");
 		bother.setType("view");
-		bother.setUrl("http://iphone.ruyicai.com/html/lottery.html");
+		bother.setUrl("http://iphone.ruyicai.com/html/lottery.html");*/
 
 		ClickButton b15 = new ClickButton();
 		b15.setKey("KJHM-T01002");
@@ -165,7 +170,7 @@ public class CreateCustomMenu {
 		b35.setName("我要留言");
 		b35.setType("view");
 		b35.setUrl("http://iphone.ruyicai.com/html/more/tickling.html");
-
+		
 		ComplexButton mainBtn1 = new ComplexButton();
 		mainBtn1.setName("开奖公告");
 		mainBtn1.setSub_button(new Button[] {
@@ -183,7 +188,7 @@ public class CreateCustomMenu {
 
 		Menu menu = new Menu();
 		menu.setButton(new Button[] {
-				mainBtn1, mainBtn2, mainBtn3 });
+				bother, mainBtn2, mainBtn3 });
 		return menu;
 	}
 }
