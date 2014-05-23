@@ -114,24 +114,30 @@ public class StaticController {
 	 */
 	@RequestMapping(value = "/createActivity")
 	@ResponseBody
-	public String findBigUserAndCreate(@RequestParam(value = "code") String code,
+	public String createActivity(@RequestParam(value = "code") String code,
 			@RequestParam(value = "orderid") String orderid, @RequestParam(value = "callBackMethod") String callback,
 			HttpServletRequest request, HttpServletResponse response) {
 		ResponseData rd = new ResponseData();
 		try {
-			logger.info("获取到code参数：code:{} orderid:{}", code, orderid);
+			logger.info("createActivity code:{} orderid:{}", code, orderid);
 			String rejson = weixinService.toauth2(code);
-			JSONObject js = new JSONObject(rejson);
-			logger.info("获得参数 用户的openid 以及  access_token：" + rejson);
-			String openid = (String) js.get("openid");
-			CaseLotUserinfo caselotuserinfo = caseLotActivityService.createBigUserAndCaseLotUserinfo(openid, orderid);
-			rd.setErrorCode(ErrorCode.OK.value);
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("caselotuserinfo", caselotuserinfo);
-			map.put("openid", openid);
-			rd.setValue(map);
+			logger.info("toauth2 json result:" + rejson);
+			if (rejson.contains("errcode")) {
+				rd.setErrorCode(ErrorCode.ERROR.value);
+				rd.setValue(rejson);
+			} else {
+				JSONObject js = new JSONObject(rejson);
+				String openid = (String) js.get("openid");
+				CaseLotUserinfo caselotuserinfo = caseLotActivityService.createBigUserAndCaseLotUserinfo(openid,
+						orderid);
+				rd.setErrorCode(ErrorCode.OK.value);
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("caselotuserinfo", caselotuserinfo);
+				map.put("openid", openid);
+				rd.setValue(map);
+			}
 		} catch (Exception e) {
-			logger.error("获取openid异常", e);
+			logger.error("createActivity error", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
 			rd.setValue(e.getMessage());
 		}
