@@ -120,7 +120,8 @@ public class CaselotActivityController {
 	 */
 	@RequestMapping(value = "/findOrCreateBigUser", method = RequestMethod.GET)
 	@ResponseBody
-	public String findOrCreateBigUser(@RequestParam(value = "openid", required = false) String openid,
+	public String findOrCreateBigUser(
+			@RequestParam(value = "openid", required = false) String openid,
 			@RequestParam(value = "nickname", required = false) String nickname,
 			@RequestParam(value = "callBackMethod", required = false) String callback) {
 		logger.info("findOrCreateBigUser openid:{} nickname:{}", openid, nickname);

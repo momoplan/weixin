@@ -26,7 +26,7 @@ public class WeixinService {
 	private static String DELETE_MENU_URL = "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=ACCESS_TOKEN";
 	private static String OPEN_oauth2_URL = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
 	private static String SELECT_USERINFO_URL = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
-
+    public String USERINFO_URL = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID";
 	/**
 	 * 微信认证appId,在InitAppUserService初始化
 	 */
@@ -171,7 +171,33 @@ public class WeixinService {
 		}
 		return json;
 	}
-
+	
+	/**
+	 * 通过全局的access_token获取用户信息
+	 * @param openid
+	 * @return
+	 */
+    public String userinfoByAccess_token(String openid){
+    	String url = AccessToken_URL.replace("APPID", appId).replace("APPSECRET", appSecret);
+		String token = null;
+		String json,userjson ="";
+		try {
+			json = Request.Post(url).connectTimeout(2000).socketTimeout(1000).execute().returnContent()
+						.asString();
+			logger.info("Http 获取用户access_token:" + json);
+			HashMap<String, Object> map = JsonMapper.fromJson(json, HashMap.class);
+			if (map.containsKey("access_token")) {
+				token = (String) map.get("access_token");
+			}
+			String userurl = USERINFO_URL.replace("ACCESS_TOKEN", token).replace("OPENID", openid);
+			userjson = Request.Post(userurl).connectTimeout(2000).socketTimeout(1000).execute().returnContent()
+					.asString();
+			logger.info("Http 获取用户信息:" + userjson);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return userjson;
+    }
 	public void setAppId(String appId) {
 		this.appId = appId;
 	}

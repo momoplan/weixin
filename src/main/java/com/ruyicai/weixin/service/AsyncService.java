@@ -2,6 +2,7 @@ package com.ruyicai.weixin.service;
 
 import java.util.Date;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,10 @@ public class AsyncService {
 
 	@Autowired
 	private RequestMessageDetailDao requestMessageDetailDao;
-
+//    @Autowired
+//    private WeixinService weixinService;
+//    @Autowired
+//    private LotteryService lotteryService;
 	@Autowired
 	private SubscriberDao subscriberDao;
 
@@ -46,6 +50,19 @@ public class AsyncService {
 			logger.error("subscribe异常:userno:" + userno + ",weixinno:" + weixinno, e);
 		}
 	}
+//	@Async
+//	public void wxuserinfo(String openid) {
+//		logger.info("获取用户信息参数:openid:" + openid);
+//		try {
+//			weixinService.setAppId("wx6919f6fac2525c5f");
+//			weixinService.setAppSecret("4888a5883fb856751d52629b4923d11d");
+//			String weixinuser = weixinService.userinfoByAccess_token(openid);
+//			CaseLotUserinfo caseLotUserinfo=  lotteryService.caseLotUserinfo(new JSONObject(weixinuser), "HM00001");
+//		    logger.info("关注时同步执行 增加 HM00001的活动账户：caseLotUserinfo:{}",caseLotUserinfo);
+//		} catch (Exception e) {
+//			logger.error("关注时同步执行 增加 HM00001的活动账户失败:" , e.getMessage());
+//		}
+//	}
 
 	@Async
 	public void unsubscribe(String userno, String weixinno) {

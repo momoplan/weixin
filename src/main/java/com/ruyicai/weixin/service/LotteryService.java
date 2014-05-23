@@ -9,11 +9,16 @@ import java.util.Random;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.ruyicai.weixin.consts.Const;
+import com.ruyicai.weixin.domain.CaseLotUserinfo;
 import com.ruyicai.weixin.dto.lottery.ResponseData;
 import com.ruyicai.weixin.util.JsonMapper;
 
@@ -23,7 +28,8 @@ public class LotteryService {
 	private Logger logger = LoggerFactory.getLogger(LotteryService.class);
 
 	private static Map<String, String> map = new HashMap<String, String>();
-
+    @Autowired
+    CaseLotActivityService caseLotActivityService;
 	static {
 		map.put("F47104", "双色球");
 		map.put("F47103", "3D");
@@ -104,7 +110,31 @@ public class LotteryService {
 		}
 		return result.toString();
 	}
-
+	
+	
+    public CaseLotUserinfo caseLotUserinfo(JSONObject userinfo,String orderid){
+    	String nickname = "",userno ="",headimgurl="";
+    	CaseLotUserinfo caselotuserinfo  = new CaseLotUserinfo();
+	    	try {
+	    	if (userinfo.has("nickname")){
+			 logger.info("获取到用户的基本信息："+userinfo);
+				nickname = userinfo.getString("nickname");
+				headimgurl = userinfo.getString("headimgurl");
+		 	}
+	    	 String openid = userinfo.getString("openid");
+			 userno = findOrCreateBigUser(openid, nickname, Const.DEFAULT_BIGUSER_TYPE);
+			 logger.info("创建或者返回用户信息findOrCreateBigUser返回数据 userno:{}",userno);
+			//创建活动用户数据
+			 caselotuserinfo= caseLotActivityService.findOrCreateCaseLotUserinfo(userno, orderid,
+					nickname, headimgurl);
+			logger.info("创建活动用户返回数据　　　caselotuserinfo:{}",caselotuserinfo);
+    	} catch (Exception e) {
+			// TODO Auto-generated catch block
+    		logger.error("创建caselot活动用户异常 orderid:" + orderid , e);
+		}	
+			
+		return caselotuserinfo;	
+    }
 	public String findOrCreateBigUser(String openid, String nickname, String type) {
 		String userno = this.findBigUser(openid, type);
 		if (StringUtils.isEmpty(userno)) {

@@ -39,6 +39,7 @@ public class EventHandler implements IMsgHandler {
 		String event = requestMessage.getEvent();
 		if (event.equalsIgnoreCase("subscribe")) {
 			asyncService.subscribe(requestMessage.getFromUserName(), requestMessage.getToUserName());
+//			asyncService.wxuserinfo(requestMessage.getFromUserName());
 			ResponseNewsMessage rnm = new ResponseNewsMessage();
 			rnm.setFromUserName(requestMessage.getToUserName());
 			rnm.setToUserName(requestMessage.getFromUserName());
