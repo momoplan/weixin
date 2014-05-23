@@ -191,9 +191,9 @@ public class StaticController {
 		logger.info("findUserinfoByCode code:{}", code);
 		ResponseData rd = new ResponseData();
 		try {
-			if (StringUtils.isEmpty(openid)) {
+			if (StringUtils.isEmpty(code)) {
 				rd.setErrorCode("10001");
-				rd.setValue("参数错误the argument orderid is require.");
+				rd.setValue("参数错误the argument code is require.");
 				return JsonMapper.toJsonP(callback, rd);
 			}
 			String rejson = weixinService.toauth2(code);
