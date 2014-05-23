@@ -145,25 +145,28 @@ public class WeixinService {
 	}
 
 	/**
-	 * 获取用户信息
+	 * 获取网页授权用户信息
 	 * 
-	 * @param accessToken
-	 *            有效的access_token
-	 * 
+	 * @param token
+	 * @param openid
 	 * @return
 	 */
-	public String getuserinfo(String token, String openid) {
-		// 拼装创建菜单的url
-		String url = SELECT_USERINFO_URL.replace("ACCESS_TOKEN", token).replace("OPENID", openid);
-		// 调用接口创建菜单
-		logger.info("用户详细信息请求连接" + url);
-		String json = null;
+	public WeixinUserDTO getOauthWeixinUser(String token, String openid) {
+		WeixinUserDTO dto = null;
 		try {
-			json = Request.Get(url).execute().returnContent().asString();
+			String url = SELECT_USERINFO_URL.replace("ACCESS_TOKEN", token).replace("OPENID", openid);
+			String json = Request.Get(url).connectTimeout(2000).execute()
+					.handleResponse(new MyFluentResponseHandler());
+			logger.info("Http 获取用户信息:" + json);
+			if (json.contains("errcode")) {
+				logger.error("获取用户信息失败 openid:{} error:{}", openid, json);
+				throw new WeixinException(json);
+			}
+			dto = WeixinUserDTO.fromJsonToWeixinUserDTO(json);
 		} catch (Exception e) {
-			logger.error("请求微信异常url=" + url, e);
+			logger.error("findUserinfoByOpenid error", e);
 		}
-		return json;
+		return dto;
 	}
 
 	/**
