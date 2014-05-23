@@ -1,7 +1,5 @@
 package com.ruyicai.weixin.dto;
 
-import java.util.Date;
-
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.json.RooJson;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -27,6 +25,6 @@ public class WeixinUserDTO {
 
 	private String headimgurl;
 
-	private Date subscribe_time;
+	private Long subscribe_time;
 
 }

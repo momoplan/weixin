@@ -42,7 +42,8 @@ public class ChancesDetail {
 		String sql = "SELECT o FROM ChancesDetail o WHERE 1=1 AND o.id.orderid = :orderid AND o.id.linkUserno = :linkUserno AND o.state = 1 ";
 		String countSql = "SELECT count(*) FROM ChancesDetail o WHERE 1=1 AND o.id.orderid = :orderid AND o.id.linkUserno = :linkUserno AND o.state = 1 ";
 		List<ChancesDetail> resultList = entityManager().createQuery(sql, ChancesDetail.class)
-				.setParameter("orderid", orderid).setParameter("linkUserno", linkUserno).getResultList();
+				.setParameter("orderid", orderid).setParameter("linkUserno", linkUserno)
+				.setFirstResult(page.getPageIndex()).setMaxResults(page.getMaxResult()).getResultList();
 		int count = entityManager().createQuery(countSql, Long.class).setParameter("orderid", orderid)
 				.setParameter("linkUserno", linkUserno).getSingleResult().intValue();
 		for (ChancesDetail detail : resultList) {

@@ -4,7 +4,6 @@
 package com.ruyicai.weixin.dto;
 
 import com.ruyicai.weixin.dto.WeixinUserDTO;
-import java.util.Date;
 
 privileged aspect WeixinUserDTO_Roo_JavaBean {
     
@@ -72,11 +71,11 @@ privileged aspect WeixinUserDTO_Roo_JavaBean {
         this.headimgurl = headimgurl;
     }
     
-    public Date WeixinUserDTO.getSubscribe_time() {
+    public Long WeixinUserDTO.getSubscribe_time() {
         return this.subscribe_time;
     }
     
-    public void WeixinUserDTO.setSubscribe_time(Date subscribe_time) {
+    public void WeixinUserDTO.setSubscribe_time(Long subscribe_time) {
         this.subscribe_time = subscribe_time;
     }
     

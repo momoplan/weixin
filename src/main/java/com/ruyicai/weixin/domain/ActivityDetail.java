@@ -45,7 +45,8 @@ public class ActivityDetail {
 		String sql = "SELECT o FROM ActivityDetail o WHERE 1=1 AND o.orderid = :orderid ORDER BY o.joinTime DESC";
 		String countSql = "SELECT count(*) FROM ActivityDetail o WHERE 1=1 AND o.orderid = :orderid ";
 		List<ActivityDetail> resultList = entityManager().createQuery(sql, ActivityDetail.class)
-				.setParameter("orderid", orderid).getResultList();
+				.setParameter("orderid", orderid).setFirstResult(page.getPageIndex())
+				.setMaxResults(page.getMaxResult()).getResultList();
 		int count = entityManager().createQuery(countSql, Long.class).setParameter("orderid", orderid)
 				.getSingleResult().intValue();
 		for (ActivityDetail detail : resultList) {

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.ruyicai.weixin.dto.WeixinUserDTO;
 import com.ruyicai.weixin.dto.menu.Menu;
+import com.ruyicai.weixin.exception.WeixinException;
 import com.ruyicai.weixin.util.JsonMapper;
 import com.ruyicai.weixin.util.MyFluentResponseHandler;
 
@@ -201,8 +202,13 @@ public class WeixinService {
 			String json = Request.Get(userurl).connectTimeout(2000).execute()
 					.handleResponse(new MyFluentResponseHandler());
 			logger.info("Http 获取用户信息:" + json);
+			if (json.contains("errcode")) {
+				logger.error("获取用户信息失败 openid:{} error:{}", openid, json);
+				throw new WeixinException(json);
+			}
+			dto = WeixinUserDTO.fromJsonToWeixinUserDTO(json);
 		} catch (Exception e) {
-			logger.error("findUserinfoByAccessToken error", e);
+			logger.error("findUserinfoByOpenid error", e);
 		}
 		return dto;
 	}
