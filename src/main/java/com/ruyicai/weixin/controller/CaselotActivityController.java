@@ -40,6 +40,7 @@ public class CaselotActivityController {
 
 	/**
 	 * 查询活动参与情况带分页
+	 * 
 	 * @param orderid
 	 * @param startLine
 	 * @param endLine
@@ -207,9 +208,9 @@ public class CaselotActivityController {
 	/**
 	 * 创建用户机会
 	 * 
-	 * @param linkUserno	推广用户
-	 * @param joinUserno	点击链接的用户
-	 * @param orderid	
+	 * @param linkUserno 推广用户
+	 * @param joinUserno 点击链接的用户
+	 * @param orderid
 	 * @param callback
 	 * @return
 	 */
@@ -279,6 +280,7 @@ public class CaselotActivityController {
 
 	/**
 	 * 创建合买 用户
+	 * 
 	 * @param userno
 	 * @param orderid
 	 * @param nickname

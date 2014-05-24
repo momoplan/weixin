@@ -87,11 +87,8 @@ public class WeixinService {
 	 */
 	public String createMenu(Menu menu, String accessToken) {
 		logger.info("accessToken:{},menu:{}", accessToken, menu);
-		// 拼装创建菜单的url
 		String url = CREATE_MENU_URL.replace("ACCESS_TOKEN", accessToken);
-		// 将菜单对象转换成json字符串
 		String jsonMenu = JsonMapper.toJson(menu);
-		// 调用接口创建菜单
 		String json = null;
 		try {
 			json = Request.Post(url).bodyString(jsonMenu, ContentType.APPLICATION_JSON).execute().returnContent()
@@ -111,9 +108,7 @@ public class WeixinService {
 	 */
 	public String selectMenu(String accessToken) {
 		logger.info("accessToken:{}", accessToken);
-		// 拼装创建菜单的url
 		String url = SELECT_MENU_URL.replace("ACCESS_TOKEN", accessToken);
-		// 调用接口创建菜单
 		String json = null;
 		try {
 			json = Request.Get(url).execute().handleResponse(new MyFluentResponseHandler());
@@ -129,18 +124,18 @@ public class WeixinService {
 	 * @param code
 	 * @return json
 	 */
-	public String toauth2(String code) {
+	public String getOauth(String code) {
 		if (StringUtils.isBlank(appId) || StringUtils.isBlank(appSecret)) {
 			throw new IllegalArgumentException("The argument appId or appSecret is required");
 		}
 		String url = OPEN_oauth2_URL.replace("APPID", appId).replace("SECRET", appSecret).replace("CODE", code);
-		logger.info("toauth2请求连接" + url);
 		String json = null;
 		try {
 			json = Request.Get(url).execute().returnContent().asString();
 		} catch (Exception e) {
 			logger.error("请求微信异常url=" + url, e);
 		}
+		logger.info("getOauth result:{}", json);
 		return json;
 	}
 
@@ -155,8 +150,7 @@ public class WeixinService {
 		WeixinUserDTO dto = null;
 		try {
 			String url = SELECT_USERINFO_URL.replace("ACCESS_TOKEN", token).replace("OPENID", openid);
-			String json = Request.Get(url).connectTimeout(2000).execute()
-					.handleResponse(new MyFluentResponseHandler());
+			String json = Request.Get(url).connectTimeout(2000).execute().handleResponse(new MyFluentResponseHandler());
 			logger.info("Http 获取用户信息:" + json);
 			if (json.contains("errcode")) {
 				logger.error("获取用户信息失败 openid:{} error:{}", openid, json);
@@ -178,9 +172,7 @@ public class WeixinService {
 	 */
 	public String deleteMenu(String accessToken) {
 		logger.info("accessToken:{}", accessToken);
-		// 拼装创建菜单的url
 		String url = DELETE_MENU_URL.replace("ACCESS_TOKEN", accessToken);
-		// 调用接口创建菜单
 		String json = null;
 		try {
 			json = Request.Get(url).execute().returnContent().asString();
@@ -201,10 +193,9 @@ public class WeixinService {
 		WeixinUserDTO dto = null;
 		try {
 			String userurl = USERINFO_URL.replace("ACCESS_TOKEN", accessToken).replace("OPENID", openid);
-			System.out.println(userurl);
 			String json = Request.Get(userurl).connectTimeout(2000).execute()
 					.handleResponse(new MyFluentResponseHandler());
-			logger.info("Http 获取用户信息:" + json);
+			logger.info("findUserinfoByOpenid result json:{}" + json);
 			if (json.contains("errcode")) {
 				logger.error("获取用户信息失败 openid:{} error:{}", openid, json);
 				throw new WeixinException(json);

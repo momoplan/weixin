@@ -47,8 +47,7 @@ public class StaticController {
 	public @ResponseBody
 	ResponseData wininfo(@RequestParam(value = "lotno", required = false) String lotno, HttpServletRequest request,
 			HttpServletResponse response) {
-		logger.info("/static/wininfo lotno:{}", new Object[] {
-			lotno });
+		logger.info("/static/wininfo lotno:{}", new Object[] { lotno });
 		ResponseData rd = new ResponseData();
 		try {
 			Long startTime = System.currentTimeMillis();
@@ -57,7 +56,7 @@ public class StaticController {
 			rd.setErrorCode("0");
 		} catch (Exception e) {
 			logger.error("/static/wininfo error", e);
-			rd.setErrorCode("500");
+			rd.setErrorCode(ErrorCode.ERROR.value);
 			rd.setValue(e.getMessage());
 		}
 		return rd;
@@ -77,7 +76,7 @@ public class StaticController {
 	}
 
 	/**
-	 * 通过微信平台 传递code， 获取openid 并用此openid 注册大客户信息， 创建caselotUser
+	 * 通过微信平台 传递code， 获取openid 并用此openid注册大客户信息， 创建caselotUser
 	 * 
 	 * @param code
 	 * @param orderid
@@ -86,16 +85,15 @@ public class StaticController {
 	 * @param response
 	 * @return
 	 */
-	@RequestMapping(value = "/createActivity")
+	@RequestMapping(value = "/createBigUserAndCaseLotUserinfo")
 	@ResponseBody
-	public String createActivity(@RequestParam(value = "code") String code,
+	public String createBigUserAndCaseLotUserinfo(@RequestParam(value = "code") String code,
 			@RequestParam(value = "orderid") String orderid, @RequestParam(value = "callBackMethod") String callback,
 			HttpServletRequest request, HttpServletResponse response) {
 		ResponseData rd = new ResponseData();
 		try {
-			logger.info("createActivity code:{} orderid:{}", code, orderid);
-			String rejson = weixinService.toauth2(code);
-			logger.info("toauth2 json result:" + rejson);
+			logger.info("/static/createBigUserAndCaseLotUserinfo code:{} orderid:{}", code, orderid);
+			String rejson = weixinService.getOauth(code);
 			if (rejson.contains("errcode")) {
 				rd.setErrorCode(ErrorCode.ERROR.value);
 				rd.setValue(rejson);
@@ -111,7 +109,7 @@ public class StaticController {
 				rd.setValue(map);
 			}
 		} catch (Exception e) {
-			logger.error("createActivity error", e);
+			logger.error("createBigUserAndCaseLotUserinfo error", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
 			rd.setValue(e.getMessage());
 		}
@@ -129,7 +127,7 @@ public class StaticController {
 	@ResponseBody
 	public String findUserinfoByOpenid(@RequestParam(value = "openid", required = false) String openid,
 			@RequestParam(value = "callBackMethod") String callback) {
-		logger.info("findUserinfoByOpenid openid:{}", openid);
+		logger.info("/static/findUserinfoByOpenid openid:{}", openid);
 		ResponseData rd = new ResponseData();
 		try {
 			if (StringUtils.isEmpty(openid)) {
@@ -160,7 +158,7 @@ public class StaticController {
 	@ResponseBody
 	public String findUserinfoByCode(@RequestParam(value = "code", required = false) String code,
 			@RequestParam(value = "callBackMethod") String callback) {
-		logger.info("findUserinfoByCode code:{}", code);
+		logger.info("/static/findUserinfoByCode code:{}", code);
 		ResponseData rd = new ResponseData();
 		try {
 			if (StringUtils.isEmpty(code)) {
@@ -168,16 +166,15 @@ public class StaticController {
 				rd.setValue("参数错误the argument code is require.");
 				return JsonMapper.toJsonP(callback, rd);
 			}
-			String rejson = weixinService.toauth2(code);
-			logger.info("toauth2 json result:" + rejson);
+			String rejson = weixinService.getOauth(code);
 			if (rejson.contains("errcode")) {
 				rd.setErrorCode(ErrorCode.ERROR.value);
 				rd.setValue(rejson);
 			} else {
 				JSONObject js = new JSONObject(rejson);
 				String openid = (String) js.get("openid");
-				String accessToken = (String) js.get("access_token");
-				WeixinUserDTO weixinUserDTO = weixinService.getOauthWeixinUser(accessToken, openid);
+				String accessToken = weixinService.getAccessToken();
+				WeixinUserDTO weixinUserDTO = weixinService.findUserinfoByOpenid(accessToken, openid);
 				rd.setErrorCode(ErrorCode.OK.value);
 				rd.setValue(weixinUserDTO);
 			}
