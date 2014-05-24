@@ -76,9 +76,9 @@ public class StaticController {
 	}
 
 	/**
-	 * 通过微信平台 传递code， 获取openid 并用此openid注册大客户信息， 创建caselotUser
+	 * 注册联合用户，并创建caselotUser
 	 * 
-	 * @param code
+	 * @param openid
 	 * @param orderid
 	 * @param callback
 	 * @param request
@@ -87,27 +87,18 @@ public class StaticController {
 	 */
 	@RequestMapping(value = "/createBigUserAndCaseLotUserinfo")
 	@ResponseBody
-	public String createBigUserAndCaseLotUserinfo(@RequestParam(value = "code") String code,
+	public String createBigUserAndCaseLotUserinfo(@RequestParam(value = "openid") String openid,
 			@RequestParam(value = "orderid") String orderid, @RequestParam(value = "callBackMethod") String callback,
 			HttpServletRequest request, HttpServletResponse response) {
 		ResponseData rd = new ResponseData();
 		try {
-			logger.info("/static/createBigUserAndCaseLotUserinfo code:{} orderid:{}", code, orderid);
-			String rejson = weixinService.getOauth(code);
-			if (rejson.contains("errcode")) {
-				rd.setErrorCode(ErrorCode.ERROR.value);
-				rd.setValue(rejson);
-			} else {
-				JSONObject js = new JSONObject(rejson);
-				String openid = (String) js.get("openid");
-				CaseLotUserinfo caselotuserinfo = caseLotActivityService.createBigUserAndCaseLotUserinfo(openid,
-						orderid);
-				rd.setErrorCode(ErrorCode.OK.value);
-				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("caselotuserinfo", caselotuserinfo);
-				map.put("openid", openid);
-				rd.setValue(map);
-			}
+			logger.info("/static/createBigUserAndCaseLotUserinfo openid:{} orderid:{}", openid, orderid);
+			CaseLotUserinfo caselotuserinfo = caseLotActivityService.createBigUserAndCaseLotUserinfo(openid, orderid);
+			rd.setErrorCode(ErrorCode.OK.value);
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("caselotuserinfo", caselotuserinfo);
+			map.put("openid", openid);
+			rd.setValue(map);
 		} catch (Exception e) {
 			logger.error("createBigUserAndCaseLotUserinfo error", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
