@@ -59,7 +59,7 @@ public class WeixinController {
 			}
 			logger.info("请求信息:" + requestBody);
 			requestMessage = JaxbMapper.fromXml(requestBody, RequestMessage.class);
-			asyncService.createRequestMessageDetail(requestMessage, requestBody);
+			// asyncService.createRequestMessageDetail(requestMessage, requestBody);
 			result = translateService.processRequest(requestMessage);
 		} catch (IOException e) {
 			logger.error("获取request.getInputStream()异常", e);
