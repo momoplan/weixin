@@ -30,7 +30,6 @@ public class XMLMapperTest {
 
 	@Test
 	public void beanToXmlTest() throws JAXBException {
-
 		logger.info("RequestMessage");
 		RequestMessage rm = new RequestMessage();
 		rm.setContent("abc");
