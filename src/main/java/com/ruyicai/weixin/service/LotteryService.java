@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.ruyicai.weixin.dto.lottery.ResponseData;
+import com.ruyicai.weixin.exception.ErrorCode;
+import com.ruyicai.weixin.exception.WeixinException;
 import com.ruyicai.weixin.util.JsonMapper;
 
 @Service
@@ -170,6 +172,38 @@ public class LotteryService {
 			logger.error("创建大客户失败 openid:" + openid + " nickname:" + nickname + " type:" + type, e);
 		}
 		return userno;
+	}
+	
+	/**
+	 * 直接扣款
+	 * 
+	 * @param userno 用户编号
+	 * @param amt 单位：分
+	 * @param bankid
+	 * @param flowno
+	 * @param memo
+	 */
+	public void deductAmt(String userno, String amt, String bankid, String flowno, String memo)
+	{
+		String json = null;
+		try
+		{
+			String url = lotteryurl + "/taccounts/deductAmt";
+			json = Request.Post(url).bodyForm(Form.form().add("userno", userno)
+					.add("amt", amt).add("bankid", bankid)
+					.add("flowno", flowno).add("memo", memo).build(), Charset.forName("UTF-8"))
+					.execute().returnContent().asString();
+		} catch (Exception e)
+		{
+			logger.error("扣款异常", e);
+			throw new WeixinException(ErrorCode.ERROR);
+		}
+		ResponseData responseData = JsonMapper.fromJson(json, ResponseData.class);
+		if (!"0".equals(responseData.getErrorCode()))
+		{
+			logger.info("扣款失败:errorCode=" + responseData.getErrorCode());
+			throw new WeixinException(ErrorCode.DEDUCT_AMT_FAIL);
+		}
 	}
 
 	private String randomPwd(int length) {

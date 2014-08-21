@@ -34,5 +34,7 @@ public class CaseLotActivityServiceTest extends AbstractJUnit4SpringContextTests
 		CaseLotUserinfo u5 = caseLotActivityService.findOrCreateCaseLotUserinfo("00007", "HM00001", "test1", "hehe1");
 		Assert.assertEquals(u5.getLinkTimes(), u1.getLinkTimes() + 1);
 	}
+	
+	
 
 }

@@ -30,7 +30,6 @@ public class RandomPacketUtil {
 			if(benchmark < remain)
 				benchmark += benchmark * (betNum / parts);
 
-			System.out.println("基准：" + benchmark);
 			for(int i = 0; i < p.length; ++i)
 			{
 				int next = 0;
@@ -59,20 +58,4 @@ public class RandomPacketUtil {
 		return p;
 	}
 	
-	public static void main(String[] args)
-	{
-		System.out.println(new Random().nextInt(2));
-		int i1 = new Random().nextInt(1000);
-		int i2 = new Random().nextInt(1000);
-		System.out.println("初始化注数：" + i1 + ", 份数：" + i2);
-		int[] in = getRandomPunt(i1, i2);
-		int sum = 0;
-		for (int i = 0; i < in.length; i++)
-		{
-			System.out.print(in[i] + ",");
-			sum += in[i];
-		}
-		System.out.println("\r\n结果 ——》注数:" + sum);
-		
-	}
 }
