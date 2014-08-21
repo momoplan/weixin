@@ -48,4 +48,6 @@ public class AppUserDao {
 		AppUser appUser = this.entityManager.find(AppUser.class, weixinName);
 		return appUser;
 	}
+	
+ 
 }

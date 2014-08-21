@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ruyicai.weixin.domain.CaseLotUserinfo;
+import com.ruyicai.weixin.domain.Packet;
 import com.ruyicai.weixin.dto.WeixinUserDTO;
 import com.ruyicai.weixin.dto.lottery.ResponseData;
 import com.ruyicai.weixin.exception.ErrorCode;
@@ -121,6 +122,10 @@ public class StaticController {
 		logger.info("/static/findUserinfoByOpenid openid:{}", openid);
 		ResponseData rd = new ResponseData();
 		try {
+			
+	
+			Packet pk = new Packet();
+			
 			if (StringUtils.isEmpty(openid)) {
 				rd.setErrorCode("10001");
 				rd.setValue("参数错误the argument orderid is require.");
