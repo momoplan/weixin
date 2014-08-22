@@ -1,5 +1,8 @@
 package com.ruyicai.weixin.service;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,7 @@ import com.ruyicai.weixin.dao.PacketDao;
 import com.ruyicai.weixin.dao.PuntPacketDao;
 import com.ruyicai.weixin.domain.Packet;
 import com.ruyicai.weixin.domain.PuntPacket;
+import com.ruyicai.weixin.util.DoubleBall;
 import com.ruyicai.weixin.util.RandomPacketUtil;
 
 @Service
@@ -25,8 +29,9 @@ public class PacketActivityService {
 	@Autowired
 	LotteryService lotteryService;
 	
+
 	/**
-	 * 抢红包处理
+	 * 送红包处理
 	 * 
 	 * @param packetUserno 发送红包用户编号
 	 * @param parts 份数
@@ -51,13 +56,54 @@ public class PacketActivityService {
 		return packet;
 	}
 	
-	public PuntPacket findPunt(String packet_id) {
-		PuntPacket puntPacket = puntPacketDao.findPunt(packet_id);
-		if (puntPacket == null) {
-			logger.error("appUser is null");
-			return null;
+	/**
+	 * 抢红包处理
+	 * 
+	 * @param packetUserno 发送红包用户编号
+	 * @param parts 份数
+	 * @param punts 注数
+	 * @param greetings 祝福语
+	 */
+	public PuntPacket getPunts(String award_userno,String channel,String packet_id) {
+		PuntPacket puntPacket = PuntPacket.findOneNotAawardPart(packet_id);
+		int punts = puntPacket.getRandomPunts();
+		 
+		// 送彩金接口
+//		String presentResult = commonService.presentDividend(award_userno,
+//				String.valueOf(200 * punts), channel, "微信号服务号抢红包奖励");
+//		if (!StringUtils.equals(presentResult, "0")) {
+//			//throw new QqException(QqErrorCode.awardGiveFail);
+//		}
+
+
+		for (int i = 0; i < punts; i++) {
+			// 生成投注数字
+			  int result[] = DoubleBall.getDoubleBallNums();
+			// 投注
 		}
 		
+//		PuntList pList = new PuntList();
+//		pList.setBatchcode("");
+		
+		
+		puntPacket.setGetUserno(award_userno);			
+		Date date=new Date();
+		Calendar cal=Calendar.getInstance();
+		cal.setTime(date);
+		puntPacket.setGetTime(cal);			
+		puntPacket.persist();
+		
 		return puntPacket;
+	}
+	
+	/**
+	 * 抢红包处理
+	 * 
+	 * @param award_userno 发送红包用户编号
+	 * @param packet_id 红包ID
+	 */
+	public void doGetPunts(String award_userno,String packet_id)
+	{
+		
 	}
 }

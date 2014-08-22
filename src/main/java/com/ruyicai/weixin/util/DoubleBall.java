@@ -7,7 +7,19 @@ public class DoubleBall {
     private static final int RESULT_LENGTH = 7;
  
     public static void main(String[] args) {
-        int reds[] = new int[RED_BALL_LENGTH];
+       
+        int result[] = getDoubleBallNums();
+
+        String split;
+        for (int i = 0; i < RESULT_LENGTH; ++i) {
+            split = i == RESULT_LENGTH - 2 ? " - " : " ";
+            System.out.print(result[i] + split);
+        }
+    }
+    
+    public static int[] getDoubleBallNums()
+    {
+    	int reds[] = new int[RED_BALL_LENGTH];
         int blues[] = new int[BLUE_BALL_LENGTH];
         int result[] = new int[RESULT_LENGTH];
  
@@ -48,10 +60,6 @@ public class DoubleBall {
         // blue ball
         result[RESULT_LENGTH - 1] = blues[(int) (Math.random() * BLUE_BALL_LENGTH)];
  
-        String split;
-        for (int i = 0; i < RESULT_LENGTH; ++i) {
-            split = i == RESULT_LENGTH - 2 ? " - " : " ";
-            System.out.print(result[i] + split);
-        }
+       return result;
     }
 }
