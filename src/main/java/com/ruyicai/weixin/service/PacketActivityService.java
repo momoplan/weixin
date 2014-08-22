@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ruyicai.weixin.dao.PacketDao;
+import com.ruyicai.weixin.dao.PuntListDao;
 import com.ruyicai.weixin.dao.PuntPacketDao;
 import com.ruyicai.weixin.domain.Packet;
+import com.ruyicai.weixin.domain.PuntList;
 import com.ruyicai.weixin.domain.PuntPacket;
 import com.ruyicai.weixin.util.DateUtil;
 import com.ruyicai.weixin.util.RandomPacketUtil;
@@ -26,6 +28,9 @@ public class PacketActivityService {
 	
 	@Autowired
 	private PuntPacketDao puntPacketDao;
+	
+	@Autowired
+	PuntListDao puntListDao;
 	
 	@Autowired
 	LotteryService lotteryService;
@@ -87,14 +92,31 @@ public class PacketActivityService {
 				map.put("total_punts", packet.getTotalPunts());
 				map.put("total_parts", packet.getTotalPersons());
 				map.put("paket_date", DateUtil.format(packet.getCreatetime().getTime()));
-				
+
 				// 红包领取人数
-				int grabs = puntPacketDao.findPuntPacketGrabed(packet.getId());
-				map.put("get_punts", grabs);
-				
+				List<PuntPacket> grabList = puntPacketDao.findPuntPacketGrabedList(packet.getId());
+				map.put("get_punts", grabList.size());
+
 				// 查询中奖人数
-				map.put("win_persons", 0);
-				
+				int win_persons = 0;
+				if (grabList != null && grabList.size() > 0)
+				{
+					for (PuntPacket puntPacket : grabList)
+					{
+						List<PuntList> puntList = puntListDao.findPuntListGrabedList(puntPacket.getId());
+						if (puntList != null && puntList.size() > 0)
+						{
+							for (PuntList punt : puntList)
+							{
+								if (punt.getOrderprizeamt() != null && punt.getOrderprizeamt() > 0 )
+									++win_persons;
+							}
+						}
+					}
+				}
+
+				map.put("win_persons", win_persons);
+
 				arry.put(map);
 			}
 			return arry.toString();

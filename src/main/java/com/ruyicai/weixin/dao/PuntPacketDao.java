@@ -1,7 +1,10 @@
 package com.ruyicai.weixin.dao;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -38,11 +41,11 @@ public class PuntPacketDao {
 		return puntPacket;
 	}
 	
-	public int findPuntPacketGrabed(int packetId)
+	public List<PuntPacket> findPuntPacketGrabedList(int packetId)
 	{
-		int q = entityManager.createQuery("select count(*) from PuntPacket p where p.getUserno != null and p.packetId = ? ", Long.class)
-				.setParameter(1, packetId).getSingleResult().intValue();
-		return q;
+		TypedQuery<PuntPacket> q = entityManager.createQuery("select o from PuntPacket o where o.getUserno != null and o.packetId = ? ", PuntPacket.class)
+				.setParameter(1, packetId);
+		return q.getResultList();
 	}
 	
 }
