@@ -1,9 +1,11 @@
 package com.ruyicai.weixin.dao;
 
 import java.util.Calendar;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,5 +31,12 @@ public class PacketDao {
 		packet.setCreatetime(Calendar.getInstance());
 		packet.persist();
 		return packet;
+	}
+	
+	public List<Packet> findPacketListByUserno(String userno)
+	{
+		TypedQuery<Packet> q = entityManager.createQuery("select o from Packet o where o.packetUserno = ?", Packet.class)
+				.setParameter(1, userno);
+		return q.getResultList();
 	}
 }

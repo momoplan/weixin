@@ -54,13 +54,23 @@ public class PacketActivityController {
 			rd.setErrorCode("10002");
 			rd.setValue("创建红包注数不能大于1000注");
 			return JsonMapper.toJsonP(callback, rd);
+		} else if (puntsInt < 1)
+		{
+			rd.setErrorCode("10003");
+			rd.setValue("创建红包注数不能小于1注");
+			return JsonMapper.toJsonP(callback, rd);
 		}
 		
 		int partsInt = Integer.valueOf(parts);
 		if (partsInt > puntsInt)
 		{
-			rd.setErrorCode("10003");
+			rd.setErrorCode("10004");
 			rd.setValue("红包份数不能大于红包注数");
+			return JsonMapper.toJsonP(callback, rd);
+		} else if (partsInt < 1)
+		{
+			rd.setErrorCode("10005");
+			rd.setValue("红包份数不能小于1份");
 			return JsonMapper.toJsonP(callback, rd);
 		}
 		
@@ -110,4 +120,36 @@ public class PacketActivityController {
 		}
 		return JsonMapper.toJsonP(callback, rd);
 	}
+	
+	@RequestMapping(value = "/getPacketList", method = RequestMethod.GET)
+	@ResponseBody
+	public String getPacketList(@RequestParam(value = "packet_userno", required = true) String packet_userno,
+			@RequestParam(value = "callBackMethod", required = true) String callback)
+	{
+		logger.info("getPacketList packet_userno:{}", packet_userno);
+		ResponseData rd = new ResponseData();
+		if (StringUtil.isEmpty(packet_userno))
+		{
+			rd.setErrorCode("10001");
+			rd.setValue("参数不能为空");
+			return JsonMapper.toJsonP(callback, rd);
+		}
+		
+		try
+		{
+			rd.setValue(packetActivityService.doGetPacketList(packet_userno));
+			rd.setErrorCode(ErrorCode.OK.value);
+		} catch (WeixinException e)
+		{
+			rd.setErrorCode(e.getErrorCode().value);
+			rd.setValue(e.getErrorCode().memo);
+		} catch (Exception e)
+		{
+			logger.error("getPacketList error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(ErrorCode.ERROR.memo);
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
+	
 }

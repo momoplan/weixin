@@ -38,4 +38,11 @@ public class PuntPacketDao {
 		return puntPacket;
 	}
 	
+	public int findPuntPacketGrabed(int packetId)
+	{
+		int q = entityManager.createQuery("select count(*) from PuntPacket p where p.getUserno != null and p.packetId = ? ", Long.class)
+				.setParameter(1, packetId).getSingleResult().intValue();
+		return q;
+	}
+	
 }

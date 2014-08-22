@@ -1,5 +1,9 @@
 package com.ruyicai.weixin.service;
 
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +13,7 @@ import com.ruyicai.weixin.dao.PacketDao;
 import com.ruyicai.weixin.dao.PuntPacketDao;
 import com.ruyicai.weixin.domain.Packet;
 import com.ruyicai.weixin.domain.PuntPacket;
+import com.ruyicai.weixin.util.DateUtil;
 import com.ruyicai.weixin.util.RandomPacketUtil;
 
 @Service
@@ -26,7 +31,7 @@ public class PacketActivityService {
 	LotteryService lotteryService;
 	
 	/**
-	 * 抢红包处理
+	 * 创建红包
 	 * 
 	 * @param packetUserno 发送红包用户编号
 	 * @param parts 份数
@@ -36,7 +41,7 @@ public class PacketActivityService {
 	public Packet doCreatePacket(String packetUserno, int parts,
 			int punts, String greetings) {
 		// 扣款
-		lotteryService.deductAmt(packetUserno, String.valueOf(punts * 200), "ryc001", "0000", "微信如意彩公众平台送红包活动");
+		lotteryService.deductAmt(packetUserno, String.valueOf(punts * 200), "ryc001", "0000", "如意彩微信公众帐号送红包活动");
 		// 扣款成功，生成红包
 		String openid = null;
 		Packet packet = packetDao.createPacket(openid, packetUserno, parts, punts, greetings);
@@ -60,4 +65,43 @@ public class PacketActivityService {
 		
 		return puntPacket;
 	}
+	
+	/**
+	 * 查询用户送出红包列表
+	 * 
+	 * @param packetUserno 送红包用户编号
+	 * @return
+	 * @throws Exception
+	 */
+	public Object doGetPacketList(String packetUserno) throws Exception
+	{
+		List<Packet> list = packetDao.findPacketListByUserno(packetUserno);
+		if (list != null && list.size() > 0)
+		{
+			JSONArray arry = new JSONArray();
+			for (Packet packet : list)
+			{
+				JSONObject map = new JSONObject();
+				// 红包详情
+				map.put("packet_id", packet.getId());
+				map.put("total_punts", packet.getTotalPunts());
+				map.put("total_parts", packet.getTotalPersons());
+				map.put("paket_date", DateUtil.format(packet.getCreatetime().getTime()));
+				
+				// 红包领取人数
+				int grabs = puntPacketDao.findPuntPacketGrabed(packet.getId());
+				map.put("get_punts", grabs);
+				
+				// 查询中奖人数
+				map.put("win_persons", 0);
+				
+				arry.put(map);
+			}
+			return arry.toString();
+		} else
+		{
+			return "无记录";
+		}
+	}
+	
 }
