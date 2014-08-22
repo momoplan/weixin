@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.ruyicai.advert.consts.Constants;
+import com.ruyicai.advert.util.HttpUtil;
 import com.ruyicai.weixin.dto.lottery.ResponseData;
 import com.ruyicai.weixin.exception.ErrorCode;
 import com.ruyicai.weixin.exception.WeixinException;
@@ -215,5 +217,26 @@ public class LotteryService {
 			sb.append(base.charAt(number));
 		}
 		return sb.toString();
+	}
+	
+	/**
+	 * 赠送彩金
+	 * @param userNo
+	 * @param amount
+	 * @return
+	 */
+	public String presentDividend(String userNo, String amount, String channel, String memo) {
+		StringBuffer paramStr = new StringBuffer();
+		paramStr.append("userno=" + userNo);
+		paramStr.append("&amt=" + amount);
+		paramStr.append("&accesstype=" + Constants.accessType);
+		paramStr.append("&subchannel=" + Constants.subChannel);
+		paramStr.append("&channel=" + channel);
+		paramStr.append("&memo=" + memo);
+		
+		String url = lotteryurl + "/taccounts/doDirectChargeProcess";
+		String result = HttpUtil.sendRequestByPost(url, paramStr.toString(), true);
+		logger.info("赠送彩金返回:"+result+",userNo:"+userNo+";amount:"+amount);
+		return result;
 	}
 }

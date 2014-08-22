@@ -60,6 +60,11 @@
 			<version>2.5</version>
 			<type>jar</type>
 		</dependency>
+				<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>fluent-hc</artifactId>
@@ -198,6 +203,11 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
 			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ezmorph</groupId>
+			<artifactId>ezmorph</artifactId>
+			<version>1.0.6</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -520,7 +530,7 @@
 				<database.pool.maxActive>50</database.pool.maxActive>
 				<database.pool.maxIdle>50</database.pool.maxIdle>
 				<weixinName>ruyicai</weixinName>
-				<lotteryurl>http://202.43.152.173:8080/lottery</lotteryurl>
+				<lotteryurl>http://202.43.152.173:8080/lottery/</lotteryurl>
 				<imageMagickPath>C:\Tools\ImageMagick-6.8.7-Q8</imageMagickPath>
 				<imageLocation>C:\image</imageLocation>
 			</properties>

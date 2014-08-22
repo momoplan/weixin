@@ -29,6 +29,9 @@ public class PacketActivityService {
 	@Autowired
 	LotteryService lotteryService;
 	
+	@Autowired
+	private CommonService commonService;
+	
 
 	/**
 	 * 送红包处理
@@ -69,11 +72,10 @@ public class PacketActivityService {
 		int punts = puntPacket.getRandomPunts();
 		 
 		// 送彩金接口
-//		String presentResult = commonService.presentDividend(award_userno,
-//				String.valueOf(200 * punts), channel, "微信号服务号抢红包奖励");
-//		if (!StringUtils.equals(presentResult, "0")) {
-//			//throw new QqException(QqErrorCode.awardGiveFail);
-//		}
+		String presentResult = commonService.presentDividend(award_userno,
+				String.valueOf(200 * punts), channel, "微信号服务号抢红包奖励");
+		System.out.println("presentResult:"+presentResult);
+
 
 
 		for (int i = 0; i < punts; i++) {
