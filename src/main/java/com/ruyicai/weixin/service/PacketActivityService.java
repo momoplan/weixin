@@ -1,6 +1,9 @@
 package com.ruyicai.weixin.service;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.ruyicai.weixin.dao.PacketDao;
 import com.ruyicai.weixin.dao.PuntListDao;
 import com.ruyicai.weixin.dao.PuntPacketDao;
+import com.ruyicai.weixin.domain.CaseLotUserinfo;
 import com.ruyicai.weixin.domain.Packet;
 import com.ruyicai.weixin.domain.PuntList;
 import com.ruyicai.weixin.domain.PuntPacket;
@@ -34,6 +38,9 @@ public class PacketActivityService {
 	
 	@Autowired
 	LotteryService lotteryService;
+	
+	@Autowired
+	CaseLotActivityService caseLotActivityService;
 	
 	/**
 	 * 创建红包
@@ -93,7 +100,7 @@ public class PacketActivityService {
 				map.put("total_parts", packet.getTotalPersons());
 				map.put("paket_date", DateUtil.format(packet.getCreatetime().getTime()));
 
-				// 红包领取人数
+				// 红包领取份数
 				List<PuntPacket> grabList = puntPacketDao.findPuntPacketGrabedList(packet.getId());
 				map.put("get_punts", grabList.size());
 
@@ -120,6 +127,102 @@ public class PacketActivityService {
 				arry.put(map);
 			}
 			return arry.toString();
+		} else
+		{
+			return "无记录";
+		}
+	}
+
+	/**
+	 * 查红包详情
+	 * 
+	 * @param userno 用户编号
+	 * @param packetId 红包id
+	 * @return
+	 * @throws Exception
+	 */
+	public Object doGetPacketInfo(String userno, String packetId) throws Exception
+	{
+		String wx_packet_activity = "HM00002";
+		Packet packet = Packet.findPacket(Integer.valueOf(packetId));
+		if (packet != null)
+		{
+			Map<String, Object> map = new HashMap<String, Object>();
+			String packetUserno = packet.getPacketUserno();
+			map.put("packet_id", packet.getId());
+			map.put("from_userno", packetUserno);
+			map.put("parts", packet.getTotalPersons());
+			map.put("punts", packet.getTotalPunts());
+			map.put("orderdate", DateUtil.format(packet.getCreatetime().getTime()));
+			map.put("greetings", packet.getGreetings());
+			String nickName = "";
+			String headimg = "";
+			CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(packetUserno, wx_packet_activity);
+			if (userInfo != null)
+			{
+				nickName = userInfo.getNickname();
+				headimg = userInfo.getHeadimgurl();
+			}
+			map.put("nickname", nickName);
+			map.put("headimg", headimg);
+			// 红包领取份数
+			List<PuntPacket> grabList = puntPacketDao.findPuntPacketGrabedList(packet.getId());
+			map.put("get_punts", grabList.size());
+
+			// 用户领取详情
+			if (grabList != null && grabList.size() > 0)
+			{
+				JSONArray arry = new JSONArray();
+				for (PuntPacket puntPacket : grabList)
+				{
+					Map<String, Object> grapMap = new HashMap<String, Object>();
+					grapMap.put("puts", puntPacket.getRandomPunts());
+					grapMap.put("acknowledge", puntPacket.getThankWords());
+					CaseLotUserinfo grabUserInfo = caseLotActivityService.caseLotchances(puntPacket.getGetUserno(), wx_packet_activity);
+					if (grabUserInfo != null)
+					{
+						nickName = grabUserInfo.getNickname();
+						headimg = grabUserInfo.getHeadimgurl();
+					}
+					grapMap.put("nickname", nickName);
+					grapMap.put("headimg", headimg);
+
+					// 中奖详情
+					int award = 0;
+					Date lottery_date = null;
+					List<PuntList> puntList = puntListDao.findPuntListGrabedList(puntPacket.getId());
+					if (puntList != null && puntList.size() > 0)
+					{
+						for (PuntList punt : puntList)
+						{
+							if (punt.getOrderprizeamt() != null && punt.getOrderprizeamt() > 0 )
+							{
+								award += punt.getOrderprizeamt();
+							}
+							if (award == 0)
+							{
+								if (lottery_date != null)
+								{
+									if (lottery_date.after(punt.getOpentime().getTime()))
+									{
+										lottery_date = punt.getOpentime().getTime();
+									}
+								} else
+								{
+									lottery_date = punt.getOpentime().getTime();
+								}
+							}
+						}
+					}
+					grapMap.put("award", award); // 中奖金额
+					grapMap.put("lottery_date", lottery_date == null ? "" : DateUtil.format(lottery_date));// 开奖时间
+
+					arry.put(grapMap);
+				}
+				map.put("punt_list", arry.toString());
+			}
+
+			return map;
 		} else
 		{
 			return "无记录";

@@ -152,4 +152,36 @@ public class PacketActivityController {
 		return JsonMapper.toJsonP(callback, rd);
 	}
 	
+	@RequestMapping(value = "/getPacketInfo", method = RequestMethod.GET)
+	@ResponseBody
+	public String getPacketInfo(@RequestParam(value = "userno", required = true) String userno,
+			@RequestParam(value = "packet_id", required = true) String packet_id,
+			@RequestParam(value = "callBackMethod", required = true) String callback)
+	{
+		logger.info("getPacketInfo userno:{}, packet_id:{}", userno, packet_id);
+		ResponseData rd = new ResponseData();
+		if (StringUtil.isEmpty(userno) || StringUtil.isEmpty(packet_id))
+		{
+			rd.setErrorCode("10001");
+			rd.setValue("参数不能为空");
+			return JsonMapper.toJsonP(callback, rd);
+		}
+		
+		try
+		{
+			rd.setValue(packetActivityService.doGetPacketInfo(userno, packet_id));
+			rd.setErrorCode(ErrorCode.OK.value);
+		} catch (WeixinException e)
+		{
+			rd.setErrorCode(e.getErrorCode().value);
+			rd.setValue(e.getErrorCode().memo);
+		} catch (Exception e)
+		{
+			logger.error("getPacketInfo error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(ErrorCode.ERROR.memo);
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
+	
 }
