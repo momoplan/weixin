@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ruyicai.weixin.domain.PuntPacket;
+import com.ruyicai.weixin.exception.ErrorCode;
+import com.ruyicai.weixin.exception.WeixinException;
+import com.ruyicai.weixin.util.StringUtil;
 
 @Component
 public class PuntPacketDao {
@@ -46,6 +49,28 @@ public class PuntPacketDao {
 		TypedQuery<PuntPacket> q = entityManager.createQuery("select o from PuntPacket o where o.getUserno != null and o.packetId = ? ", PuntPacket.class)
 				.setParameter(1, packetId);
 		return q.getResultList();
+	}
+	
+	@Transactional
+	public PuntPacket thankWord(String awardUserno, String thankWords, String packetId)
+	{
+		PuntPacket puntPacket = findPuntPacketByUsernoAndPacketId(awardUserno, Integer.valueOf(packetId));
+		if (puntPacket != null)
+		{
+			if (!StringUtil.isEmpty(puntPacket.getThankWords()))
+				throw new WeixinException(ErrorCode.THANKS_WORDS_EXISTS);
+				
+			puntPacket.setThankWords(thankWords);
+			puntPacket.merge();
+		}
+		return puntPacket;
+	}
+	
+	public PuntPacket findPuntPacketByUsernoAndPacketId(String awardUserno, int packetId)
+	{
+		TypedQuery<PuntPacket> q = entityManager.createQuery("select o from PuntPacket o where o.getUserno = ? and o.packetId = ? ", PuntPacket.class)
+				.setParameter(1, awardUserno).setParameter(2, packetId);
+		return q.getSingleResult();
 	}
 	
 }

@@ -184,4 +184,38 @@ public class PacketActivityController {
 		return JsonMapper.toJsonP(callback, rd);
 	}
 	
+	@RequestMapping(value = "/thankTa", method = RequestMethod.GET)
+	@ResponseBody
+	public String thankTa(@RequestParam(value = "award_userno", required = true) String award_userno,
+			@RequestParam(value = "thank_words", required = true) String thank_words,
+			@RequestParam(value = "packet_id", required = true) String packet_id,
+			@RequestParam(value = "callBackMethod", required = true) String callback)
+	{
+		logger.info("thankTa award_userno:{}, thank_words:{}, packet_id:{}", award_userno, award_userno, packet_id);
+		ResponseData rd = new ResponseData();
+		if (StringUtil.isEmpty(award_userno) || StringUtil.isEmpty(thank_words) || StringUtil.isEmpty(packet_id))
+		{
+			rd.setErrorCode("10001");
+			rd.setValue("参数不能为空");
+			return JsonMapper.toJsonP(callback, rd);
+		}
+		
+		try
+		{
+			packetActivityService.doThankTa(award_userno, thank_words, packet_id);
+			rd.setErrorCode(ErrorCode.OK.value);
+			rd.setValue(ErrorCode.OK.memo);
+		} catch (WeixinException e)
+		{
+			rd.setErrorCode(e.getErrorCode().value);
+			rd.setValue(e.getErrorCode().memo);
+		} catch (Exception e)
+		{
+			logger.error("thankTa error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(ErrorCode.ERROR.memo);
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
+	
 }

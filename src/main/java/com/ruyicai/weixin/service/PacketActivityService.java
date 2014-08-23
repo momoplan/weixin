@@ -19,6 +19,8 @@ import com.ruyicai.weixin.domain.CaseLotUserinfo;
 import com.ruyicai.weixin.domain.Packet;
 import com.ruyicai.weixin.domain.PuntList;
 import com.ruyicai.weixin.domain.PuntPacket;
+import com.ruyicai.weixin.exception.ErrorCode;
+import com.ruyicai.weixin.exception.WeixinException;
 import com.ruyicai.weixin.util.DateUtil;
 import com.ruyicai.weixin.util.RandomPacketUtil;
 
@@ -151,8 +153,8 @@ public class PacketActivityService {
 			String packetUserno = packet.getPacketUserno();
 			map.put("packet_id", packet.getId());
 			map.put("from_userno", packetUserno);
-			map.put("parts", packet.getTotalPersons());
-			map.put("punts", packet.getTotalPunts());
+			map.put("total_parts", packet.getTotalPersons());
+			map.put("total_punts", packet.getTotalPunts());
 			map.put("orderdate", DateUtil.format(packet.getCreatetime().getTime()));
 			map.put("greetings", packet.getGreetings());
 			String nickName = "";
@@ -165,9 +167,16 @@ public class PacketActivityService {
 			}
 			map.put("nickname", nickName);
 			map.put("headimg", headimg);
+			String is_self = "0"; // 非本人
+			if (userno.equals(packetUserno))
+			{
+				is_self = "1";
+			}
+			map.put("is_self", is_self);
+			
 			// 红包领取份数
 			List<PuntPacket> grabList = puntPacketDao.findPuntPacketGrabedList(packet.getId());
-			map.put("get_punts", grabList.size());
+			map.put("get_parts", grabList.size());
 
 			// 用户领取详情
 			if (grabList != null && grabList.size() > 0)
@@ -176,7 +185,7 @@ public class PacketActivityService {
 				for (PuntPacket puntPacket : grabList)
 				{
 					Map<String, Object> grapMap = new HashMap<String, Object>();
-					grapMap.put("puts", puntPacket.getRandomPunts());
+					grapMap.put("punts", puntPacket.getRandomPunts());
 					grapMap.put("acknowledge", puntPacket.getThankWords());
 					CaseLotUserinfo grabUserInfo = caseLotActivityService.caseLotchances(puntPacket.getGetUserno(), wx_packet_activity);
 					if (grabUserInfo != null)
@@ -226,6 +235,23 @@ public class PacketActivityService {
 		} else
 		{
 			return "无记录";
+		}
+	}
+
+	/**
+	 * 答谢TA
+	 * 
+	 * @param awardUserno 用户编号
+	 * @param thankWords 答谢语
+	 * @param packetId 红包id
+	 */
+	public void doThankTa(String awardUserno, String thankWords, String packetId)
+	{
+		PuntPacket puntPacket = puntPacketDao.thankWord(awardUserno, thankWords, packetId);
+		if (puntPacket == null)
+		{
+			logger.info("答谢失败");
+			throw new WeixinException(ErrorCode.THANKS_FAIL);
 		}
 	}
 	
