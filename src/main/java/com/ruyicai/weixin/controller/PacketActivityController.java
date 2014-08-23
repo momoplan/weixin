@@ -218,4 +218,34 @@ public class PacketActivityController {
 		return JsonMapper.toJsonP(callback, rd);
 	}
 	
+	@RequestMapping(value = "/getMyPunts", method = RequestMethod.GET)
+	@ResponseBody
+	public String getMyPunts(@RequestParam(value = "award_userno", required = true) String award_userno,
+			@RequestParam(value = "callBackMethod", required = true) String callback)
+	{
+		logger.info("getMyPunts award_userno:{}", award_userno);
+		ResponseData rd = new ResponseData();
+		if (StringUtil.isEmpty(award_userno))
+		{
+			rd.setErrorCode("10001");
+			rd.setValue("参数不能为空");
+			return JsonMapper.toJsonP(callback, rd);
+		}
+		
+		try
+		{
+			rd.setValue(packetActivityService.doGetMyPunts(award_userno));
+			rd.setErrorCode(ErrorCode.OK.value);
+		} catch (WeixinException e)
+		{
+			rd.setErrorCode(e.getErrorCode().value);
+			rd.setValue(e.getErrorCode().memo);
+		} catch (Exception e)
+		{
+			logger.error("getMyPunts error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(ErrorCode.ERROR.memo);
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
 }

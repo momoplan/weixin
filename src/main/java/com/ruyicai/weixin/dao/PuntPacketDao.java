@@ -21,8 +21,6 @@ public class PuntPacketDao {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-
-
 	public PuntPacket findPunt(String packet_id) {
 		if (StringUtils.isBlank(packet_id)) {
 			throw new IllegalArgumentException("The argument packet_id  is required");
@@ -62,6 +60,9 @@ public class PuntPacketDao {
 				
 			puntPacket.setThankWords(thankWords);
 			puntPacket.merge();
+		} else
+		{
+			throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
 		}
 		return puntPacket;
 	}
@@ -73,4 +74,10 @@ public class PuntPacketDao {
 		return q.getSingleResult();
 	}
 	
+	public List<PuntPacket> findPuntPacketByUserno(String userno)
+	{
+		TypedQuery<PuntPacket> q = entityManager.createQuery("select o from PuntPacket o where o.getUserno = ? ", PuntPacket.class)
+				.setParameter(1, userno);
+		return q.getResultList();
+	}
 }
