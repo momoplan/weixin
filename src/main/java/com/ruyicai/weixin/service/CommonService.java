@@ -69,5 +69,25 @@ public class CommonService {
 		//return fromObject.getString("error_code");
 		return fromObject.toString();
 	}
+	
+	/**
+	 * 投注
+	 * @param userNo
+	 * @param point
+	 * @return
+	 */
+	public String getOpenInfo(String batchcode)
+	{
+		String result = lotteryService.doGetBatchInfo();
+		if (StringUtils.isBlank(result)) {
+			return "";
+		}
+		JSONObject fromObject = JSONObject.fromObject(result);
+		if (fromObject==null) {
+			return "";
+		}
+		//return fromObject.getString("error_code");
+		return fromObject.toString();
+	}
 
 }

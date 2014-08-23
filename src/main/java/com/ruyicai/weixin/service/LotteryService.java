@@ -280,13 +280,23 @@ public class LotteryService {
 	 * @return
 	 */
 	public String doGetBatchInfo() {
-
- 
-			
- 
 		String url = "http://202.43.152.173:9088/lotserver/SendRequestServlet?parameter={\"command\":\"QueryLot\",\"type\":\"highFrequency\",\"lotno\":\"F47104\"}&callBackMethod=";
 		String result = HttpUtil.sendRequestByPost(url, "", true);
 		logger.info("查期号和开奖日期:"+result);
+		result = result.replace("(", "").replace(")", "");
+		return result;
+	}
+	
+	/**
+	 * 查期号和开奖日期
+	 * @param userNo
+	 * @param amount
+	 * @return
+	 */
+	public String doGetOpenInfo(String batchcode) {
+		String url = "http://202.43.152.173:9088/lotserver/SendRequestServlet?parameter={\"command\":\"AllQuery\",\"type\":\"winInfoDetail\",\"lotno\":\"F47104\",\"batchcode\":\""+batchcode+"\"}&callBackMethod=";
+		String result = HttpUtil.sendRequestByPost(url, "", true);
+		logger.info("doGetOpenInfo:"+result);
 		result = result.replace("(", "").replace(")", "");
 		return result;
 	}

@@ -96,6 +96,8 @@ public class PacketActivityService {
 		// 生成投注数字
 		String[] result = DoubleBall.getDoubleBallsByString(punts);
 		Calendar cal = Calendar.getInstance();
+		Calendar cal_now = Calendar.getInstance();
+		cal_now.setTime(new Date());
 		
 		iMap.put("punts", String.valueOf(punts));
 		iMap.put("lottery_type", "双色球");	
@@ -109,14 +111,16 @@ public class PacketActivityService {
 				"yyyy-MM-dd");
 
 		try {
-			System.out.println(fromObject.getString("endtime"));
-			Date dt = format1.parse(fromObject.getString("endtime"));
-			batchcode = fromObject.getString("batchcode");
-			opentime = "2014-10-11";
-
+			 
+			Date dt = format1.parse("20"+fromObject.getString("endtime"));
+			batchcode = fromObject.getString("batchcode");		
 			cal.setTime(dt);
 			Date date = cal.getTime();
-			System.out.println(date);
+			String str=format1.format(date);  
+			opentime = str;
+			 		
+//			ret = commonService.getOpenInfo(String.valueOf(Integer.parseInt(batchcode)-1));
+//			fromObject = JSONObject.fromObject(ret);
 
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
@@ -129,18 +133,15 @@ public class PacketActivityService {
 					"1001", "0001" + result[i] + "^_1_200_200");
 			fromObject = JSONObject.fromObject(ret);
 			String orderId = fromObject.getString("orderId");
-			String error_code = fromObject.getString("error_code");
-
-			
+			String error_code = fromObject.getString("error_code");		
 
 			PuntList pList = new PuntList();
 			pList.setBatchcode(batchcode);
 			pList.setOpentime(cal);
 			pList.setBetcode(result[i]);
 			pList.setPuntId(puntPacket.getId());
-			pList.setOrderid(orderId);
-			cal.setTime(new Date());
-			pList.setCreatetime(cal);
+			pList.setOrderid(orderId);		 
+			pList.setCreatetime(cal_now);
 			pList.persist();
 			logger.info(error_code);
 			 
