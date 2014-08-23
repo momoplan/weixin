@@ -368,7 +368,7 @@ public class PacketActivityService {
 						}
 					}
 					grapMap.put("award", award); // 中奖金额
-					grapMap.put("lottery_date", lottery_date == null ? "" : DateUtil.format(lottery_date));// 开奖时间
+					grapMap.put("lottery_date", lottery_date == null ? "" : DateUtil.format("MM月dd日", lottery_date));// 开奖时间
 
 					arry.put(grapMap);
 				}
