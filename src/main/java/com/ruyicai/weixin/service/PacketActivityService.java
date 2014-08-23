@@ -10,7 +10,6 @@ import java.util.Map;
 import net.sf.json.JSONObject;
 
 import org.json.JSONArray;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +27,7 @@ import com.ruyicai.weixin.exception.WeixinException;
 import com.ruyicai.weixin.util.DateUtil;
 import com.ruyicai.weixin.util.DoubleBall;
 import com.ruyicai.weixin.util.RandomPacketUtil;
+import com.ruyicai.weixin.util.StringUtil;
 
 @Service
 public class PacketActivityService {
@@ -314,6 +314,7 @@ public class PacketActivityService {
 			{
 				int get_punts = 0; // 已领取注数
 				int userno_punts = 0; // userno 参数抢到注数
+				String is_thanks = "0"; // 已答谢状态,0-未答谢;1-已答谢
 				
 				JSONArray arry = new JSONArray();
 				for (PuntPacket puntPacket : grabList)
@@ -324,7 +325,11 @@ public class PacketActivityService {
 					
 					get_punts += puntPacket.getRandomPunts();
 					if (!userno.equals(packetUserno))
+					{
 						userno_punts = puntPacket.getRandomPunts();
+						if (!StringUtil.isEmpty(puntPacket.getThankWords()))
+							is_thanks = "1";
+					}
 					
 					CaseLotUserinfo grabUserInfo = caseLotActivityService.caseLotchances(puntPacket.getGetUserno(), wx_packet_activity);
 					if (grabUserInfo != null)
@@ -371,6 +376,7 @@ public class PacketActivityService {
 				
 				map.put("get_punts", get_punts);
 				map.put("userno_punts", userno_punts);
+				map.put("is_thanks", is_thanks);
 			}
 
 			return map;
@@ -456,6 +462,20 @@ public class PacketActivityService {
 		{
 			throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
 		}
+	}
+
+	/**
+	 * 查询我的活动
+	 * 
+	 * @return
+	 */
+	public Map<String, String> doGetActivityEnv()
+	{
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("total_packet_person", "1200");
+		map.put("total_get_person", "1200");
+		map.put("total_win", "100000");
+		return map;
 	}
 	
 }
