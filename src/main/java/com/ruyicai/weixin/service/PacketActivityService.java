@@ -285,7 +285,7 @@ public class PacketActivityService {
 			map.put("from_userno", packetUserno);
 			map.put("total_parts", packet.getTotalPersons());
 			map.put("total_punts", packet.getTotalPunts());
-			map.put("orderdate", DateUtil.format("yyyy-MM-dd", packet.getCreatetime().getTime()));
+			map.put("orderdate", DateUtil.format("MM月dd日", packet.getCreatetime().getTime()));
 			map.put("greetings", packet.getGreetings());
 			String nickName = "";
 			String headimg = "";
@@ -419,17 +419,17 @@ public class PacketActivityService {
 			for (PuntPacket puntPacket : list)
 			{
 				Map<String, Object> map = new HashMap<String, Object>();
-				// 获取送红包人信息
-				Packet packet = Packet.findPacket(puntPacket.getPacketId());
-				String fromUserno = packet.getPacketUserno();
-				CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(fromUserno, wx_packet_activity);
-				map.put("nickname", userInfo.getNickname() == null ? "" : userInfo.getNickname());
-				map.put("get_time", DateUtil.format("yyyy-MM-dd", puntPacket.getGetTime().getTime())); // 领取红包时间
-
 				// 获取每份红包详情
 				List<PuntList> puntList = puntListDao.findPuntListGrabedList(puntPacket.getId());
 				if (puntList != null && puntList.size() > 0)
 				{
+					// 获取送红包人信息
+					Packet packet = Packet.findPacket(puntPacket.getPacketId());
+					String fromUserno = packet.getPacketUserno();
+					CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(fromUserno, wx_packet_activity);
+					map.put("nickname", userInfo.getNickname() == null ? "" : userInfo.getNickname());
+					map.put("get_time", DateUtil.format("yyyy-MM-dd", puntPacket.getGetTime().getTime())); // 领取红包时间
+					
 					JSONArray puntArry = new JSONArray();
 					for (PuntList punt : puntList)
 					{
@@ -437,7 +437,7 @@ public class PacketActivityService {
 						puntMap.put("betCode", punt.getBetcode());
 						String openTime = "";
 						if (punt.getOpentime().getTime() != null)
-							openTime = DateUtil.format("yyyy-MM-dd", punt.getOpentime().getTime());
+							openTime = DateUtil.format("MM月dd日", punt.getOpentime().getTime());
 						
 						puntMap.put("openTime", openTime);
 						puntMap.put("orderprizeamt", punt.getOrderprizeamt() == null ? "0" : punt.getOrderprizeamt());
@@ -452,9 +452,8 @@ public class PacketActivityService {
 					}
 					
 					map.put("punt_list", puntArry);
+					arry.put(map);
 				}
-				
-				arry.put(map);
 			}
 			
 			return arry.toString();
