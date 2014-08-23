@@ -105,7 +105,7 @@ public class CreateCustomMenu {
 		ViewButton bother = new ViewButton();
 		bother.setName("送彩票");
 		bother.setType("view");
-		bother.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6919f6fac2525c5f&redirect_uri=http://wx.ruyicai.com/index.html&response_type=code&scope=snsapi_base&state=1#wechat_redirect");
+		bother.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6919f6fac2525c5f&redirect_uri=http://wx.ruyicai.com/weixin/index.html&response_type=code&scope=snsapi_base&state=1#wechat_redirect");
 		/*ViewButton bother = new ViewButton();
 		bother.setName("更多");
 		bother.setType("view");

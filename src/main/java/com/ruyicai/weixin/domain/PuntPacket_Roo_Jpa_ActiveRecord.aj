@@ -42,7 +42,35 @@ privileged aspect PuntPacket_Roo_Jpa_ActiveRecord {
 //        if (packet_id == null) return null;
     	String sql = "SELECT * FROM punt_packet WHERE packet_id = "+packet_id+" AND get_userno IS NULL LIMIT 1 FOR UPDATE";
     	List<PuntPacket> lstPuntPacket = entityManager().createNativeQuery(sql, PuntPacket.class).getResultList();
+    	if(lstPuntPacket.size() >0)
+        	return  lstPuntPacket.get(0);
+        	else
+        		return null;
+    }
+    
+    
+    @SuppressWarnings("unchecked")
+	public static PuntPacket PuntPacket.findByGetUserno(String getUserno,String packet_id) {
+//        if (packet_id == null) return null;
+    	String sql = "SELECT * FROM punt_packet WHERE get_userno = '"+getUserno+"' AND packet_id = "+packet_id;
+    	List<PuntPacket> lstPuntPacket = entityManager().createNativeQuery(sql, PuntPacket.class).getResultList();
+    	
+    	if(lstPuntPacket.size() >0)
     	return  lstPuntPacket.get(0);
+    	else
+    		return null;
+    }
+    
+    @SuppressWarnings("unchecked")
+	public static PuntPacket PuntPacket.findLeftParts(String packet_id) {
+//        if (packet_id == null) return null;
+    	String sql = "SELECT * FROM punt_packet WHERE get_userno IS NULL AND packet_id = "+packet_id;
+    	List<PuntPacket> lstPuntPacket = entityManager().createNativeQuery(sql, PuntPacket.class).getResultList();
+    
+    	if(lstPuntPacket.size() >0)
+    		return  lstPuntPacket.get(0);
+    	else
+    		return null;
     }
     
     

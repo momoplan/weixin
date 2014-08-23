@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.fluent.Form;
 import org.apache.http.client.fluent.Request;
@@ -237,6 +239,55 @@ public class LotteryService {
 		String url = lotteryurl + "/taccounts/doDirectChargeProcess";
 		String result = HttpUtil.sendRequestByPost(url, paramStr.toString(), true);
 		logger.info("赠送彩金返回:"+result+",userNo:"+userNo+";amount:"+amount);
+		return result;
+	}
+	
+	/**
+	 * 双色球投注
+	 * @param userNo
+	 * @param amount
+	 * @return
+	 */
+	public String DoubleDallBet(String userNo, String amount, String channel, String bet_code) {
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("amount", amount);
+		map.put("batchcode", "");
+		map.put("batchnum", "1");
+		map.put("bet_code", bet_code);
+		map.put("bettype", "bet");
+		map.put("command", "betLot");
+		map.put("isSellWays", "1");
+		map.put("lotmulti", "1");
+		map.put("lotno", "F47104");		
+		map.put("oneAmount", amount);
+		map.put("prizeend", "0");
+		map.put("userno", userNo);
+		
+		JSONObject json = JSONObject.fromObject(map);
+			
+//		String url = lotteryurl + "http://202.43.152.173:8080/lottery/lotserver/RuyicaiServlet";
+		String url = "http://202.43.152.173:9088/lotserver/SendRequestServlet?parameter="+json.toString()+"&callBackMethod=";
+		String result = HttpUtil.sendRequestByPost(url, "", true);
+		logger.info("双色球投注返回:"+result+",userNo:"+userNo+";amount:"+amount);
+		result = result.replace("(", "").replace(")", "");
+		return result;
+	}
+	
+	/**
+	 * 查期号和开奖日期
+	 * @param userNo
+	 * @param amount
+	 * @return
+	 */
+	public String doGetBatchInfo() {
+
+ 
+			
+ 
+		String url = "http://202.43.152.173:9088/lotserver/SendRequestServlet?parameter={\"command\":\"QueryLot\",\"type\":\"highFrequency\",\"lotno\":\"F47104\"}&callBackMethod=";
+		String result = HttpUtil.sendRequestByPost(url, "", true);
+		logger.info("查期号和开奖日期:"+result);
+		result = result.replace("(", "").replace(")", "");
 		return result;
 	}
 }

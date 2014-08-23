@@ -88,11 +88,59 @@ public class PacketActivityController {
 		return JsonMapper.toJsonP(callback, rd);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/getPuntsFromPacket", method = RequestMethod.GET)
 	@ResponseBody
 	public String getpuntsfrompacket(
 			@RequestParam(value = "award_userno", required = false) String award_userno,
 			@RequestParam(value = "channel", required = false) String channel,
+			@RequestParam(value = "packet_id", required = false) String packet_id,
+			@RequestParam(value = "callBackMethod", required = false) String callback) {
+		logger.info("getPuntsFromPacket award_userno:{} packet_id：{} ",
+				award_userno, packet_id);
+
+		ResponseData rd = new ResponseData();
+		try {
+			if (StringUtils.isEmpty(award_userno)
+					|| StringUtils.isEmpty(packet_id)) {
+				rd.setErrorCode("10001");
+				rd.setValue("参数错误the argument orderid or userno is require.");
+				return JsonMapper.toJsonP(callback, rd);
+			}
+
+			Map<String, String> map = packetActivityService.doGetPacketStus(
+					award_userno, packet_id);
+			String status = map.get("status");
+			if (status.equals("0")) {
+				Map<String,Object> imap = packetActivityService.getPunts(
+						award_userno, channel, packet_id);
+
+				rd.setErrorCode(ErrorCode.OK.value);
+				rd.setValue(imap);
+			}
+			else
+			{
+				rd.setErrorCode(ErrorCode.GET_PUNT_FAIL.value);//未抢到
+				rd.setValue(map);
+			}
+
+		} catch (WeixinException e) {
+			logger.error("findChancesDetail error", e);
+			rd.setErrorCode(e.getErrorCode().value);
+			rd.setValue(e.getMessage());
+		} catch (Exception e) {
+			logger.error("findChancesDetail error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(e.getMessage());
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/getPacketStatus", method = RequestMethod.GET)
+	@ResponseBody
+	public String getPacketStatus(
+			@RequestParam(value = "award_userno", required = false) String award_userno,
 			@RequestParam(value = "packet_id", required = false) String packet_id,
 			@RequestParam(value = "callBackMethod", required = false) String callback) {
 		logger.info("getPuntsFromPacket award_userno:{} packet_id：{} ",
@@ -105,10 +153,11 @@ public class PacketActivityController {
 				rd.setValue("参数错误the argument orderid or userno is require.");
 				return JsonMapper.toJsonP(callback, rd);
 			}
-			
-			PuntPacket puntPacket = packetActivityService.getPunts(award_userno, channel, packet_id);
 
-			rd.setValue(puntPacket);
+			Map<String, String> map = packetActivityService.doGetPacketStus(
+					award_userno, packet_id);
+			rd.setErrorCode(ErrorCode.OK.value);
+			rd.setValue(map);
 
 		} catch (WeixinException e) {
 			logger.error("findChancesDetail error", e);
