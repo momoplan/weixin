@@ -123,10 +123,6 @@ public class JsonMapper {
 	 * 輸出JSONP格式數據.
 	 */
 	public static String toJsonP(String functionName, Object object) {
-		
-//		if(functionName.endsWith(""))
-//			return toJson(new JSONPObject.);
-//		else
 		return toJson(new JSONPObject(functionName, object));
 	}
 }
