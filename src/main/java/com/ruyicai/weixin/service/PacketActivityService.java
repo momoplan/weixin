@@ -27,6 +27,7 @@ import com.ruyicai.weixin.exception.WeixinException;
 import com.ruyicai.weixin.util.DateUtil;
 import com.ruyicai.weixin.util.DoubleBall;
 import com.ruyicai.weixin.util.RandomPacketUtil;
+import com.ruyicai.weixin.util.StringUtil;
 
 @Service
 public class PacketActivityService {
@@ -289,7 +290,7 @@ public class PacketActivityService {
 			map.put("from_userno", packetUserno);
 			map.put("total_parts", packet.getTotalPersons());
 			map.put("total_punts", packet.getTotalPunts());
-			map.put("orderdate", DateUtil.format("yyyy-MM-dd", packet.getCreatetime().getTime()));
+			map.put("orderdate", DateUtil.format("MM月dd日", packet.getCreatetime().getTime()));
 			map.put("greetings", packet.getGreetings());
 			String nickName = "";
 			String headimg = "";
@@ -318,6 +319,7 @@ public class PacketActivityService {
 			{
 				int get_punts = 0; // 已领取注数
 				int userno_punts = 0; // userno 参数抢到注数
+				String is_thanks = "0"; // 已答谢状态,0-未答谢;1-已答谢
 				
 				JSONArray arry = new JSONArray();
 				for (PuntPacket puntPacket : grabList)
@@ -328,7 +330,11 @@ public class PacketActivityService {
 					
 					get_punts += puntPacket.getRandomPunts();
 					if (!userno.equals(packetUserno))
+					{
 						userno_punts = puntPacket.getRandomPunts();
+						if (!StringUtil.isEmpty(puntPacket.getThankWords()))
+							is_thanks = "1";
+					}
 					
 					CaseLotUserinfo grabUserInfo = caseLotActivityService.caseLotchances(puntPacket.getGetUserno(), wx_packet_activity);
 					if (grabUserInfo != null)
@@ -367,7 +373,7 @@ public class PacketActivityService {
 						}
 					}
 					grapMap.put("award", award); // 中奖金额
-					grapMap.put("lottery_date", lottery_date == null ? "" : DateUtil.format(lottery_date));// 开奖时间
+					grapMap.put("lottery_date", lottery_date == null ? "" : DateUtil.format("MM月dd日", lottery_date));// 开奖时间
 
 					arry.put(grapMap);
 				}
@@ -375,6 +381,7 @@ public class PacketActivityService {
 				
 				map.put("get_punts", get_punts);
 				map.put("userno_punts", userno_punts);
+				map.put("is_thanks", is_thanks);
 			}
 
 			return map;
@@ -417,17 +424,17 @@ public class PacketActivityService {
 			for (PuntPacket puntPacket : list)
 			{
 				Map<String, Object> map = new HashMap<String, Object>();
-				// 获取送红包人信息
-				Packet packet = Packet.findPacket(puntPacket.getPacketId());
-				String fromUserno = packet.getPacketUserno();
-				CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(fromUserno, wx_packet_activity);
-				map.put("nickname", userInfo.getNickname() == null ? "" : userInfo.getNickname());
-				map.put("get_time", DateUtil.format("yyyy-MM-dd", puntPacket.getGetTime().getTime())); // 领取红包时间
-
 				// 获取每份红包详情
 				List<PuntList> puntList = puntListDao.findPuntListGrabedList(puntPacket.getId());
 				if (puntList != null && puntList.size() > 0)
 				{
+					// 获取送红包人信息
+					Packet packet = Packet.findPacket(puntPacket.getPacketId());
+					String fromUserno = packet.getPacketUserno();
+					CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(fromUserno, wx_packet_activity);
+					map.put("nickname", userInfo.getNickname() == null ? "" : userInfo.getNickname());
+					map.put("get_time", DateUtil.format("yyyy-MM-dd", puntPacket.getGetTime().getTime())); // 领取红包时间
+					
 					JSONArray puntArry = new JSONArray();
 					for (PuntList punt : puntList)
 					{
@@ -435,7 +442,7 @@ public class PacketActivityService {
 						puntMap.put("betCode", punt.getBetcode());
 						String openTime = "";
 						if (punt.getOpentime().getTime() != null)
-							openTime = DateUtil.format("yyyy-MM-dd", punt.getOpentime().getTime());
+							openTime = DateUtil.format("MM月dd日", punt.getOpentime().getTime());
 						
 						puntMap.put("openTime", openTime);
 						puntMap.put("orderprizeamt", punt.getOrderprizeamt() == null ? "0" : punt.getOrderprizeamt());
@@ -450,9 +457,8 @@ public class PacketActivityService {
 					}
 					
 					map.put("punt_list", puntArry);
+					arry.put(map);
 				}
-				
-				arry.put(map);
 			}
 			
 			return arry.toString();
@@ -460,6 +466,20 @@ public class PacketActivityService {
 		{
 			throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
 		}
+	}
+
+	/**
+	 * 查询我的活动
+	 * 
+	 * @return
+	 */
+	public Map<String, String> doGetActivityEnv()
+	{
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("total_packet_person", "1200");
+		map.put("total_get_person", "1200");
+		map.put("total_win", "100000");
+		return map;
 	}
 	
 }

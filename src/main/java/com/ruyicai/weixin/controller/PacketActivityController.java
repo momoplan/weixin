@@ -305,4 +305,27 @@ public class PacketActivityController {
 		}
 		return JsonMapper.toJsonP(callback, rd);
 	}
+	
+	@RequestMapping(value = "/getActivityEnv", method = RequestMethod.GET)
+	@ResponseBody
+	public String getActivityEnv(@RequestParam(value = "callBackMethod", required = true) String callback)
+	{
+		ResponseData rd = new ResponseData();
+		try
+		{
+			rd.setValue(packetActivityService.doGetActivityEnv());
+			rd.setErrorCode(ErrorCode.OK.value);
+		} catch (WeixinException e)
+		{
+			rd.setErrorCode(e.getErrorCode().value);
+			rd.setValue(e.getErrorCode().memo);
+		} catch (Exception e)
+		{
+			logger.error("getActivityEnv error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(ErrorCode.ERROR.memo);
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
+	
 }
