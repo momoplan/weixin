@@ -136,13 +136,9 @@ public class PacketActivityService {
 			try {
 				Date dt = format1.parse("20"+fromObject.getString("endtime"));
 				batchcode = fromObject.getString("batchcode");		
-				cal_open.setTime(dt);
-				Date date = cal_open.getTime();
-				String str=format1.format(date);  
-				opentime = str;
+				cal_open.setTime(dt);				 
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new WeixinException(ErrorCode.ERROR);
 			}
 			 
 
@@ -151,25 +147,18 @@ public class PacketActivityService {
 						channel, "0001" + result[i] + "^_1_200_200");
 				fromObject = JSONObject.fromObject(ret);
 				String orderId = fromObject.getString("orderId");
-				String error_code = fromObject.getString("error_code");		
 				PuntList pList = new PuntList();
 				pList.setBatchcode(batchcode);
-//				Date date = cal_open.getTime();
-//				String str=format1.format(date);  
-//				opentime = str;
-				logger.info("opentime"+opentime);
 				pList.setOpentime(cal_open);
 				pList.setBetcode(result[i]);
 				pList.setPuntId(puntPacket.getId());
 				pList.setOrderid(orderId);		 
 				pList.setCreatetime(cal_now);
-				pList.persist();
-				logger.info(error_code);
-				 
+				pList.persist();				 
 			}
 			
 			iMap.put("lottery_date", opentime);
-			iMap.put("pund", "10000");
+			iMap.put("pund", "5451080226");
 			iMap.put("puntlist", result);
 
 			puntPacket.setGetUserno(award_userno);
@@ -196,6 +185,7 @@ public class PacketActivityService {
 	public Map doGetPacketStus(String award_userno, String packet_id) {
 		int ret = 0; // 有剩下
 		String headImgUrl = "";
+	 
 		Packet packet = Packet.findPacket(Integer.parseInt(packet_id));
 		if (packet.getPacketUserno().equals(award_userno)) {
 			ret = 3; // 送红包的抢不了
@@ -214,6 +204,8 @@ public class PacketActivityService {
 				ret = 1; // 已抢完
 			}
 		}
+		 
+		
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("award_userno", award_userno);
 		map.put("packet_id", packet_id);
@@ -226,6 +218,8 @@ public class PacketActivityService {
 		catch(Exception ex)
 		{
 			logger.info("caseLotActivityService.caseLotchances award_userno{}",award_userno);
+			throw new WeixinException(ErrorCode.ERROR);
+			
 		}
 		map.put("headimgurl", headImgUrl);
 
