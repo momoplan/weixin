@@ -175,7 +175,10 @@ public class PacketActivityController {
 
 			Map<String, String> map = packetActivityService.doGetPacketStus(
 					award_userno, packet_id);
+			
+			
 			rd.setErrorCode(ErrorCode.OK.value);
+			
 			rd.setValue(map);
 
 		} catch (WeixinException e) {

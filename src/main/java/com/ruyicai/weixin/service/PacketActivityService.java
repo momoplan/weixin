@@ -147,13 +147,16 @@ public class PacketActivityService {
 
 			for (int i = 0; i < punts; i++) {
 				ret = commonService.getDoubleDallBet(award_userno, "200",
-						"1001", "0001" + result[i] + "^_1_200_200");
+						channel, "0001" + result[i] + "^_1_200_200");
 				fromObject = JSONObject.fromObject(ret);
 				String orderId = fromObject.getString("orderId");
 				String error_code = fromObject.getString("error_code");		
-
 				PuntList pList = new PuntList();
 				pList.setBatchcode(batchcode);
+				Date date = cal.getTime();
+				String str=format1.format(date);  
+				opentime = str;
+				logger.info("opentime"+opentime);
 				pList.setOpentime(cal);
 				pList.setBetcode(result[i]);
 				pList.setPuntId(puntPacket.getId());
@@ -190,6 +193,7 @@ public class PacketActivityService {
 	@SuppressWarnings("rawtypes")
 	public Map doGetPacketStus(String award_userno, String packet_id) {
 		int ret = 0; // 有剩下
+		String headImgUrl = "";
 		Packet packet = Packet.findPacket(Integer.parseInt(packet_id));
 		if (packet.getPacketUserno().equals(award_userno)) {
 			ret = 3; // 送红包的抢不了
@@ -212,6 +216,16 @@ public class PacketActivityService {
 		map.put("award_userno", award_userno);
 		map.put("packet_id", packet_id);
 		map.put("status", String.valueOf(ret));
+		try
+		{
+		CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(award_userno, Const.WX_PACKET_ACTIVITY);
+		headImgUrl = userInfo.getHeadimgurl();
+		}
+		catch(Exception ex)
+		{
+			logger.info("caseLotActivityService.caseLotchances award_userno{}",award_userno);
+		}
+		map.put("headimgurl", headImgUrl);
 
 		return map;
 	}
