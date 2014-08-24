@@ -159,7 +159,7 @@ public class PacketActivityService {
 			}
 			
 			iMap.put("lottery_date", opentime);
-			iMap.put("pund", "10000");
+			iMap.put("pund", "5451080226");
 			iMap.put("puntlist", result);
 
 			puntPacket.setGetUserno(award_userno);
