@@ -147,7 +147,6 @@ public class PacketActivityService {
 						channel, "0001" + result[i] + "^_1_200_200");
 				fromObject = JSONObject.fromObject(ret);
 				String orderId = fromObject.getString("orderId");
-				String error_code = fromObject.getString("error_code");		
 				PuntList pList = new PuntList();
 				pList.setBatchcode(batchcode);
 				pList.setOpentime(cal_open);
