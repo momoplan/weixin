@@ -530,7 +530,9 @@
 				<database.pool.maxActive>50</database.pool.maxActive>
 				<database.pool.maxIdle>50</database.pool.maxIdle>
 				<weixinName>ruyicai</weixinName>
-				<lotteryurl>http://202.43.152.173:8080/lottery/</lotteryurl>
+				<lotteryurl>http://202.43.152.173:8080/lottery</lotteryurl>
+				<lotterycoreurl>http://202.43.152.173:8080/lottery</lotterycoreurl>
+				<lotserverurl>http://202.43.152.173:9088/lotserver</lotserverurl>
 				<imageMagickPath>C:\Tools\ImageMagick-6.8.7-Q8</imageMagickPath>
 				<imageLocation>C:\image</imageLocation>
 			</properties>
@@ -546,6 +548,8 @@
 				<database.pool.maxIdle>50</database.pool.maxIdle>
 				<weixinName>sunyang</weixinName>
 				<lotteryurl>http://192.168.0.42:8080/lottery</lotteryurl>
+				<lotterycoreurl>http://192.168.0.42:8080/lottery</lotterycoreurl>
+				<lotserverurl>http://192.168.0.42/lotserver</lotserverurl>
 				<imageMagickPath>E:\ImageMagick-6.8.7-Q8</imageMagickPath>
 				<imageLocation>E:\image</imageLocation>
 			</properties>
@@ -561,6 +565,8 @@
 				<database.pool.maxIdle>50</database.pool.maxIdle>
 				<weixinName>ruyicai</weixinName>
 				<lotteryurl>http://192.168.99.6/lotteryprize</lotteryurl>
+				<lotterycoreurl>http://192.168.0.42:8080/lottery</lotterycoreurl>
+				<lotserverurl>http://192.168.0.42/lotserver</lotserverurl>
 				<imageMagickPath></imageMagickPath>
 				<imageLocation>/home/appusr/images_weixin</imageLocation>
 			</properties>
