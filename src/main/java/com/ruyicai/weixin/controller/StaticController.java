@@ -96,8 +96,26 @@ public class StaticController {
 			CaseLotUserinfo caselotuserinfo = caseLotActivityService.createBigUserAndCaseLotUserinfo(openid, orderid);
 			rd.setErrorCode(ErrorCode.OK.value);
 			Map<String, Object> map = new HashMap<String, Object>();
+			
+			String subsrcibe = "0";
+			String accessToken = weixinService.getAccessToken();
+			try
+			{
+			WeixinUserDTO dto = null;
+			dto = weixinService.findUserinfoByOpenid(accessToken, openid);
+			if(null != dto)
+			{
+				subsrcibe = String.valueOf(dto.getSubscribe());
+			}
+			}
+			catch(Exception ex)
+			{
+				logger.info("createBigUserAndCaseLotUserinfo-findUserinfoByOpenid:"+ex.getMessage());
+			}
+			map.put("openid", openid); 
+			map.put("subsrcibe", subsrcibe);
 			map.put("caselotuserinfo", caselotuserinfo);
-			map.put("openid", openid);
+			
 			rd.setValue(map);
 		} catch (Exception e) {
 			logger.error("createBigUserAndCaseLotUserinfo error", e);

@@ -19,7 +19,6 @@ public class CaseLotUserinfoPK implements Serializable {
 	@Column(name = "orderid", length = 100)
 	private String orderid;
 	
-//	@Column(name = "subscribe", length = 100)
-//	private String subscribe;
+
 
 }

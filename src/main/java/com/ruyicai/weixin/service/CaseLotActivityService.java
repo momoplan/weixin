@@ -192,6 +192,7 @@ public class CaseLotActivityService {
 					nickname, Const.DEFAULT_BIGUSER_TYPE);
 			caseLotUserinfo = this.findOrCreateCaseLotUserinfo(userno, orderid,
 					nickname, headimgurl);
+			 
 			//caseLotUserinfo.setSubcribe(subscribe);
 
 		} catch (Exception e) {
