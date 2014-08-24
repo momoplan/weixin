@@ -100,4 +100,9 @@ public class CommonService {
 		return fromObject.toString();
 	}
 
+	public void getOrderInfo(String orderid)
+	{
+		String result = lotserverService.doGetOrderInfo(orderid);
+		JSONObject fromObject = JSONObject.fromObject(result);
+	}
 }
