@@ -100,11 +100,16 @@ public class PacketActivityService {
 	 * @param greetings
 	 *            祝福语
 	 */
+	@SuppressWarnings("rawtypes")
 	public Map getPunts(String award_userno, String channel,
 			String packet_id) {
+		
+		Map<String,Object> iMap = new HashMap<String,Object>();
+		
+		
 		PuntPacket puntPacket = PuntPacket.findOneNotAawardPart(packet_id);
 		int punts = puntPacket.getRandomPunts();
-		Map<String,Object> iMap = new HashMap<String,Object>();
+	
 		
 		// 送彩金接口
 		String presentResult = commonService.presentDividend(award_userno,

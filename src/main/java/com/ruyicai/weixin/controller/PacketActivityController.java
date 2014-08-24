@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ruyicai.weixin.domain.CaseLotUserinfo;
 import com.ruyicai.weixin.domain.Packet;
 import com.ruyicai.weixin.dto.lottery.ResponseData;
 import com.ruyicai.weixin.exception.ErrorCode;
 import com.ruyicai.weixin.exception.WeixinException;
+import com.ruyicai.weixin.service.CaseLotActivityService;
 import com.ruyicai.weixin.service.PacketActivityService;
 import com.ruyicai.weixin.util.JsonMapper;
 import com.ruyicai.weixin.util.StringUtil;
@@ -30,6 +32,9 @@ public class PacketActivityController {
 
 	@Autowired
 	PacketActivityService packetActivityService;
+
+	@Autowired
+	CaseLotActivityService caseLotActivityService;
 
 	@RequestMapping(value = "/createPacket", method = RequestMethod.GET)
 	@ResponseBody
@@ -55,21 +60,18 @@ public class PacketActivityController {
 			rd.setErrorCode("10002");
 			rd.setValue("创建红包注数不能大于1000注");
 			return JsonMapper.toJsonP(callback, rd);
-		} else if (puntsInt < 1)
-		{
+		} else if (puntsInt < 1) {
 			rd.setErrorCode("10003");
 			rd.setValue("创建红包注数不能小于1注");
 			return JsonMapper.toJsonP(callback, rd);
 		}
 
 		int partsInt = Integer.valueOf(parts);
-		if (partsInt > puntsInt)
-		{
+		if (partsInt > puntsInt) {
 			rd.setErrorCode("10004");
 			rd.setValue("红包份数不能大于红包注数");
 			return JsonMapper.toJsonP(callback, rd);
-		} else if (partsInt < 1)
-		{
+		} else if (partsInt < 1) {
 			rd.setErrorCode("10005");
 			rd.setValue("红包份数不能小于1份");
 			return JsonMapper.toJsonP(callback, rd);
@@ -115,20 +117,30 @@ public class PacketActivityController {
 				return JsonMapper.toJsonP(callback, rd);
 			}
 
-			Map<String, String> map = packetActivityService.doGetPacketStus(
-					award_userno, packet_id);
-			String status = map.get("status");
-			if (status.equals("0")) {
-				Map<String,Object> imap = packetActivityService.getPunts(
-						award_userno, channel, packet_id);
+			String wx_packet_activity = "HM00002";
+			CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(
+					award_userno, wx_packet_activity);
+			if (userInfo == null) {
+				rd.setErrorCode(ErrorCode.CASELOTUSERINFO_NOT_EXISTS.value);// 未抢到
+				rd.setValue(ErrorCode.CASELOTUSERINFO_NOT_EXISTS.memo);
 
-				rd.setErrorCode(ErrorCode.OK.value);
-				rd.setValue(imap);
-			}
-			else
+			} else
+
 			{
-				rd.setErrorCode(ErrorCode.GET_PUNT_FAIL.value);//未抢到
-				rd.setValue(map);
+
+				Map<String, String> map = packetActivityService
+						.doGetPacketStus(award_userno, packet_id);
+				String status = map.get("status");
+				if (status.equals("0")) {
+					Map<String, Object> imap = packetActivityService.getPunts(
+							award_userno, channel, packet_id);
+
+					rd.setErrorCode(ErrorCode.OK.value);
+					rd.setValue(imap);
+				} else {
+					rd.setErrorCode(ErrorCode.GET_PUNT_FAIL.value);// 未抢到
+					rd.setValue(map);
+				}
 			}
 
 		} catch (WeixinException e) {
@@ -177,128 +189,116 @@ public class PacketActivityController {
 		}
 		return JsonMapper.toJsonP(callback, rd);
 	}
-	
+
 	@RequestMapping(value = "/getPacketList", method = RequestMethod.GET)
 	@ResponseBody
-	public String getPacketList(@RequestParam(value = "packet_userno", required = true) String packet_userno,
-			@RequestParam(value = "callBackMethod", required = true) String callback)
-	{
+	public String getPacketList(
+			@RequestParam(value = "packet_userno", required = true) String packet_userno,
+			@RequestParam(value = "callBackMethod", required = true) String callback) {
 		logger.info("getPacketList packet_userno:{}", packet_userno);
 		ResponseData rd = new ResponseData();
-		if (StringUtil.isEmpty(packet_userno))
-		{
+		if (StringUtil.isEmpty(packet_userno)) {
 			rd.setErrorCode("10001");
 			rd.setValue("参数不能为空");
 			return JsonMapper.toJsonP(callback, rd);
 		}
-		
-		try
-		{
+
+		try {
 			rd.setValue(packetActivityService.doGetPacketList(packet_userno));
 			rd.setErrorCode(ErrorCode.OK.value);
-		} catch (WeixinException e)
-		{
+		} catch (WeixinException e) {
 			rd.setErrorCode(e.getErrorCode().value);
 			rd.setValue(e.getErrorCode().memo);
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			logger.error("getPacketList error", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
 			rd.setValue(ErrorCode.ERROR.memo);
 		}
 		return JsonMapper.toJsonP(callback, rd);
 	}
-	
+
 	@RequestMapping(value = "/getPacketInfo", method = RequestMethod.GET)
 	@ResponseBody
-	public String getPacketInfo(@RequestParam(value = "userno", required = true) String userno,
+	public String getPacketInfo(
+			@RequestParam(value = "userno", required = true) String userno,
 			@RequestParam(value = "packet_id", required = true) String packet_id,
-			@RequestParam(value = "callBackMethod", required = true) String callback)
-	{
+			@RequestParam(value = "callBackMethod", required = true) String callback) {
 		logger.info("getPacketInfo userno:{}, packet_id:{}", userno, packet_id);
 		ResponseData rd = new ResponseData();
-		if (StringUtil.isEmpty(userno) || StringUtil.isEmpty(packet_id))
-		{
+		if (StringUtil.isEmpty(userno) || StringUtil.isEmpty(packet_id)) {
 			rd.setErrorCode("10001");
 			rd.setValue("参数不能为空");
 			return JsonMapper.toJsonP(callback, rd);
 		}
-		
-		try
-		{
-			rd.setValue(packetActivityService.doGetPacketInfo(userno, packet_id));
+
+		try {
+			rd.setValue(packetActivityService
+					.doGetPacketInfo(userno, packet_id));
 			rd.setErrorCode(ErrorCode.OK.value);
-		} catch (WeixinException e)
-		{
+		} catch (WeixinException e) {
 			rd.setErrorCode(e.getErrorCode().value);
 			rd.setValue(e.getErrorCode().memo);
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			logger.error("getPacketInfo error", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
 			rd.setValue(ErrorCode.ERROR.memo);
 		}
 		return JsonMapper.toJsonP(callback, rd);
 	}
-	
+
 	@RequestMapping(value = "/thankTa", method = RequestMethod.GET)
 	@ResponseBody
-	public String thankTa(@RequestParam(value = "award_userno", required = true) String award_userno,
+	public String thankTa(
+			@RequestParam(value = "award_userno", required = true) String award_userno,
 			@RequestParam(value = "thank_words", required = true) String thank_words,
 			@RequestParam(value = "packet_id", required = true) String packet_id,
-			@RequestParam(value = "callBackMethod", required = true) String callback)
-	{
-		logger.info("thankTa award_userno:{}, thank_words:{}, packet_id:{}", award_userno, award_userno, packet_id);
+			@RequestParam(value = "callBackMethod", required = true) String callback) {
+		logger.info("thankTa award_userno:{}, thank_words:{}, packet_id:{}",
+				award_userno, award_userno, packet_id);
 		ResponseData rd = new ResponseData();
-		if (StringUtil.isEmpty(award_userno) || StringUtil.isEmpty(thank_words) || StringUtil.isEmpty(packet_id))
-		{
+		if (StringUtil.isEmpty(award_userno) || StringUtil.isEmpty(thank_words)
+				|| StringUtil.isEmpty(packet_id)) {
 			rd.setErrorCode("10001");
 			rd.setValue("参数不能为空");
 			return JsonMapper.toJsonP(callback, rd);
 		}
-		
-		try
-		{
-			packetActivityService.doThankTa(award_userno, thank_words, packet_id);
+
+		try {
+			packetActivityService.doThankTa(award_userno, thank_words,
+					packet_id);
 			rd.setErrorCode(ErrorCode.OK.value);
 			rd.setValue(ErrorCode.OK.memo);
-		} catch (WeixinException e)
-		{
+		} catch (WeixinException e) {
 			rd.setErrorCode(e.getErrorCode().value);
 			rd.setValue(e.getErrorCode().memo);
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			logger.error("thankTa error", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
 			rd.setValue(ErrorCode.ERROR.memo);
 		}
 		return JsonMapper.toJsonP(callback, rd);
 	}
-	
+
 	@RequestMapping(value = "/getMyPunts", method = RequestMethod.GET)
 	@ResponseBody
-	public String getMyPunts(@RequestParam(value = "award_userno", required = true) String award_userno,
-			@RequestParam(value = "callBackMethod", required = true) String callback)
-	{
+	public String getMyPunts(
+			@RequestParam(value = "award_userno", required = true) String award_userno,
+			@RequestParam(value = "callBackMethod", required = true) String callback) {
 		logger.info("getMyPunts award_userno:{}", award_userno);
 		ResponseData rd = new ResponseData();
-		if (StringUtil.isEmpty(award_userno))
-		{
+		if (StringUtil.isEmpty(award_userno)) {
 			rd.setErrorCode("10001");
 			rd.setValue("参数不能为空");
 			return JsonMapper.toJsonP(callback, rd);
 		}
-		
-		try
-		{
+
+		try {
 			rd.setValue(packetActivityService.doGetMyPunts(award_userno));
 			rd.setErrorCode(ErrorCode.OK.value);
-		} catch (WeixinException e)
-		{
+		} catch (WeixinException e) {
 			rd.setErrorCode(e.getErrorCode().value);
 			rd.setValue(e.getErrorCode().memo);
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			logger.error("getMyPunts error", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
 			rd.setValue(ErrorCode.ERROR.memo);
