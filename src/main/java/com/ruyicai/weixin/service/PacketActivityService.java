@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ruyicai.weixin.consts.Const;
 import com.ruyicai.weixin.dao.PacketDao;
 import com.ruyicai.weixin.dao.PuntListDao;
 import com.ruyicai.weixin.dao.PuntPacketDao;
@@ -68,6 +69,9 @@ public class PacketActivityService {
 	 */
 	public Packet doCreatePacket(String packetUserno, int parts, int punts,
 			String greetings) {
+		// 判断用户是否存在
+		caseLotActivityService.caseLotchances(packetUserno, Const.WX_PACKET_ACTIVITY);
+			
 		// 扣款
 		lotteryService.deductAmt(packetUserno, String.valueOf(punts * 200), "ryc001", "0000", "如意彩微信公众帐号送红包活动");
 		// 扣款成功，生成红包
@@ -289,8 +293,7 @@ public class PacketActivityService {
 			map.put("greetings", packet.getGreetings());
 			String nickName = "";
 			String headimg = "";
-			String wx_packet_activity = "HM00002";
-			CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(packetUserno, wx_packet_activity);
+			CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(packetUserno, Const.WX_PACKET_ACTIVITY);
 			if (userInfo != null)
 			{
 				nickName = userInfo.getNickname();
@@ -331,7 +334,7 @@ public class PacketActivityService {
 							is_thanks = "1";
 					}
 					
-					CaseLotUserinfo grabUserInfo = caseLotActivityService.caseLotchances(puntPacket.getGetUserno(), wx_packet_activity);
+					CaseLotUserinfo grabUserInfo = caseLotActivityService.caseLotchances(puntPacket.getGetUserno(), Const.WX_PACKET_ACTIVITY);
 					if (grabUserInfo != null)
 					{
 						nickName = grabUserInfo.getNickname();
@@ -414,7 +417,6 @@ public class PacketActivityService {
 		List<PuntPacket> list = puntPacketDao.findPuntPacketByUserno(awardUserno);
 		if (list != null && list.size() > 0)
 		{
-			String wx_packet_activity = "HM00002";
 			JSONArray arry = new JSONArray();
 			for (PuntPacket puntPacket : list)
 			{
@@ -426,7 +428,7 @@ public class PacketActivityService {
 					// 获取送红包人信息
 					Packet packet = Packet.findPacket(puntPacket.getPacketId());
 					String fromUserno = packet.getPacketUserno();
-					CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(fromUserno, wx_packet_activity);
+					CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(fromUserno, Const.WX_PACKET_ACTIVITY);
 					map.put("nickname", userInfo.getNickname() == null ? "" : userInfo.getNickname());
 					map.put("get_time", DateUtil.format("yyyy-MM-dd", puntPacket.getGetTime().getTime())); // 领取红包时间
 					
