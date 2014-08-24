@@ -196,6 +196,8 @@ public class PacketActivityService {
 	public Map doGetPacketStus(String award_userno, String packet_id) {
 		int ret = 0; // 有剩下
 		String headImgUrl = "";
+		try
+		{
 		Packet packet = Packet.findPacket(Integer.parseInt(packet_id));
 		if (packet.getPacketUserno().equals(award_userno)) {
 			ret = 3; // 送红包的抢不了
@@ -214,6 +216,12 @@ public class PacketActivityService {
 				ret = 1; // 已抢完
 			}
 		}
+		}
+		catch(Exception ex)
+		{
+			throw new WeixinException(ErrorCode.ERROR);
+		}
+		
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("award_userno", award_userno);
 		map.put("packet_id", packet_id);
@@ -226,6 +234,8 @@ public class PacketActivityService {
 		catch(Exception ex)
 		{
 			logger.info("caseLotActivityService.caseLotchances award_userno{}",award_userno);
+			throw new WeixinException(ErrorCode.ERROR);
+			
 		}
 		map.put("headimgurl", headImgUrl);
 
