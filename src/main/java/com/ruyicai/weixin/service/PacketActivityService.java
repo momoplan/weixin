@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ruyicai.weixin.consts.Const;
 import com.ruyicai.weixin.dao.PacketDao;
 import com.ruyicai.weixin.dao.PuntListDao;
 import com.ruyicai.weixin.dao.PuntPacketDao;
@@ -68,6 +69,9 @@ public class PacketActivityService {
 	 */
 	public Packet doCreatePacket(String packetUserno, int parts, int punts,
 			String greetings) {
+		// 判断用户是否存在
+		caseLotActivityService.caseLotchances(packetUserno, Const.WX_PACKET_ACTIVITY);
+			
 		// 扣款
 		lotteryService.deductAmt(packetUserno, String.valueOf(punts * 200), "ryc001", "0000", "如意彩微信公众帐号送红包活动");
 		// 扣款成功，生成红包
@@ -102,79 +106,77 @@ public class PacketActivityService {
 		
 		Map<String,Object> iMap = new HashMap<String,Object>();
 		
-		
 		PuntPacket puntPacket = PuntPacket.findOneNotAawardPart(packet_id);
-		int punts = puntPacket.getRandomPunts();
-	
-		
-		// 送彩金接口
-		String presentResult = commonService.presentDividend(award_userno,
-				String.valueOf(200 * punts), channel, "微信号服务号抢红包奖励");
-		System.out.println("presentResult:" + presentResult);
+		if (puntPacket != null)
+		{
+			int punts = puntPacket.getRandomPunts();
+			
+			// 送彩金接口
+			commonService.presentDividend(award_userno,
+					String.valueOf(200 * punts), channel, "微信号服务号抢红包奖励");
 
-		// 生成投注数字
-		String[] result = DoubleBall.getDoubleBallsByString(punts);
-		Calendar cal = Calendar.getInstance();
-		Calendar cal_now = Calendar.getInstance();
-		cal_now.setTime(new Date());
-		
-		iMap.put("punts", String.valueOf(punts));
-		iMap.put("lottery_type", "双色球");	
-		String opentime = "";
-		JSONObject fromObject = null;	
-		String batchcode = "";
-		String ret = commonService.getBatchInfo();
-		fromObject = JSONObject.fromObject(ret);
-
-		java.text.DateFormat format1 = new java.text.SimpleDateFormat(
-				"yyyy-MM-dd");
-
-		try {
-			 
-			Date dt = format1.parse("20"+fromObject.getString("endtime"));
-			batchcode = fromObject.getString("batchcode");		
-			cal.setTime(dt);
-			Date date = cal.getTime();
-			String str=format1.format(date);  
-			opentime = str;
-			 		
-//			ret = commonService.getOpenInfo(String.valueOf(Integer.parseInt(batchcode)-1));
-//			fromObject = JSONObject.fromObject(ret);
-
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		 
-
-		for (int i = 0; i < punts; i++) {
-			ret = commonService.getDoubleDallBet(award_userno, "200",
-					"1001", "0001" + result[i] + "^_1_200_200");
+			// 生成投注数字
+			String[] result = DoubleBall.getDoubleBallsByString(punts);
+			Calendar cal = Calendar.getInstance();
+			Calendar cal_now = Calendar.getInstance();
+			cal_now.setTime(new Date());
+			
+			iMap.put("punts", String.valueOf(punts));
+			iMap.put("lottery_type", "双色球");	
+			String opentime = "";
+			JSONObject fromObject = null;	
+			String batchcode = "";
+			String ret = commonService.getBatchInfo();
 			fromObject = JSONObject.fromObject(ret);
-			String orderId = fromObject.getString("orderId");
-			String error_code = fromObject.getString("error_code");		
 
-			PuntList pList = new PuntList();
-			pList.setBatchcode(batchcode);
-			pList.setOpentime(cal);
-			pList.setBetcode(result[i]);
-			pList.setPuntId(puntPacket.getId());
-			pList.setOrderid(orderId);		 
-			pList.setCreatetime(cal_now);
-			pList.persist();
-			logger.info(error_code);
+			java.text.DateFormat format1 = new java.text.SimpleDateFormat(
+					"yyyy-MM-dd");
+
+			try {
+				Date dt = format1.parse("20"+fromObject.getString("endtime"));
+				batchcode = fromObject.getString("batchcode");		
+				cal.setTime(dt);
+				Date date = cal.getTime();
+				String str=format1.format(date);  
+				opentime = str;
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			 
-		}
-		
-		iMap.put("lottery_date", opentime);
-		iMap.put("pund", "10000");
-		iMap.put("puntlist", result);
 
-		puntPacket.setGetUserno(award_userno);
-		cal.setTime(new Date());
-		puntPacket.setGetTime(cal);
-		puntPacket.persist();
-		return iMap;
+			for (int i = 0; i < punts; i++) {
+				ret = commonService.getDoubleDallBet(award_userno, "200",
+						"1001", "0001" + result[i] + "^_1_200_200");
+				fromObject = JSONObject.fromObject(ret);
+				String orderId = fromObject.getString("orderId");
+				String error_code = fromObject.getString("error_code");		
+
+				PuntList pList = new PuntList();
+				pList.setBatchcode(batchcode);
+				pList.setOpentime(cal);
+				pList.setBetcode(result[i]);
+				pList.setPuntId(puntPacket.getId());
+				pList.setOrderid(orderId);		 
+				pList.setCreatetime(cal_now);
+				pList.persist();
+				logger.info(error_code);
+				 
+			}
+			
+			iMap.put("lottery_date", opentime);
+			iMap.put("pund", "10000");
+			iMap.put("puntlist", result);
+
+			puntPacket.setGetUserno(award_userno);
+			cal.setTime(new Date());
+			puntPacket.setGetTime(cal);
+			puntPacket.persist();
+			return iMap;
+		} else
+		{
+			throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
+		}
 	}
 
 	/**
@@ -187,25 +189,23 @@ public class PacketActivityService {
 	 */
 	@SuppressWarnings("rawtypes")
 	public Map doGetPacketStus(String award_userno, String packet_id) {
-		int ret = 0;
+		int ret = 0; // 有剩下
 		Packet packet = Packet.findPacket(Integer.parseInt(packet_id));
 		if (packet.getPacketUserno().equals(award_userno)) {
 			ret = 3; // 送红包的抢不了
 		}
 
 		if (ret == 0) {
-			PuntPacket puntPacket = null;
-			puntPacket = PuntPacket.findByGetUserno(award_userno,
-					packet_id);
-			if (null != puntPacket) {
+			List<PuntPacket> lstPuntPacket = PuntPacket.findByGetUserno(award_userno, packet_id);
+			if (lstPuntPacket != null && lstPuntPacket.size() > 0) {
 				ret = 2; // 已抢
 			}
 		}
 
 		if (ret == 0) {
-			PuntPacket puntPacket = PuntPacket.findLeftParts(packet_id);
-			if (null == puntPacket) {
-				ret = 1; // 有剩下
+			List<PuntPacket> puntPacket = PuntPacket.findLeftParts(packet_id);
+			if (null == puntPacket || puntPacket.size() == 0) {
+				ret = 1; // 已抢完
 			}
 		}
 		Map<String, String> map = new HashMap<String, String>();
@@ -294,8 +294,7 @@ public class PacketActivityService {
 			map.put("greetings", packet.getGreetings());
 			String nickName = "";
 			String headimg = "";
-			String wx_packet_activity = "HM00002";
-			CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(packetUserno, wx_packet_activity);
+			CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(packetUserno, Const.WX_PACKET_ACTIVITY);
 			if (userInfo != null)
 			{
 				nickName = userInfo.getNickname();
@@ -320,6 +319,7 @@ public class PacketActivityService {
 				int get_punts = 0; // 已领取注数
 				int userno_punts = 0; // userno 参数抢到注数
 				String is_thanks = "0"; // 已答谢状态,0-未答谢;1-已答谢
+				String thank_words = "";
 				
 				JSONArray arry = new JSONArray();
 				for (PuntPacket puntPacket : grabList)
@@ -333,10 +333,13 @@ public class PacketActivityService {
 					{
 						userno_punts = puntPacket.getRandomPunts();
 						if (!StringUtil.isEmpty(puntPacket.getThankWords()))
+						{
+							thank_words = puntPacket.getThankWords();
 							is_thanks = "1";
+						}
 					}
 					
-					CaseLotUserinfo grabUserInfo = caseLotActivityService.caseLotchances(puntPacket.getGetUserno(), wx_packet_activity);
+					CaseLotUserinfo grabUserInfo = caseLotActivityService.caseLotchances(puntPacket.getGetUserno(), Const.WX_PACKET_ACTIVITY);
 					if (grabUserInfo != null)
 					{
 						nickName = grabUserInfo.getNickname();
@@ -382,6 +385,7 @@ public class PacketActivityService {
 				map.put("get_punts", get_punts);
 				map.put("userno_punts", userno_punts);
 				map.put("is_thanks", is_thanks);
+				map.put("thank_words", thank_words);
 			}
 
 			return map;
@@ -419,7 +423,6 @@ public class PacketActivityService {
 		List<PuntPacket> list = puntPacketDao.findPuntPacketByUserno(awardUserno);
 		if (list != null && list.size() > 0)
 		{
-			String wx_packet_activity = "HM00002";
 			JSONArray arry = new JSONArray();
 			for (PuntPacket puntPacket : list)
 			{
@@ -431,7 +434,7 @@ public class PacketActivityService {
 					// 获取送红包人信息
 					Packet packet = Packet.findPacket(puntPacket.getPacketId());
 					String fromUserno = packet.getPacketUserno();
-					CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(fromUserno, wx_packet_activity);
+					CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(fromUserno, Const.WX_PACKET_ACTIVITY);
 					map.put("nickname", userInfo.getNickname() == null ? "" : userInfo.getNickname());
 					map.put("get_time", DateUtil.format("yyyy-MM-dd", puntPacket.getGetTime().getTime())); // 领取红包时间
 					
