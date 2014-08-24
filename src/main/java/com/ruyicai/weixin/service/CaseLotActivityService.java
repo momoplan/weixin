@@ -32,19 +32,26 @@ public class CaseLotActivityService {
 	private WeixinService weixinService;
 
 	@Transactional
-	public CaseLotUserinfo findOrCreateCaseLotUserinfo(String userno, String orderid, String nickname, String headimgurl) {
-		logger.info("createCaseLotUserinfo userno:{} orderid:{} nickname:{} headimgurl:{}", userno, orderid, nickname,
-				headimgurl);
+	public CaseLotUserinfo findOrCreateCaseLotUserinfo(String userno,
+			String orderid, String nickname, String headimgurl) {
+		logger.info(
+				"createCaseLotUserinfo userno:{} orderid:{} nickname:{} headimgurl:{}",
+				userno, orderid, nickname, headimgurl);
 		if (StringUtils.isEmpty(userno)) {
-			throw new IllegalArgumentException("the argument userno is require.");
+			throw new IllegalArgumentException(
+					"the argument userno is require.");
 		}
 		if (StringUtils.isEmpty(orderid)) {
-			throw new IllegalArgumentException("the argument orderid is require.");
+			throw new IllegalArgumentException(
+					"the argument orderid is require.");
 		}
+		
+	 
 		CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo.findCaseLotUserinfo(new CaseLotUserinfoPK(userno, orderid));
 		if (caseLotUserinfo == null) {
 			findActivityByOrderid(orderid);
-			caseLotUserinfo = CaseLotUserinfo.createCaseLotUserinfo(userno, orderid, nickname, headimgurl);
+			caseLotUserinfo = CaseLotUserinfo.createCaseLotUserinfo(userno,
+					orderid, nickname, headimgurl);
 		}
 		return caseLotUserinfo;
 	}
@@ -53,7 +60,8 @@ public class CaseLotActivityService {
 	public Activity findActivityByOrderid(String orderid) {
 		logger.info("findActivityByOrderid orderid:{}", orderid);
 		if (StringUtils.isEmpty(orderid)) {
-			throw new IllegalArgumentException("the argument orderid is require.");
+			throw new IllegalArgumentException(
+					"the argument orderid is require.");
 		}
 		Activity activity = Activity.findActivity(orderid);
 		if (activity == null) {
@@ -64,14 +72,18 @@ public class CaseLotActivityService {
 
 	@Transactional
 	public CaseLotUserinfo caseLotchances(String userno, String orderid) {
-		logger.info("selectActivityDetail orderid:{},userno:{}", orderid, userno);
+		logger.info("selectActivityDetail orderid:{},userno:{}", orderid,
+				userno);
 		if (StringUtils.isEmpty(orderid)) {
-			throw new IllegalArgumentException("the argument orderid is require.");
+			throw new IllegalArgumentException(
+					"the argument orderid is require.");
 		}
 		if (StringUtils.isEmpty(userno)) {
-			throw new IllegalArgumentException("the argument userno is require.");
+			throw new IllegalArgumentException(
+					"the argument userno is require.");
 		}
-		CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo.findCaseLotUserinfo(new CaseLotUserinfoPK(userno, orderid));
+		CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo
+				.findCaseLotUserinfo(new CaseLotUserinfoPK(userno, orderid));
 		if (caseLotUserinfo == null) {
 			throw new WeixinException(ErrorCode.CASELOTUSERINFO_NOT_EXISTS);
 		}
@@ -79,14 +91,18 @@ public class CaseLotActivityService {
 	}
 
 	@Transactional
-	public CaseLotUserinfo joinActivity(String userno, String orderid, String linkUserno) {
+	public CaseLotUserinfo joinActivity(String userno, String orderid,
+			String linkUserno) {
 		if (StringUtils.isEmpty(userno)) {
-			throw new IllegalArgumentException("the argument userno is require.");
+			throw new IllegalArgumentException(
+					"the argument userno is require.");
 		}
 		if (StringUtils.isEmpty(orderid)) {
-			throw new IllegalArgumentException("the argument orderid is require.");
+			throw new IllegalArgumentException(
+					"the argument orderid is require.");
 		}
-		logger.info("合买活动免费领取彩票：userno:{},orderid:{},linkUserno:{}", userno, orderid, linkUserno);
+		logger.info("合买活动免费领取彩票：userno:{},orderid:{},linkUserno:{}", userno,
+				orderid, linkUserno);
 		Activity activity = Activity.findActivity(orderid, true);
 		if (activity == null) {
 			throw new WeixinException(ErrorCode.CASELOT_NOT_EXISTS);
@@ -94,20 +110,22 @@ public class CaseLotActivityService {
 		Integer remainingShare = activity.getRemainingShare();
 		logger.info("start  remainingShare{}", remainingShare);
 		if (remainingShare <= 0) {
-			throw new WeixinException(ErrorCode.ACTIVITY_REMAININGSHARE_NOT_ENOUGH);
+			throw new WeixinException(
+					ErrorCode.ACTIVITY_REMAININGSHARE_NOT_ENOUGH);
 		}
 		activity.setRemainingShare(remainingShare - 1);
 		logger.info("remainingShare{}", remainingShare);
 		activity.merge();
 		logger.info("activity{}", activity);
-		CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo.findCaseLotUserinfo(new CaseLotUserinfoPK(userno, orderid),
-				true);
+		CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo.findCaseLotUserinfo(
+				new CaseLotUserinfoPK(userno, orderid), true);
 		if (caseLotUserinfo == null) {
 			throw new WeixinException(ErrorCode.CASELOTUSERINFO_NOT_EXISTS);
 		}
 		int chances = caseLotUserinfo.getChances();
 		if (chances <= 0) {
-			throw new WeixinException(ErrorCode.CASELOTUSERINFO_CHANCES_NOT_ENOUGH);
+			throw new WeixinException(
+					ErrorCode.CASELOTUSERINFO_CHANCES_NOT_ENOUGH);
 		}
 		caseLotUserinfo.setChances(chances - 1);
 		caseLotUserinfo.setJoinTimes(caseLotUserinfo.getJoinTimes() + 1);
@@ -120,9 +138,11 @@ public class CaseLotActivityService {
 		return caseLotUserinfo;
 	}
 
-	public ChancesDetail createChanceDetail(String linkUserno, String joinUserno, String orderid) {
-		ChancesDetail chancesDetail = ChancesDetail.findChancesDetail(new ChancesDetailPK(linkUserno, joinUserno,
-				orderid));
+	public ChancesDetail createChanceDetail(String linkUserno,
+			String joinUserno, String orderid) {
+		ChancesDetail chancesDetail = ChancesDetail
+				.findChancesDetail(new ChancesDetailPK(linkUserno, joinUserno,
+						orderid));
 		if (chancesDetail != null) {
 			if (chancesDetail.getState() == 1) {
 				throw new WeixinException(ErrorCode.CHANCEDETAIL_HAVE_ADD);
@@ -130,61 +150,89 @@ public class CaseLotActivityService {
 			throw new WeixinException(ErrorCode.CHANCEDETAIL_HAVE_EXISTS);
 		}
 		findActivityByOrderid(orderid);
-		return ChancesDetail.createChancesDetail(linkUserno, joinUserno, orderid);
+		return ChancesDetail.createChancesDetail(linkUserno, joinUserno,
+				orderid);
 	}
 
 	/**
-	 * 创建lottery联合用户
-	 * 创建合买活动用户
+	 * 创建lottery联合用户 创建合买活动用户
 	 * 
 	 * @param openid
 	 * @param orderid
 	 * @return
 	 */
-	public CaseLotUserinfo createBigUserAndCaseLotUserinfo(String openid, String orderid) {
+	public CaseLotUserinfo createBigUserAndCaseLotUserinfo(String openid,
+			String orderid) {
 		logger.info("获取用户信息参数:openid:" + openid);
 		CaseLotUserinfo caseLotUserinfo = null;
 		try {
 			String accessToken = weixinService.getAccessToken();
-			WeixinUserDTO dto = weixinService.findUserinfoByOpenid(accessToken, openid);
-			if (dto != null) {
-				String nickname = StringUtils.isNotEmpty(dto.getNickname()) ? dto.getNickname() : dto.getOpenid();
-				logger.info("查找或创建联合用户 openid:{} nickname:{}", dto.getOpenid(), nickname);
-				String userno = lotteryService.findOrCreateBigUser(dto.getOpenid(), nickname,
-						Const.DEFAULT_BIGUSER_TYPE);
-				caseLotUserinfo = this.findOrCreateCaseLotUserinfo(userno, orderid, dto.getNickname(),
-						dto.getHeadimgurl());
+			WeixinUserDTO dto = null;
+			String nickname = "";
+			String headimgurl = "";
+			String subscribe = "0";
+			try {
+				dto = weixinService.findUserinfoByOpenid(accessToken, openid);
+
+				if (dto != null) {
+					nickname = StringUtils.isNotEmpty(dto.getNickname()) ? dto
+							.getNickname() : dto.getOpenid();
+					headimgurl = StringUtils.isNotEmpty(dto.getHeadimgurl()) ? dto
+							.getHeadimgurl() : dto.getOpenid();
+					subscribe = String.valueOf(dto.getSubscribe());
+
+				}
+
+			} catch (Exception ex) {
+				logger.error("findUserinfoByOpenid", ex.getMessage());
 			}
+
+			logger.info("查找或创建联合用户 openid:{} nickname:{}", openid, nickname);
+			String userno = lotteryService.findOrCreateBigUser(openid,
+					nickname, Const.DEFAULT_BIGUSER_TYPE);
+			caseLotUserinfo = this.findOrCreateCaseLotUserinfo(userno, orderid,
+					nickname, headimgurl);
+			//caseLotUserinfo.setSubcribe(subscribe);
+
 		} catch (Exception e) {
 			logger.error("关注时同步执行 增加 HM00001的活动账户失败:", e.getMessage());
 		}
+		
+		 
 		return caseLotUserinfo;
 	}
 
 	@Transactional
-	public void addChanceDetail(String linkUserno, String joinUserno, String orderid) {
-		logger.info("addChanceDetail linkUserno：{} joinUserno:{} orderid:{}", linkUserno, joinUserno, orderid);
+	public void addChanceDetail(String linkUserno, String joinUserno,
+			String orderid) {
+		logger.info("addChanceDetail linkUserno：{} joinUserno:{} orderid:{}",
+				linkUserno, joinUserno, orderid);
 		try {
-			ChancesDetail chancesDetail = ChancesDetail.findChancesDetail(new ChancesDetailPK(linkUserno, joinUserno,
-					orderid));
+			ChancesDetail chancesDetail = ChancesDetail
+					.findChancesDetail(new ChancesDetailPK(linkUserno,
+							joinUserno, orderid));
 			if (chancesDetail != null) {
 				if (chancesDetail.getState() == 0) {
 					chancesDetail.setState(1);
 					chancesDetail.setSuccessTime(new Date());
 					chancesDetail.merge();
-					CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo.findCaseLotUserinfo(new CaseLotUserinfoPK(
-							linkUserno, orderid), true);
+					CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo
+							.findCaseLotUserinfo(new CaseLotUserinfoPK(
+									linkUserno, orderid), true);
 					if (caseLotUserinfo != null) {
 						int linkTimes = caseLotUserinfo.getLinkTimes() + 1;
 						if (linkTimes % 3 == 0) {
-							caseLotUserinfo.setChances(caseLotUserinfo.getChances() + 1);
+							caseLotUserinfo.setChances(caseLotUserinfo
+									.getChances() + 1);
 							caseLotUserinfo.setLinkTimes(linkTimes);
-							logger.info("增加用户抽奖机会 linkUserno:{} joinUserno:{} orderid:{}", linkUserno, joinUserno,
-									orderid);
+							logger.info(
+									"增加用户抽奖机会 linkUserno:{} joinUserno:{} orderid:{}",
+									linkUserno, joinUserno, orderid);
 						} else {
 							caseLotUserinfo.setLinkTimes(linkTimes);
-							logger.info("增加用户链接次数 linkUserno:{} joinUserno:{} orderid:{}", linkUserno, joinUserno,
-									orderid);
+							logger.info(
+									"增加用户链接次数 linkUserno:{} joinUserno:{} orderid:{}",
+									linkUserno, joinUserno, orderid);
 						}
 						caseLotUserinfo.merge();
 					}

@@ -9,7 +9,9 @@ import java.util.Date;
 
 privileged aspect CaseLotUserinfo_Roo_JavaBean {
     
-    public CaseLotUserinfoPK CaseLotUserinfo.getId() {
+   // private String subscribe;
+
+	public CaseLotUserinfoPK CaseLotUserinfo.getId() {
         return this.id;
     }
     
@@ -64,5 +66,4 @@ privileged aspect CaseLotUserinfo_Roo_JavaBean {
     public void CaseLotUserinfo.setLinkTimes(int linkTimes) {
         this.linkTimes = linkTimes;
     }
-    
 }
