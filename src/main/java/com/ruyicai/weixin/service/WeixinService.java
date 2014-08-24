@@ -69,6 +69,31 @@ public class WeixinService {
 				token = (String) map.get("access_token");
 				logger.info("缓存中添加 token:{}", token);
 				ACCESS_TOKEN_MAP.put(ACCESS_TOKEN_KEY, token);
+				 
+			}
+		} catch (Exception e) {
+			logger.error("请求微信异常url=" + url, e);
+		}
+		return token;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public String getAccessToken(boolean refresh) {
+		if (StringUtils.isBlank(appId) || StringUtils.isBlank(appSecret)) {
+			throw new IllegalArgumentException("The argument appId or appSecret is required");
+		}
+		String token = "";
+		String url = AccessToken_URL.replace("APPID", appId).replace("APPSECRET", appSecret);
+		try {
+			String json = Request.Get(url).connectTimeout(2000).socketTimeout(1000).execute().returnContent()
+					.asString();
+			logger.info("Http Response:" + json);
+			HashMap<String, Object> map = JsonMapper.fromJson(json, HashMap.class);
+			if (map.containsKey("access_token")) {
+				token = (String) map.get("access_token");
+				logger.info("缓存中添加 token:{}", token);
+				ACCESS_TOKEN_MAP.put(ACCESS_TOKEN_KEY, token);
+				 
 			}
 		} catch (Exception e) {
 			logger.error("请求微信异常url=" + url, e);
