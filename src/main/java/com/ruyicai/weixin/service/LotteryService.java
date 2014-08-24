@@ -228,7 +228,7 @@ public class LotteryService {
 	 * @return
 	 */
 	public String presentDividend(String userNo, String amount, String channel, String memo) {
-		StringBuffer paramStr = new StringBuffer();
+		StringBuilder paramStr = new StringBuilder();
 		paramStr.append("userno=" + userNo);
 		paramStr.append("&amt=" + amount);
 		paramStr.append("&accesstype=" + Constants.accessType);

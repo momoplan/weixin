@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ruyicai.weixin.consts.Const;
 import com.ruyicai.weixin.domain.CaseLotUserinfo;
 import com.ruyicai.weixin.domain.Packet;
 import com.ruyicai.weixin.dto.lottery.ResponseData;
@@ -117,9 +118,8 @@ public class PacketActivityController {
 				return JsonMapper.toJsonP(callback, rd);
 			}
 
-			String wx_packet_activity = "HM00002";
 			CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(
-					award_userno, wx_packet_activity);
+					award_userno, Const.WX_PACKET_ACTIVITY);
 			if (userInfo == null) {
 				rd.setErrorCode(ErrorCode.CASELOTUSERINFO_NOT_EXISTS.value);// 未抢到
 				rd.setValue(ErrorCode.CASELOTUSERINFO_NOT_EXISTS.memo);
@@ -144,11 +144,11 @@ public class PacketActivityController {
 			}
 
 		} catch (WeixinException e) {
-			logger.error("findChancesDetail error", e);
+			logger.error("getPuntsFromPacket error1", e);
 			rd.setErrorCode(e.getErrorCode().value);
 			rd.setValue(e.getMessage());
 		} catch (Exception e) {
-			logger.error("findChancesDetail error", e);
+			logger.error("getPuntsFromPacket error2", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
 			rd.setValue(e.getMessage());
 		}

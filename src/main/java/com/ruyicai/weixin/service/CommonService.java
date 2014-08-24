@@ -6,6 +6,9 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ruyicai.weixin.exception.ErrorCode;
+import com.ruyicai.weixin.exception.WeixinException;
+
 @Service
 public class CommonService {
 	
@@ -21,12 +24,16 @@ public class CommonService {
 	public String presentDividend(String userNo, String point, String channel, String memo) {
 		String result = lotteryService.presentDividend(userNo, point, channel, memo);
 		if (StringUtils.isBlank(result)) {
-			return "";
+			throw new WeixinException (ErrorCode.DIRECT_CHARGE_FAIL);
 		}
 		JSONObject fromObject = JSONObject.fromObject(result);
-		if (fromObject==null) {
-			return "";
+		if (fromObject == null) {
+			throw new WeixinException (ErrorCode.DIRECT_CHARGE_FAIL);
 		}
+		String errorCode = fromObject.getString("errorCode");
+		if (!"0".equals(errorCode))
+			throw new WeixinException (ErrorCode.DIRECT_CHARGE_FAIL);
+		
 		return fromObject.getString("errorCode");
 	}
 	
