@@ -15,6 +15,9 @@ public class CommonService {
 	@Autowired
 	private LotteryService lotteryService;
 	
+	@Autowired
+	LotserverService lotserverService;
+	
 	/**
 	 * 赠送彩金
 	 * @param userNo
@@ -45,7 +48,7 @@ public class CommonService {
 	 */
 	public String getDoubleDallBet(String userNo, String amount, String channel, String bet_code)
 	{
-		String result = lotteryService.DoubleDallBet( userNo,  amount,  channel,  bet_code);
+		String result = lotserverService.DoubleDallBet( userNo,  amount,  channel,  bet_code);
 		if (StringUtils.isBlank(result)) {
 			return "";
 		}
@@ -65,7 +68,7 @@ public class CommonService {
 	 */
 	public String getBatchInfo()
 	{
-		String result = lotteryService.doGetBatchInfo();
+		String result = lotserverService.doGetBatchInfo();
 		if (StringUtils.isBlank(result)) {
 			return "";
 		}
@@ -85,7 +88,7 @@ public class CommonService {
 	 */
 	public String getOpenInfo(String batchcode)
 	{
-		String result = lotteryService.doGetBatchInfo();
+		String result = lotserverService.doGetBatchInfo();
 		if (StringUtils.isBlank(result)) {
 			return "";
 		}
