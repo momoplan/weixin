@@ -109,6 +109,7 @@ public class PacketActivityService {
 		PuntPacket puntPacket = PuntPacket.findOneNotAawardPart(packet_id);
 		if (puntPacket != null)
 		{
+			
 			int punts = puntPacket.getRandomPunts();
 			
 			// 送彩金接口
@@ -117,7 +118,7 @@ public class PacketActivityService {
 
 			// 生成投注数字
 			String[] result = DoubleBall.getDoubleBallsByString(punts);
-			Calendar cal = Calendar.getInstance();
+			Calendar cal_open = Calendar.getInstance();
 			Calendar cal_now = Calendar.getInstance();
 			cal_now.setTime(new Date());
 			
@@ -135,8 +136,8 @@ public class PacketActivityService {
 			try {
 				Date dt = format1.parse("20"+fromObject.getString("endtime"));
 				batchcode = fromObject.getString("batchcode");		
-				cal.setTime(dt);
-				Date date = cal.getTime();
+				cal_open.setTime(dt);
+				Date date = cal_open.getTime();
 				String str=format1.format(date);  
 				opentime = str;
 			} catch (ParseException e) {
@@ -153,11 +154,11 @@ public class PacketActivityService {
 				String error_code = fromObject.getString("error_code");		
 				PuntList pList = new PuntList();
 				pList.setBatchcode(batchcode);
-				Date date = cal.getTime();
-				String str=format1.format(date);  
-				opentime = str;
+//				Date date = cal_open.getTime();
+//				String str=format1.format(date);  
+//				opentime = str;
 				logger.info("opentime"+opentime);
-				pList.setOpentime(cal);
+				pList.setOpentime(cal_open);
 				pList.setBetcode(result[i]);
 				pList.setPuntId(puntPacket.getId());
 				pList.setOrderid(orderId);		 
@@ -172,6 +173,7 @@ public class PacketActivityService {
 			iMap.put("puntlist", result);
 
 			puntPacket.setGetUserno(award_userno);
+			Calendar cal = Calendar.getInstance();
 			cal.setTime(new Date());
 			puntPacket.setGetTime(cal);
 			puntPacket.persist();
