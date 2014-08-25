@@ -78,4 +78,19 @@ public class LotserverService {
 		result = result.replace("(", "").replace(")", "");
 		return result;
 	}
+	
+	/**
+	 * 根据购彩订单号查询订单详情
+	 * 
+	 * @param orderid
+	 * @return
+	 */
+	public String doGetOrderInfo(String orderid)
+	{
+		String url = lotserverurl + "/SendRequestServlet?parameter={\"command\":\"select\",\"requestType\":\"orderDetails\",\"coopid\":\"1101\",\"platform\":\"public\",\"id\":\""+orderid+"\"}&callBackMethod=";
+		String result = HttpUtil.sendRequestByPost(url, "", true);
+		logger.info("doGetOrderInfo:"+result);
+		result = result.replace("(", "").replace(")", "");
+		return result;
+	}
 }

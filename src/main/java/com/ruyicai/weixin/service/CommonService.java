@@ -100,4 +100,24 @@ public class CommonService {
 		return fromObject.toString();
 	}
 
+	/**
+	 * 根据购彩订单号获取订单详情
+	 * 
+	 * @param orderid
+	 * @return
+	 */
+	public JSONObject getOrderInfo(String orderid)
+	{
+		JSONObject json = null;
+		String result = lotserverService.doGetOrderInfo(orderid);
+		JSONObject fromObject = JSONObject.fromObject(result);
+		if (fromObject != null)
+		{
+			if ("0".equals(fromObject.get("error_code")))
+			{
+				json = JSONObject.fromObject(fromObject.get("result"));
+			}
+		}
+		return json;
+	}
 }
