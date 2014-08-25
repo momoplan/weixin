@@ -136,6 +136,8 @@ public class PacketActivityService {
 				Date dt = format1.parse("20" + fromObject.getString("endtime"));
 				batchcode = fromObject.getString("batchcode");
 				cal_open.setTime(dt);
+				dt=cal_open.getTime();
+				opentime = format1.format(dt);
 			} catch (ParseException e) {
 				throw new WeixinException(ErrorCode.ERROR);
 			}
