@@ -81,41 +81,62 @@ public class LotteryService {
 
 	@Value("${lotteryurl}")
 	private String lotteryurl;
-	
+
 	@Value("${lotterycoreurl}")
 	private String lotterycoreurl;
+
+//	@Value("${testlotteryurl}")
+//	private String testlotteryurl;
+//
+//	@Value("${testlotterycoreurl}")
+//	private String testlotterycoreurl;
+//
+//	@Value("${testusernolist}")
+//	private String testusernolist;
 
 	@SuppressWarnings("unchecked")
 	public String selectTwininfoBylotno(String lotno, String issuenum) {
 		StringBuilder result = new StringBuilder();
 		String url = lotteryurl + "/select/getTwininfoBylotno";
 		try {
-			String json = Request.Post(url).bodyForm(Form.form().add("lotno", lotno).add("issuenum", issuenum).build())
+			String json = Request
+					.Post(url)
+					.bodyForm(
+							Form.form().add("lotno", lotno)
+									.add("issuenum", issuenum).build())
 					.execute().returnContent().asString();
-			ResponseData responseData = JsonMapper.fromJson(json, ResponseData.class);
+			ResponseData responseData = JsonMapper.fromJson(json,
+					ResponseData.class);
 			if (responseData.getErrorCode().equals("0")) {
-				List<Map<String, Object>> list = (List<Map<String, Object>>) responseData.getValue();
+				List<Map<String, Object>> list = (List<Map<String, Object>>) responseData
+						.getValue();
 				if (list != null) {
 					String lotName = map.get(lotno);
 					for (Map<String, Object> map : list) {
-						Map<String, Object> id = (Map<String, Object>) map.get("id");
+						Map<String, Object> id = (Map<String, Object>) map
+								.get("id");
 						String batchcode = (String) id.get("batchcode");
 						String winbasecode = (String) map.get("winbasecode");
-						String winspecialcode = (String) map.get("winspecialcode");
-						result.append(lotName + "第" + batchcode + "期开奖号码" + winbasecode + " " + winspecialcode + "\n");
+						String winspecialcode = (String) map
+								.get("winspecialcode");
+						result.append(lotName + "第" + batchcode + "期开奖号码"
+								+ winbasecode + " " + winspecialcode + "\n");
 					}
 				}
 			}
 		} catch (Exception e) {
-			logger.error("请求lottery异常url:" + url + ",params:lotno=" + lotno + "&issuenum=" + issuenum, e);
+			logger.error("请求lottery异常url:" + url + ",params:lotno=" + lotno
+					+ "&issuenum=" + issuenum, e);
 		}
 		return result.toString();
 	}
 
-	public String findOrCreateBigUser(String openid, String nickname, String type) {
+	public String findOrCreateBigUser(String openid, String nickname,
+			String type) {
 		String userno = this.findBigUser(openid, type);
 		if (StringUtils.isEmpty(userno)) {
-			logger.info("创建联合用户 openid:{},nickname:{},type:{}", openid, nickname, type);
+			logger.info("创建联合用户 openid:{},nickname:{},type:{}", openid,
+					nickname, type);
 			userno = this.createBigUser(openid, nickname, type);
 		}
 		return userno;
@@ -124,18 +145,22 @@ public class LotteryService {
 	@SuppressWarnings("unchecked")
 	public String findBigUser(String openid, String type) {
 		String userno = null;
-		String url = lotteryurl + "/tbiguserinfoes?json&find=BigUser&outuserno=" + openid + "&type=" + type;
+		String url = "";
+		url = lotteryurl + "/tbiguserinfoes?json&find=BigUser&outuserno="
+				+ openid + "&type=" + type;
 		try {
 			String json = Request.Get(url).execute().returnContent().asString();
 			Map<String, Object> map = JsonMapper.fromJson(json, HashMap.class);
 			String errorCode = (String) map.get("errorCode");
 			if (errorCode.equals("0")) {
-				Map<String, Object> tbiguserinfo = (Map<String, Object>) map.get("value");
+				Map<String, Object> tbiguserinfo = (Map<String, Object>) map
+						.get("value");
 				if (tbiguserinfo.containsKey("userno")) {
 					userno = (String) tbiguserinfo.get("userno");
 				}
 			} else {
-				logger.error("查询大客户异常 openid:" + openid + " type:" + type + " errorCode:" + errorCode);
+				logger.error("查询大客户异常 openid:" + openid + " type:" + type
+						+ " errorCode:" + errorCode);
 			}
 		} catch (Exception e) {
 			logger.error("查询大客户异常 openid:" + openid + " type:" + type, e);
@@ -155,57 +180,67 @@ public class LotteryService {
 	public String createBigUser(String openid, String nickname, String type) {
 		String userno = null;
 		try {
-			Form form = Form.form().add("userName", openid).add("password", randomPwd(8)).add("channel", "2")
+			Form form = Form.form().add("userName", openid)
+					.add("password", randomPwd(8)).add("channel", "2")
 					.add("outuserno", openid).add("type", type);
 			if (StringUtils.isNotEmpty(nickname)) {
 				form.add("nickname", nickname);
 			}
-			String json = Request.Post(lotteryurl + "/tbiguserinfoes/registerBigUser")
-					.bodyForm(form.build(), Charset.forName("UTF-8")).execute().returnContent().asString();
+			String json = Request
+					.Post(lotteryurl + "/tbiguserinfoes/registerBigUser")
+					.bodyForm(form.build(), Charset.forName("UTF-8")).execute()
+					.returnContent().asString();
 			Map<String, Object> map = JsonMapper.fromJson(json, HashMap.class);
 			String errorCode = (String) map.get("errorCode");
 			if (errorCode.equals("0")) {
-				Map<String, Object> tbiguserinfo = (Map<String, Object>) map.get("value");
+				Map<String, Object> tbiguserinfo = (Map<String, Object>) map
+						.get("value");
 				if (tbiguserinfo.containsKey("userno")) {
 					userno = (String) tbiguserinfo.get("userno");
 				}
 			} else {
-				logger.error("创建大客户失败 openid:" + openid + " nickname:" + nickname + " type:" + type + " errorCode:"
+				logger.error("创建大客户失败 openid:" + openid + " nickname:"
+						+ nickname + " type:" + type + " errorCode:"
 						+ errorCode);
 			}
 		} catch (Exception e) {
-			logger.error("创建大客户失败 openid:" + openid + " nickname:" + nickname + " type:" + type, e);
+			logger.error("创建大客户失败 openid:" + openid + " nickname:" + nickname
+					+ " type:" + type, e);
 		}
 		return userno;
 	}
-	
+
 	/**
 	 * 直接扣款
 	 * 
-	 * @param userno 用户编号
-	 * @param amt 单位：分
+	 * @param userno
+	 *            用户编号
+	 * @param amt
+	 *            单位：分
 	 * @param bankid
 	 * @param flowno
 	 * @param memo
 	 */
-	public void deductAmt(String userno, String amt, String bankid, String flowno, String memo)
-	{
+	public void deductAmt(String userno, String amt, String bankid,
+			String flowno, String memo) {
 		String json = null;
-		try
-		{
+		try {
 			String url = lotterycoreurl + "/taccounts/deductAmt";
-			json = Request.Post(url).bodyForm(Form.form().add("userno", userno)
-					.add("amt", amt).add("bankid", bankid)
-					.add("flowno", flowno).add("memo", memo).build(), Charset.forName("UTF-8"))
+			json = Request
+					.Post(url)
+					.bodyForm(
+							Form.form().add("userno", userno).add("amt", amt)
+									.add("bankid", bankid)
+									.add("flowno", flowno).add("memo", memo)
+									.build(), Charset.forName("UTF-8"))
 					.execute().returnContent().asString();
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			logger.error("扣款异常", e);
 			throw new WeixinException(ErrorCode.ERROR);
 		}
-		ResponseData responseData = JsonMapper.fromJson(json, ResponseData.class);
-		if (!"0".equals(responseData.getErrorCode()))
-		{
+		ResponseData responseData = JsonMapper.fromJson(json,
+				ResponseData.class);
+		if (!"0".equals(responseData.getErrorCode())) {
 			logger.info("扣款失败:errorCode=" + responseData.getErrorCode());
 			throw new WeixinException(ErrorCode.DEDUCT_AMT_FAIL);
 		}
@@ -221,14 +256,16 @@ public class LotteryService {
 		}
 		return sb.toString();
 	}
-	
+
 	/**
 	 * 赠送彩金
+	 * 
 	 * @param userNo
 	 * @param amount
 	 * @return
 	 */
-	public String presentDividend(String userNo, String amount, String channel, String memo) {
+	public String presentDividend(String userNo, String amount, String channel,
+			String memo) {
 		StringBuilder paramStr = new StringBuilder();
 		paramStr.append("userno=" + userNo);
 		paramStr.append("&amt=" + amount);
@@ -236,11 +273,13 @@ public class LotteryService {
 		paramStr.append("&subchannel=" + Constants.subChannel);
 		paramStr.append("&channel=" + channel);
 		paramStr.append("&memo=" + memo);
-		
+
 		String url = lotterycoreurl + "/taccounts/doDirectChargeProcess";
-		String result = HttpUtil.sendRequestByPost(url, paramStr.toString(), true);
-		logger.info("赠送彩金返回:"+result+",userNo:"+userNo+";amount:"+amount);
+		String result = HttpUtil.sendRequestByPost(url, paramStr.toString(),
+				true);
+		logger.info("赠送彩金返回:" + result + ",userNo:" + userNo + ";amount:"
+				+ amount);
 		return result;
 	}
-	
+
 }
