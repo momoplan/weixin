@@ -565,8 +565,8 @@
 				<database.pool.maxIdle>50</database.pool.maxIdle>
 				<weixinName>ruyicai</weixinName>
 				<lotteryurl>http://192.168.99.6/lotteryprize</lotteryurl>
-				<lotterycoreurl>http://192.168.0.42:8080/lottery</lotterycoreurl>
-				<lotserverurl>http://192.168.0.42/lotserver</lotserverurl>
+				<lotterycoreurl>http://202.43.152.173:8080/lottery</lotterycoreurl>
+				<lotserverurl>http://202.43.152.173:9088/lotserver</lotserverurl>
 				<imageMagickPath></imageMagickPath>
 				<imageLocation>/home/appusr/images_weixin</imageLocation>
 			</properties>

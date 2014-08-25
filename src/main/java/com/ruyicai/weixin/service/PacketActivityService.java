@@ -324,14 +324,13 @@ public class PacketActivityService {
 			map.put("get_parts", grabList.size()); // 已领取份数
 
 			// 用户领取详情
+			int get_punts = 0; // 已领取注数
+			int userno_punts = 0; // userno 参数抢到注数
+			String is_thanks = "0"; // 已答谢状态,0-未答谢;1-已答谢
+			String thank_words = "";
+			JSONArray arry = new JSONArray();
 			if (grabList != null && grabList.size() > 0)
 			{
-				int get_punts = 0; // 已领取注数
-				int userno_punts = 0; // userno 参数抢到注数
-				String is_thanks = "0"; // 已答谢状态,0-未答谢;1-已答谢
-				String thank_words = "";
-				
-				JSONArray arry = new JSONArray();
 				for (PuntPacket puntPacket : grabList)
 				{
 					Map<String, Object> grapMap = new HashMap<String, Object>();
@@ -390,13 +389,13 @@ public class PacketActivityService {
 
 					arry.put(grapMap);
 				}
-				map.put("punt_list", arry.toString());
-				
-				map.put("get_punts", get_punts);
-				map.put("userno_punts", userno_punts);
-				map.put("is_thanks", is_thanks);
-				map.put("thank_words", thank_words);
 			}
+			
+			map.put("punt_list", arry.toString());
+			map.put("get_punts", get_punts);
+			map.put("userno_punts", userno_punts);
+			map.put("is_thanks", is_thanks);
+			map.put("thank_words", thank_words);
 
 			return map;
 		} else
