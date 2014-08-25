@@ -344,10 +344,10 @@ public class PacketActivityService {
 				for (PuntPacket puntPacket : grabList) {
 					Map<String, Object> grapMap = new HashMap<String, Object>();
 					grapMap.put("punts", puntPacket.getRandomPunts());
-					grapMap.put("acknowledge", puntPacket.getThankWords());
-
+					grapMap.put("acknowledge", StringUtil.isEmpty(puntPacket.getThankWords()) ? "" : puntPacket.getThankWords());
 					get_punts += puntPacket.getRandomPunts();
-					if (!userno.equals(packetUserno)) {
+					if (userno.equals(puntPacket.getGetUserno()))
+					{
 						userno_punts = puntPacket.getRandomPunts();
 						if (!StringUtil.isEmpty(puntPacket.getThankWords())) {
 							thank_words = puntPacket.getThankWords();
