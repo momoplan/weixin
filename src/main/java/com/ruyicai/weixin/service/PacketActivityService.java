@@ -178,36 +178,45 @@ public class PacketActivityService {
 	 * @param packet_id
 	 *            红包ID
 	 */
-	@SuppressWarnings({ "rawtypes", "null" })
+	@SuppressWarnings({ "rawtypes" })
 	public Map doGetPacketStus(String award_userno, String packet_id) {
 		int ret = 0; // 有剩下
 		String headImgUrl = "";
 		Packet packet = null;
 		packet = Packet.findPacket(Integer.parseInt(packet_id));
 
-		if (null == packet)
+		if (null == packet) {
+			logger.info("Packet.findPacket-packet_id:{}", packet_id);
 			throw new WeixinException(ErrorCode.PACKET_NOT_EXIST);
-		else {
+		} else {
+			try {
+				if (packet.getPacketUserno().equals(award_userno)) {
+					ret = 3; // 送红包的抢不了
+				}
 
-			if (packet.getPacketUserno().equals(award_userno)) {
-				ret = 3; // 送红包的抢不了
-			}
+				if (ret == 0) {
+					List<PuntPacket> lstPuntPacket = PuntPacket
+							.findByGetUserno(award_userno, packet_id);
+					if (lstPuntPacket != null && lstPuntPacket.size() > 0) {
+						ret = 2; // 已抢
+					}
+				}
 
-			if (ret == 0) {
-				List<PuntPacket> lstPuntPacket = PuntPacket.findByGetUserno(
-						award_userno, packet_id);
-				if (lstPuntPacket != null && lstPuntPacket.size() > 0) {
-					ret = 2; // 已抢
+				if (ret == 0) {
+					List<PuntPacket> puntPacket = PuntPacket
+							.findLeftParts(packet_id);
+					if (null == puntPacket || puntPacket.size() == 0) {
+						ret = 1; // 已抢完
+					}
 				}
 			}
 
-			if (ret == 0) {
-				List<PuntPacket> puntPacket = PuntPacket
-						.findLeftParts(packet_id);
-				if (null == puntPacket || puntPacket.size() == 0) {
-					ret = 1; // 已抢完
-				}
+			catch (WeixinException ex) {
+				logger.info("packet.getPacketUserno-award_userno:{}",
+						award_userno);
+				throw new WeixinException(ErrorCode.PACKET_STATUS_EXIST);
 			}
+
 		}
 
 		Map<String, String> map = new HashMap<String, String>();
@@ -216,7 +225,7 @@ public class PacketActivityService {
 		map.put("status", String.valueOf(ret));
 		try {
 			CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(
-					award_userno, Const.WX_PACKET_ACTIVITY);
+					packet.getPacketUserno(), Const.WX_PACKET_ACTIVITY);
 			headImgUrl = userInfo.getHeadimgurl();
 		} catch (Exception ex) {
 			logger.info("caseLotActivityService.caseLotchances award_userno{}",
