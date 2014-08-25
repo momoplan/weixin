@@ -176,9 +176,9 @@ public class CaseLotActivityService {
 
 				if (dto != null) {
 					nickname = StringUtils.isNotEmpty(dto.getNickname()) ? dto
-							.getNickname() : dto.getOpenid();
+							.getNickname() : "";
 					headimgurl = StringUtils.isNotEmpty(dto.getHeadimgurl()) ? dto
-							.getHeadimgurl() : dto.getOpenid();
+							.getHeadimgurl() : "";
 					subscribe = String.valueOf(dto.getSubscribe());
 
 				}

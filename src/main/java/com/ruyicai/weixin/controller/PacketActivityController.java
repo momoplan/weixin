@@ -182,11 +182,11 @@ public class PacketActivityController {
 			rd.setValue(map);
 
 		} catch (WeixinException e) {
-			logger.error("findChancesDetail error", e);
+			logger.error("getPacketStatus error", e);
 			rd.setErrorCode(e.getErrorCode().value);
 			rd.setValue(e.getMessage());
 		} catch (Exception e) {
-			logger.error("findChancesDetail error", e);
+			logger.error("getPacketStatus error", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
 			rd.setValue(e.getMessage());
 		}
