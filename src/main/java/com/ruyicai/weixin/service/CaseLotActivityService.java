@@ -72,8 +72,8 @@ public class CaseLotActivityService {
 
 	@Transactional
 	public CaseLotUserinfo caseLotchances(String userno, String orderid) {
-		logger.info("selectActivityDetail orderid:{},userno:{}", orderid,
-				userno);
+//		logger.info("selectActivityDetail orderid:{},userno:{}", orderid,
+//				userno);
 		if (StringUtils.isEmpty(orderid)) {
 			throw new IllegalArgumentException(
 					"the argument orderid is require.");

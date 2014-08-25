@@ -117,7 +117,7 @@ public class StaticController {
 						+ ex.getMessage());
 			}
 			map.put("openid", openid);
-			map.put("subsrcibe", subsrcibe);
+			map.put("subscribe", subsrcibe);
 			map.put("caselotuserinfo", caselotuserinfo);
 
 			rd.setValue(map);
