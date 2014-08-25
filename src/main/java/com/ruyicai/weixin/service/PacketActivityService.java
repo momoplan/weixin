@@ -272,6 +272,15 @@ public class PacketActivityService {
 								.findPuntListGrabedList(puntPacket.getId());
 						if (puntList != null && puntList.size() > 0) {
 							for (PuntList punt : puntList) {
+								Calendar cal = punt.getOpentime();
+								cal.set(Calendar.MINUTE, cal.get(Calendar.MINUTE) + 30);// 开奖时间延迟30分钟
+								if (new Date().after(cal.getTime()) && punt.getOrderprizeamt() == null)
+								{
+									int orderprizeamt = getPrizeAmt(punt.getOrderid());
+									// 更新中奖金额
+									puntListDao.merge(punt, orderprizeamt);
+								}
+								
 								if (punt.getOrderprizeamt() != null
 										&& punt.getOrderprizeamt() > 0)
 									++win_persons;
@@ -372,11 +381,16 @@ public class PacketActivityService {
 							.findPuntListGrabedList(puntPacket.getId());
 					if (puntList != null && puntList.size() > 0) {
 						for (PuntList punt : puntList) {
-							if (punt.getOrderprizeamt() != null
-									&& punt.getOrderprizeamt() > 0) {
-								award += punt.getOrderprizeamt();
+							Calendar cal = punt.getOpentime();
+							cal.set(Calendar.MINUTE, cal.get(Calendar.MINUTE) + 30);// 开奖时间延迟30分钟
+							if (new Date().after(cal.getTime()) && punt.getOrderprizeamt() == null) // 已开奖
+							{
+								int orderprizeamt = getPrizeAmt(punt.getOrderid());
+								// 更新中奖金额
+								puntListDao.merge(punt, orderprizeamt);
 							}
-							if (award == 0) {
+							if (punt.getOrderprizeamt() == null)
+							{
 								if (lottery_date != null) {
 									if (lottery_date.after(punt.getOpentime()
 											.getTime())) {
@@ -387,11 +401,15 @@ public class PacketActivityService {
 									lottery_date = punt.getOpentime().getTime();
 								}
 							}
+							
+							if (punt.getOrderprizeamt() != null
+									&& punt.getOrderprizeamt() > 0) {
+								award += punt.getOrderprizeamt();
+							}
 						}
 					}
 					grapMap.put("award", award); // 中奖金额
-					grapMap.put("lottery_date", lottery_date == null ? ""
-							: DateUtil.format("MM月dd日", lottery_date));// 开奖时间
+					grapMap.put("lottery_date", lottery_date == null ? "" : DateUtil.format("MM月dd日", lottery_date));// 开奖时间
 
 					arry.put(grapMap);
 				}
@@ -467,10 +485,15 @@ public class PacketActivityService {
 									.getOpentime().getTime());
 
 						puntMap.put("openTime", openTime);
-						puntMap.put(
-								"orderprizeamt",
-								punt.getOrderprizeamt() == null ? "0" : punt
-										.getOrderprizeamt());
+						Calendar cal = punt.getOpentime();
+						cal.set(Calendar.MINUTE, cal.get(Calendar.MINUTE) + 30);// 开奖时间延迟30分钟
+						if (new Date().after(cal.getTime()) && punt.getOrderprizeamt() == null)
+						{
+							int orderprizeamt = getPrizeAmt(punt.getOrderid());
+							// 更新中奖金额
+							puntListDao.merge(punt, orderprizeamt);
+						}
+						puntMap.put("orderprizeamt", punt.getOrderprizeamt() == null ? 0 : punt.getOrderprizeamt());
 						String isOpen = "0"; // 是否开奖,0-未开奖:1-已开奖
 						if (new Date().after(punt.getOpentime().getTime())) {
 							isOpen = "1";
@@ -502,6 +525,23 @@ public class PacketActivityService {
 		map.put("total_get_person", "1200");
 		map.put("total_win", "100000");
 		return map;
+	}
+	
+	/**
+	 * 获取订单中奖金额
+	 * 
+	 * @param orderid
+	 * @return
+	 */
+	public int getPrizeAmt(String orderid)
+	{
+		JSONObject json = commonService.getOrderInfo(orderid);
+		if (json != null)
+		{
+			String prizeAmt = json.get("prizeAmt").toString();
+			return StringUtil.isEmpty(prizeAmt) ? 0 : Integer.valueOf(prizeAmt);
+		}
+		return 0;
 	}
 
 }

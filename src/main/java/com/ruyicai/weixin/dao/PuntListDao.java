@@ -7,6 +7,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ruyicai.weixin.domain.PuntList;
 
@@ -21,6 +22,15 @@ public class PuntListDao {
 		TypedQuery<PuntList> q = entityManager.createQuery("select o from PuntList o where o.puntId = ? ", PuntList.class)
 				.setParameter(1, puntId);
 		return q.getResultList();
+	}
+	
+	@Transactional
+	public PuntList merge(PuntList punt, int orderprizeamt)
+	{
+		punt.setOrderprizeamt(orderprizeamt);
+		punt.merge();
+		punt.flush();
+		return punt;
 	}
 	
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.ruyicai.weixin.exception.ErrorCode;
 import com.ruyicai.weixin.exception.WeixinException;
+import com.ruyicai.weixin.util.StringUtil;
 
 @Service
 public class CommonService {
@@ -110,12 +111,15 @@ public class CommonService {
 	{
 		JSONObject json = null;
 		String result = lotserverService.doGetOrderInfo(orderid);
-		JSONObject fromObject = JSONObject.fromObject(result);
-		if (fromObject != null)
+		if (!StringUtil.isEmpty(result))
 		{
-			if ("0".equals(fromObject.get("error_code")))
+			JSONObject fromObject = JSONObject.fromObject(result);
+			if (fromObject != null)
 			{
-				json = JSONObject.fromObject(fromObject.get("result"));
+				if ("0".equals(fromObject.get("error_code")))
+				{
+					json = JSONObject.fromObject(fromObject.get("result"));
+				}
 			}
 		}
 		return json;
