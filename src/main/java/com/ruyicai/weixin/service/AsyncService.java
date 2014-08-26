@@ -39,6 +39,7 @@ public class AsyncService {
 		try {
 			subscriberDao.subscribe(userno, weixinno);
 			caseLotActivityService.createBigUserAndCaseLotUserinfo(userno, "HM00001");
+			caseLotActivityService.createBigUserAndCaseLotUserinfo(userno, "HM00002");
 		} catch (Exception e) {
 			logger.error("subscribe异常:userno:" + userno + ",weixinno:" + weixinno, e);
 		}

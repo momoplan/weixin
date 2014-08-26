@@ -53,6 +53,15 @@ public class CaseLotActivityService {
 			caseLotUserinfo = CaseLotUserinfo.createCaseLotUserinfo(userno,
 					orderid, nickname, headimgurl);
 		}
+		else
+		{
+			if(!headimgurl.equals("") || !nickname.equals(""))
+			{
+				caseLotUserinfo.setHeadimgurl(headimgurl);
+				caseLotUserinfo.setNickname(nickname);
+				caseLotUserinfo.persist();
+			}
+		}
 		return caseLotUserinfo;
 	}
 
@@ -193,7 +202,7 @@ public class CaseLotActivityService {
 			caseLotUserinfo = this.findOrCreateCaseLotUserinfo(userno, orderid,
 					nickname, headimgurl);
 			 
-			//caseLotUserinfo.setSubcribe(subscribe);
+			 
 
 		} catch (Exception e) {
 			logger.error("关注时同步执行 增加 HM00001的活动账户失败:", e.getMessage());
