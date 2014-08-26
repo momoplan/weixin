@@ -275,7 +275,7 @@ public class PacketActivityService {
 						if (puntList != null && puntList.size() > 0) {
 							for (PuntList punt : puntList) {
 								Calendar cal = punt.getOpentime();
-								cal.set(Calendar.MINUTE, cal.get(Calendar.MINUTE) + 30);// 查询开奖时间延迟30分钟
+								cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) + 10);
 								if (new Date().after(cal.getTime()) && punt.getOrderprizeamt() == null)
 								{
 									int orderprizeamt = getPrizeAmt(punt.getOrderid());
@@ -384,7 +384,7 @@ public class PacketActivityService {
 					if (puntList != null && puntList.size() > 0) {
 						for (PuntList punt : puntList) {
 							Calendar cal = punt.getOpentime();
-							cal.set(Calendar.MINUTE, cal.get(Calendar.MINUTE) + 30);// 查询开奖时间延迟30分钟
+							cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) + 10);
 							if (new Date().after(cal.getTime()) && punt.getOrderprizeamt() == null) // 已开奖
 							{
 								int orderprizeamt = getPrizeAmt(punt.getOrderid());
@@ -488,7 +488,7 @@ public class PacketActivityService {
 
 						puntMap.put("openTime", openTime);
 						Calendar cal = punt.getOpentime();
-						cal.set(Calendar.MINUTE, cal.get(Calendar.MINUTE) + 30);// 查询开奖时间延迟30分钟
+						cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) + 10);
 						if (new Date().after(cal.getTime()) && punt.getOrderprizeamt() == null)
 						{
 							int orderprizeamt = getPrizeAmt(punt.getOrderid());
