@@ -2,6 +2,8 @@ package com.ruyicai.weixin.dao;
 
 import java.util.List;
 
+import com.ruyicai.weixin.consts.Const;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -70,5 +72,14 @@ public class PuntPacketDao {
 		TypedQuery<PuntPacket> q = entityManager.createQuery("select o from PuntPacket o where o.getUserno = ? ", PuntPacket.class)
 				.setParameter(1, userno);
 		return q.getResultList();
+	}
+	
+	public List<PuntPacket> findExpiredDatePuntPacket()
+	{
+		
+		String strSQL = "SELECT * FROM `punt_packet` where get_userno is null and createtime <= date_sub(NOW(), interval "+ Const.WX_RETURN_DAY +" day) ;";
+		@SuppressWarnings("unchecked")
+		List<PuntPacket> q = entityManager.createNativeQuery(strSQL).getResultList();
+		return q;
 	}
 }
