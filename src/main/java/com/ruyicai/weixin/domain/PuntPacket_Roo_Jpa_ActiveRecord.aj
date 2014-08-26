@@ -4,12 +4,9 @@
 package com.ruyicai.weixin.domain;
 
 import com.ruyicai.weixin.domain.PuntPacket;
-
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import org.springframework.transaction.annotation.Transactional;
 
 privileged aspect PuntPacket_Roo_Jpa_ActiveRecord {
@@ -30,37 +27,8 @@ privileged aspect PuntPacket_Roo_Jpa_ActiveRecord {
     }
     
     public static List<PuntPacket> PuntPacket.findAllPuntPackets() {
-    	 
-        return entityManager().createQuery("SELECT o FROM PuntPacket o ", PuntPacket.class).getResultList();
-//    	return entityManager().createNativeQuery("SELECT * FROM punt_packet WHERE packet_id = 1 LIMIT 1 FOR UPDATE", PuntPacket.class).getResultList();
-//        return entityManager().createQuery("SELECT o FROM PuntPacket o ", PuntPacket.class).getResultList();
-     
+        return entityManager().createQuery("SELECT o FROM PuntPacket o", PuntPacket.class).getResultList();
     }
-    
-    @SuppressWarnings("unchecked")
-	public static PuntPacket PuntPacket.findOneNotAawardPart(String packet_id) {
-    	String sql = "SELECT * FROM punt_packet WHERE packet_id = "+packet_id+" AND get_userno IS NULL LIMIT 1 FOR UPDATE";
-    	List<PuntPacket> lstPuntPacket = entityManager().createNativeQuery(sql, PuntPacket.class).getResultList();
-    	if(lstPuntPacket.size() >0)
-    		return  lstPuntPacket.get(0);
-    	else
-    		return null;
-    }
-    
-    
-    @SuppressWarnings("unchecked")
-	public static List<PuntPacket> PuntPacket.findByGetUserno(String getUserno,String packet_id) {
-    	String sql = "SELECT * FROM punt_packet WHERE get_userno = '"+getUserno+"' AND packet_id = "+packet_id;
-    	return entityManager().createNativeQuery(sql, PuntPacket.class).getResultList();
-    }
-    
-    @SuppressWarnings("unchecked")
-	public static List<PuntPacket> PuntPacket.findLeftParts(String packet_id) {
-    	String sql = "SELECT * FROM punt_packet WHERE get_userno IS NULL AND packet_id = "+packet_id;
-    	return entityManager().createNativeQuery(sql, PuntPacket.class).getResultList();
-    }
-    
-    
     
     public static List<PuntPacket> PuntPacket.findAllPuntPackets(String sortFieldName, String sortOrder) {
         String jpaQuery = "SELECT o FROM PuntPacket o";
@@ -77,8 +45,6 @@ privileged aspect PuntPacket_Roo_Jpa_ActiveRecord {
         if (id == null) return null;
         return entityManager().find(PuntPacket.class, id);
     }
-    
-
     
     public static List<PuntPacket> PuntPacket.findPuntPacketEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM PuntPacket o", PuntPacket.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
@@ -132,4 +98,31 @@ privileged aspect PuntPacket_Roo_Jpa_ActiveRecord {
         return merged;
     }
     
+    @SuppressWarnings("unchecked")
+    @Transactional
+	public static PuntPacket PuntPacket.findOneNotAawardPart(String packet_id) {
+    	String sql = "SELECT * FROM punt_packet WHERE get_userno IS NULL AND packet_id = "+packet_id+" LIMIT 1 FOR UPDATE";
+    	List<PuntPacket> lstPuntPacket = entityManager().createNativeQuery(sql, PuntPacket.class).getResultList();
+    	if(lstPuntPacket.size() >0)
+    		return  lstPuntPacket.get(0);
+    	else
+    		return null;
+    }
+    
+    
+    @SuppressWarnings("unchecked")
+    @Transactional
+	public static List<PuntPacket> PuntPacket.findByGetUserno(String getUserno,String packet_id) {
+    	String sql = "SELECT * FROM punt_packet WHERE packet_id = '"+packet_id+"' AND get_userno = " +getUserno;
+    	return entityManager().createNativeQuery(sql, PuntPacket.class).getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Transactional
+	public static List<PuntPacket> PuntPacket.findLeftParts(String packet_id) {
+    	String sql = "SELECT * FROM punt_packet WHERE get_userno IS NULL AND packet_id = "+packet_id;
+    	return entityManager().createNativeQuery(sql, PuntPacket.class).getResultList();
+    }
+    
+ 
 }

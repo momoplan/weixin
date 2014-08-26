@@ -21,23 +21,7 @@ public class PuntPacketDao {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	public PuntPacket findPunt(String packet_id) {
-		if (StringUtils.isBlank(packet_id)) {
-			throw new IllegalArgumentException("The argument packet_id  is required");
-		}
-				
-//		PuntPacket puntPacket = new PuntPacket();
-//		 
-//		puntPacket.setPacketId(Integer.parseInt(packet_id));		
-//		PuntPacket iPunt = this.entityManager.find(PuntPacket.class, puntPacket);
-		
-		PuntPacket puntPacket =  new PuntPacket();
-		 
-		puntPacket = PuntPacket.findPuntPacket(1);
-		
-		 
-		return puntPacket;
-	}
+
 	
 	@Transactional
 	public PuntPacket createPuntPacket(int packetId, int randomPunts)

@@ -545,5 +545,15 @@ public class PacketActivityService {
 		}
 		return 0;
 	}
+	
+	public int returnAllLeftPunts()
+	{
+		int ret = 0;
+		//在packet表中查找超过指定时间范围的红包，取红包id,userno
+		//根据红包id
+		return ret;
+	}
+	
+
 
 }

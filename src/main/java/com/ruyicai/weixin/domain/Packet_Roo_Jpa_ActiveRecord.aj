@@ -22,6 +22,8 @@ privileged aspect Packet_Roo_Jpa_ActiveRecord {
         return em;
     }
     
+
+       
     public static long Packet.countPackets() {
         return entityManager().createQuery("SELECT COUNT(o) FROM Packet o", Long.class).getSingleResult();
     }
