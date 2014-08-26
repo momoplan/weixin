@@ -74,12 +74,11 @@ public class PuntPacketDao {
 		return q.getResultList();
 	}
 	
-	public List<PuntPacket> findExpiredDatePuntPacket()
-	{
-		
-		String strSQL = "SELECT * FROM `punt_packet` where get_userno is null and createtime <= date_sub(NOW(), interval "+ Const.WX_RETURN_DAY +" day) ;";
-		@SuppressWarnings("unchecked")
-		List<PuntPacket> q = entityManager.createNativeQuery(strSQL).getResultList();
-		return q;
-	}
+//	public List<PuntPacket> findExpiredDatePuntPacket()
+//	{		
+//		String strSQL = "SELECT * FROM `punt_packet` where get_userno is null and createtime <= date_sub(NOW(), interval "+ Const.WX_RETURN_DAY +" day) ;";
+//		@SuppressWarnings("unchecked")
+//		List<PuntPacket> q = entityManager.createNativeQuery(strSQL).getResultList();
+//		return q;
+//	}
 }

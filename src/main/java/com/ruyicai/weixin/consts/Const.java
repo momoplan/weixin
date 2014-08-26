@@ -9,5 +9,7 @@ public class Const {
 	public static String DEFAULT_BIGUSER_TYPE = "000007";
 	
 	public static String WX_PACKET_ACTIVITY = "HM00002";
+	
+	public static int WX_RETURN_DAY = 1;
 
 }
