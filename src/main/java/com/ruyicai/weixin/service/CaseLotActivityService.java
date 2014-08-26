@@ -85,6 +85,7 @@ public class CaseLotActivityService {
 		CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo
 				.findCaseLotUserinfo(new CaseLotUserinfoPK(userno, orderid));
 		if (caseLotUserinfo == null) {
+			logger.info("活动用户不存在,userno:{}", userno);
 			throw new WeixinException(ErrorCode.CASELOTUSERINFO_NOT_EXISTS);
 		}
 		return caseLotUserinfo;

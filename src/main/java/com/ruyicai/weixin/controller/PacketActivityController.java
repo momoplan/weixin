@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ruyicai.weixin.consts.Const;
-import com.ruyicai.weixin.domain.CaseLotUserinfo;
 import com.ruyicai.weixin.domain.Packet;
 import com.ruyicai.weixin.dto.lottery.ResponseData;
 import com.ruyicai.weixin.exception.ErrorCode;
@@ -33,7 +32,7 @@ public class PacketActivityController {
 
 	@Autowired
 	PacketActivityService packetActivityService;
-
+	
 	@Autowired
 	CaseLotActivityService caseLotActivityService;
 
@@ -118,35 +117,33 @@ public class PacketActivityController {
 				return JsonMapper.toJsonP(callback, rd);
 			}
 
-			CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(
-					award_userno, Const.WX_PACKET_ACTIVITY);
-			if (userInfo == null) {
-				rd.setErrorCode(ErrorCode.CASELOTUSERINFO_NOT_EXISTS.value);// 未抢到
-				rd.setValue(ErrorCode.CASELOTUSERINFO_NOT_EXISTS.memo);
+			// 判断用户是否存在
+			caseLotActivityService.caseLotchances(award_userno, Const.WX_PACKET_ACTIVITY);
+			int status = packetActivityService.getPacketStatus(award_userno, packet_id);
+			if (status == 0) {
+				Map<String, Object> imap = packetActivityService.getPunts(
+						award_userno, channel, packet_id);
 
-			} else
-
-			{
-
-				Map<String, String> map = packetActivityService
-						.doGetPacketStus(award_userno, packet_id);
-				String status = map.get("status");
-				if (status.equals("0")) {
-					Map<String, Object> imap = packetActivityService.getPunts(
-							award_userno, channel, packet_id);
-
-					rd.setErrorCode(ErrorCode.OK.value);
-					rd.setValue(imap);
-				} else {
-					rd.setErrorCode(ErrorCode.GET_PUNT_FAIL.value);// 未抢到
-					rd.setValue(map);
+				rd.setErrorCode(ErrorCode.OK.value);
+				rd.setValue(imap);
+			} else {
+				String value = "";
+				if (status == 1)
+				{
+					value = "红包已抢完";
+				} else if (status == 2)
+				{
+					value = "你已抢过红包";
+				} else
+				{
+					value = "不能抢自己发的红包";
 				}
+				rd.setValue(value);
+				rd.setErrorCode(String.valueOf(status));
 			}
-
 		} catch (WeixinException e) {
-			logger.error("getPuntsFromPacket error1", e);
 			rd.setErrorCode(e.getErrorCode().value);
-			rd.setValue(e.getMessage());
+			rd.setValue(e.getErrorCode().memo);
 		} catch (Exception e) {
 			logger.error("getPuntsFromPacket error2", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
