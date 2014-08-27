@@ -22,8 +22,6 @@ privileged aspect Packet_Roo_Jpa_ActiveRecord {
         return em;
     }
     
-
-       
     public static long Packet.countPackets() {
         return entityManager().createQuery("SELECT COUNT(o) FROM Packet o", Long.class).getSingleResult();
     }
@@ -45,11 +43,9 @@ privileged aspect Packet_Roo_Jpa_ActiveRecord {
     
     public static Packet Packet.findPacket(Integer id) {
         if (id == null) return null;
-        
         return entityManager().find(Packet.class, id);
     }
     
- 
     public static List<Packet> Packet.findPacketEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM Packet o", Packet.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }

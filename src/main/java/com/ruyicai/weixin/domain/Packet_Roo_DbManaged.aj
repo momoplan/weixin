@@ -35,6 +35,9 @@ privileged aspect Packet_Roo_DbManaged {
     @DateTimeFormat(style = "MM")
     private Calendar Packet.createtime;
     
+    @Column(name = "return_punts")
+    private Integer Packet.returnPunts;
+    
     public String Packet.getOpenid() {
         return openid;
     }
@@ -89,6 +92,14 @@ privileged aspect Packet_Roo_DbManaged {
     
     public void Packet.setCreatetime(Calendar createtime) {
         this.createtime = createtime;
+    }
+    
+    public Integer Packet.getReturnPunts() {
+        return returnPunts;
+    }
+    
+    public void Packet.setReturnPunts(Integer returnPunts) {
+        this.returnPunts = returnPunts;
     }
     
 }

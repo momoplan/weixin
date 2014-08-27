@@ -124,5 +124,4 @@ privileged aspect PuntPacket_Roo_Jpa_ActiveRecord {
     	return entityManager().createNativeQuery(sql, PuntPacket.class).getResultList();
     }
     
- 
 }

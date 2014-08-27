@@ -32,11 +32,6 @@ privileged aspect PuntPacket_Roo_DbManaged {
     @Column(name = "thank_words", length = 90)
     private String PuntPacket.thankWords;
     
-    @Column(name = "createtime")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
-    private Calendar PuntPacket.createtime;
-    
     public Integer PuntPacket.getPacketId() {
         return packetId;
     }
@@ -83,14 +78,6 @@ privileged aspect PuntPacket_Roo_DbManaged {
     
     public void PuntPacket.setThankWords(String thankWords) {
         this.thankWords = thankWords;
-    }
-    
-    public Calendar PuntPacket.getCreatetime() {
-        return createtime;
-    }
-    
-    public void PuntPacket.setCreatetime(Calendar createtime) {
-        this.createtime = createtime;
     }
     
 }
