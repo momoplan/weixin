@@ -37,7 +37,7 @@ public class PuntPacketDao {
 	
 	public List<PuntPacket> findPuntPacketGrabedList(int packetId)
 	{
-		TypedQuery<PuntPacket> q = entityManager.createQuery("select o from PuntPacket o where o.getUserno != null and o.packetId = ? ", PuntPacket.class)
+		TypedQuery<PuntPacket> q = entityManager.createQuery("select o from PuntPacket o where o.getUserno != null and o.packetId = ? order by o.id desc", PuntPacket.class)
 				.setParameter(1, packetId);
 		return q.getResultList();
 	}
@@ -69,7 +69,7 @@ public class PuntPacketDao {
 	
 	public List<PuntPacket> findPuntPacketByUserno(String userno)
 	{
-		TypedQuery<PuntPacket> q = entityManager.createQuery("select o from PuntPacket o where o.getUserno = ? ", PuntPacket.class)
+		TypedQuery<PuntPacket> q = entityManager.createQuery("select o from PuntPacket o where o.getUserno = ? order by o.getTime desc", PuntPacket.class)
 				.setParameter(1, userno);
 		return q.getResultList();
 	}

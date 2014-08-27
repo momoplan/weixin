@@ -249,12 +249,14 @@ public class PacketActivityService {
 				// 红包领取份数
 				List<PuntPacket> grabList = puntPacketDao
 						.findPuntPacketGrabedList(packet.getId());
-				map.put("get_punts", grabList.size());
 
+				int get_punts = 0; // 领取注数
 				// 查询中奖人数
 				int win_persons = 0;
 				if (grabList != null && grabList.size() > 0) {
 					for (PuntPacket puntPacket : grabList) {
+						get_punts += puntPacket.getRandomPunts();
+						
 						List<PuntList> puntList = puntListDao
 								.findPuntListGrabedList(puntPacket.getId());
 						if (puntList != null && puntList.size() > 0) {
@@ -280,6 +282,7 @@ public class PacketActivityService {
 					}
 				}
 
+				map.put("get_punts", get_punts);
 				map.put("win_persons", win_persons);
 
 				arry.put(map);

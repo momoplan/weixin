@@ -35,7 +35,7 @@ public class PacketDao {
 	
 	public List<Packet> findPacketListByUserno(String userno)
 	{
-		TypedQuery<Packet> q = entityManager.createQuery("select o from Packet o where o.packetUserno = ?", Packet.class)
+		TypedQuery<Packet> q = entityManager.createQuery("select o from Packet o where o.packetUserno = ? order by o.id desc", Packet.class)
 				.setParameter(1, userno);
 		return q.getResultList();
 	}
