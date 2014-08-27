@@ -47,6 +47,8 @@ public class CaseLotUserinfo {
 //	@Column(name = "subscribe")
 //	private String subscribe;
 	
+	@Column(name = "settingImgurl")
+	private String settingImgurl;
 
 
 	public static CaseLotUserinfo findCaseLotUserinfo(CaseLotUserinfoPK id, boolean lock) {

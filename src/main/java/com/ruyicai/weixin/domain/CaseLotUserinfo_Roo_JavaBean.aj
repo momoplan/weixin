@@ -66,4 +66,12 @@ privileged aspect CaseLotUserinfo_Roo_JavaBean {
     public void CaseLotUserinfo.setLinkTimes(int linkTimes) {
         this.linkTimes = linkTimes;
     }
+    
+    public String CaseLotUserinfo.getSettingImgurl() {
+        return this.settingImgurl;
+    }
+    
+    public void CaseLotUserinfo.setSettingImgurl(String settingImgurl) {
+        this.settingImgurl = settingImgurl;
+    }
 }
