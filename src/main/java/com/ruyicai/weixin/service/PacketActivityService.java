@@ -257,16 +257,16 @@ public class PacketActivityService {
 						if (puntList != null && puntList.size() > 0) {
 							for (PuntList punt : puntList) {
 								Calendar cal = punt.getOpentime();
-								cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) + 22);
+								cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) + 24);
 								if (new Date().after(cal.getTime()) && punt.getOrderprizeamt() == null)
 								{
 									int orderprizeamt = getPrizeAmt(punt.getOrderid());
 									// 更新中奖金额
-									cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 22);
+									cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 24);
 									puntListDao.merge(punt, orderprizeamt);
 								} else
 								{
-									cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 22); // 还原时间
+									cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 24); // 还原时间
 								}
 								
 								if (punt.getOrderprizeamt() != null
@@ -341,34 +341,37 @@ public class PacketActivityService {
 			String acknowledge = "";
 			String nickname = "";
 			String imgurl = "";
+			String isOpen = "0"; // 是否开奖,0-未开奖:1-已开奖
 			int packet_user_award = 0;
 			JSONArray arry = new JSONArray();
 			Map<String, Object> packet_user_Map = new HashMap<String, Object>();
 			Date return_lottery_date = null;
 			if (grabList != null && grabList.size() > 0) {
-				
-				
 				for (PuntPacket puntPacket : grabList) {
 					if(puntPacket.getGetUserno().equals(packetUserno))
 					{
 						totalPunts += puntPacket.getRandomPunts();		
-						
 						
 						List<PuntList> puntList = puntListDao
 								.findPuntListGrabedList(puntPacket.getId());
 						if (puntList != null && puntList.size() > 0) {
 							for (PuntList punt : puntList) {
 								Calendar cal = punt.getOpentime();
-								cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) + 22);
+								cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) + 24);
+								
+								if (new Date().after(cal.getTime())) {
+									isOpen = "1";
+								}
+								
 								if (new Date().after(cal.getTime()) && punt.getOrderprizeamt() == null) // 已开奖
 								{
 									int orderprizeamt = getPrizeAmt(punt.getOrderid());
 									// 更新中奖金额
-									cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 22);
+									cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 24);
 									puntListDao.merge(punt, orderprizeamt);
 								} else
 								{
-									cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 22); // 还原时间
+									cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 24); // 还原时间
 								}
 								
 								if (punt.getOrderprizeamt() == null)
@@ -433,16 +436,21 @@ public class PacketActivityService {
 					if (puntList != null && puntList.size() > 0) {
 						for (PuntList punt : puntList) {
 							Calendar cal = punt.getOpentime();
-							cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) + 22);
+							cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) + 24);
+							
+							if (new Date().after(cal.getTime())) {
+								isOpen = "1";
+							}
+							
 							if (new Date().after(cal.getTime()) && punt.getOrderprizeamt() == null) // 已开奖
 							{
 								int orderprizeamt = getPrizeAmt(punt.getOrderid());
 								// 更新中奖金额
-								cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 22);
+								cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 24);
 								puntListDao.merge(punt, orderprizeamt);
 							} else
 							{
-								cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 22); // 还原时间
+								cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 24); // 还原时间
 							}
 							
 							if (punt.getOrderprizeamt() == null)
@@ -463,15 +471,17 @@ public class PacketActivityService {
 						}
 					}
 					grapMap.put("award", award); // 中奖金额
+					grapMap.put("isOpen", isOpen); // 是否开奖
 					grapMap.put("lottery_date", lottery_date == null ? "" : DateUtil.format("MM月dd日", lottery_date));// 开奖时间
 
 					arry.put(grapMap);
 				}
 				
+				packet_user_Map.put("isOpen", isOpen); // 是否开奖
 				packet_user_Map.put("award", packet_user_award); // 中奖金额
-				packet_user_Map.put("get_punts", totalPunts); // 中奖金额
-				packet_user_Map.put("nickname", userInfo.getNickname()); // 中奖金额
-				packet_user_Map.put("headimgurl", userInfo.getHeadimgurl()); // 中奖金额
+				packet_user_Map.put("get_punts", totalPunts); // 领取注
+				packet_user_Map.put("nickname", userInfo.getNickname()); // 用户昵称
+				packet_user_Map.put("headimgurl", userInfo.getHeadimgurl()); // 用户头像
 				
 				packet_user_Map.put("return_lottery_date", return_lottery_date == null ? "" : DateUtil.format("MM月dd日", return_lottery_date));// 开奖时间
 				
@@ -550,7 +560,7 @@ public class PacketActivityService {
 						if (cal.getTime() != null)
 							openTime = DateUtil.format("MM月dd日", cal.getTime());
 						
-						cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) + 22);
+						cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) + 24);
 						
 						String isOpen = "0"; // 是否开奖,0-未开奖:1-已开奖
 						if (new Date().after(cal.getTime())) {
@@ -561,11 +571,11 @@ public class PacketActivityService {
 						{
 							int orderprizeamt = getPrizeAmt(punt.getOrderid());
 							// 更新中奖金额
-							cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 22);
+							cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 24);
 							puntListDao.merge(punt, orderprizeamt);
 						} else
 						{
-							cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 22); // 还原时间
+							cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 24); // 还原时间
 						}
 						
 						puntMap.put("orderprizeamt", punt.getOrderprizeamt() == null ? 0 : punt.getOrderprizeamt());

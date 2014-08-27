@@ -102,7 +102,6 @@ public class PacketActivityController {
 		return JsonMapper.toJsonP(callback, rd);
 	}
 
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/getPuntsFromPacket", method = RequestMethod.GET)
 	@ResponseBody
 	public String getpuntsfrompacket(
