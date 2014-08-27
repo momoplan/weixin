@@ -43,11 +43,9 @@ privileged aspect Packet_Roo_Jpa_ActiveRecord {
     
     public static Packet Packet.findPacket(Integer id) {
         if (id == null) return null;
-        
         return entityManager().find(Packet.class, id);
     }
     
- 
     public static List<Packet> Packet.findPacketEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM Packet o", Packet.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
