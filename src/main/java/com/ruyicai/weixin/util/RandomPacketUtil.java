@@ -23,18 +23,20 @@ public class RandomPacketUtil {
 			}
 		} else
 		{
-			int init = 1;
+			int init = (int) (betNum * 0.6) / parts ; // 初始值
+			if (init == 0)
+				init = 1;
+			
+			int remain = betNum - (init * parts);
+			int remainAvg = (int) (remain / parts);
+			
+			if (remainAvg < 3)
+				remainAvg = 5;
+			
 			int sum = 0;
-			int remain = betNum - parts;
-			int benchmark = 2;
-			if(benchmark < remain)
-				benchmark += benchmark * (betNum / parts);
-
 			for(int i = 0; i < p.length; ++i)
 			{
-				int next = 0;
-				if (rd.nextInt(2) == 1)
-					next = rd.nextInt(benchmark);
+				int next = 1 + rd.nextInt(remainAvg);
 				
 				if ((sum + next) > remain)
 				{
@@ -56,6 +58,22 @@ public class RandomPacketUtil {
 		}
 
 		return p;
+	}
+	
+	public static void main(String[] args)
+	{
+		for (int i = 0; i< 50;i++)
+		{
+			System.out.print("测试" + i + "=====");
+			int[] in = getRandomPunt(100,20);
+			int sum = 0;
+			for (int j = 0 ; j <in.length ; j++)
+			{
+				System.out.print(in[j] + ",");
+				sum += in[j];
+			}
+			System.out.println("\r\n 总注数: " + sum + "\r\n");
+		}
 	}
 	
 }
