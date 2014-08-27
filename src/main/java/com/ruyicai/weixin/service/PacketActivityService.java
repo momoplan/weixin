@@ -242,7 +242,10 @@ public class PacketActivityService {
 				map.put("total_parts", packet.getTotalPersons());
 				map.put("paket_date", DateUtil.format("yyyy-MM-dd", packet
 						.getCreatetime().getTime()));
-				map.put("return_punts", packet.getReturnPunts());
+				if(null == packet.getReturnPunts())
+					map.put("return_punts", 0);
+				else
+					map.put("return_punts", packet.getReturnPunts());
 				// 红包领取份数
 				List<PuntPacket> grabList = puntPacketDao
 						.findPuntPacketGrabedList(packet.getId());
@@ -549,6 +552,12 @@ public class PacketActivityService {
 							: userInfo.getNickname());
 					map.put("get_time", DateUtil.format("yyyy-MM-dd",
 							puntPacket.getGetTime().getTime())); // 领取红包时间
+					
+					if(fromUserno.equals(awardUserno))
+						map.put("isreturn", 1);
+					else
+						map.put("isreturn", 0);
+						
 
 					JSONArray puntArry = new JSONArray();
 					for (PuntList punt : puntList) {
