@@ -11,5 +11,6 @@ public class Const {
 	public static String WX_PACKET_ACTIVITY = "HM00002";
 	
 	public static int WX_RETURN_DAY = 1;
+	public static String WX_PACKET_CHANNEL = "1101";
 
 }
