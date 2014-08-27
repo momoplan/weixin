@@ -50,7 +50,6 @@ public class CaseLotUserinfo {
 	@Column(name = "settingImgurl")
 	private String settingImgurl;
 
-
 	public static CaseLotUserinfo findCaseLotUserinfo(CaseLotUserinfoPK id, boolean lock) {
 		CaseLotUserinfo caseLotUserinfo = entityManager().find(CaseLotUserinfo.class, id,
 				lock ? LockModeType.PESSIMISTIC_WRITE : LockModeType.NONE);
