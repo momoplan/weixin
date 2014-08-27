@@ -1,6 +1,7 @@
 package com.ruyicai.weixin.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +14,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+ 
+
+
 import com.ruyicai.weixin.consts.Const;
+import com.ruyicai.weixin.dao.PacketDao;
 import com.ruyicai.weixin.domain.Packet;
 import com.ruyicai.weixin.dto.lottery.ResponseData;
 import com.ruyicai.weixin.exception.ErrorCode;
@@ -189,7 +194,7 @@ public class PacketActivityController {
 		}
 		return JsonMapper.toJsonP(callback, rd);
 	}
-
+    //送到的红包列表
 	@RequestMapping(value = "/getPacketList", method = RequestMethod.GET)
 	@ResponseBody
 	public String getPacketList(
@@ -279,6 +284,7 @@ public class PacketActivityController {
 		return JsonMapper.toJsonP(callback, rd);
 	}
 
+	//领取的列表
 	@RequestMapping(value = "/getMyPunts", method = RequestMethod.GET)
 	@ResponseBody
 	public String getMyPunts(
@@ -324,6 +330,30 @@ public class PacketActivityController {
 			logger.error("getActivityEnv error", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
 			rd.setValue(ErrorCode.ERROR.memo);
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
+	
+ 
+	@RequestMapping(value = "/returnAllLeftPunts", method = RequestMethod.GET)
+	@ResponseBody
+	public String returnAllLeftPunts(@RequestParam(value = "callBackMethod", required = true) String callback) {
+		 
+		ResponseData rd = new ResponseData();
+		try {
+
+			int returnPunts = packetActivityService.returnAllLeftPunts();		
+			rd.setErrorCode(ErrorCode.OK.value);			
+			rd.setValue(returnPunts);
+
+		} catch (WeixinException e) {
+			logger.error("findReturnPacketList error", e);
+			rd.setErrorCode(e.getErrorCode().value);
+			rd.setValue(e.getMessage());
+		} catch (Exception e) {
+			logger.error("findReturnPacketList error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(e.getMessage());
 		}
 		return JsonMapper.toJsonP(callback, rd);
 	}

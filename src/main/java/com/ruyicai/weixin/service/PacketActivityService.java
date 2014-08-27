@@ -103,9 +103,13 @@ public class PacketActivityService {
 	 * @param greetings
 	 *            祝福语
 	 */
-	@SuppressWarnings("rawtypes")
-	public Map getPunts(String award_userno, String channel, String packet_id) {
+	 
+	public Map<String, Object> getPunts(String award_userno, String channel, String packet_id) {
 		PuntPacket puntPacket = PuntPacket.findOneNotAawardPart(packet_id);
+		 return getPunts( award_userno,  channel,  puntPacket);
+	}
+	
+	public Map<String, Object> getPunts(String award_userno, String channel, PuntPacket puntPacket) {		 
 		if (puntPacket != null) {
 			int punts = puntPacket.getRandomPunts();
 
@@ -119,12 +123,10 @@ public class PacketActivityService {
 				doCreatePuntList(result[i], award_userno, channel, puntPacket.getId());
 			}
 
-			updatePuntPacket(puntPacket, award_userno);
-			
+			updatePuntPacket(puntPacket, award_userno);			
 			// 获取最新期开奖时间
 			String ret = commonService.getBatchInfo();
-			Calendar cal_open = Calendar.getInstance();
-			
+			Calendar cal_open = Calendar.getInstance();			
 			java.text.DateFormat format1 = new java.text.SimpleDateFormat(
 					"yyyy-MM-dd");
 			try {
@@ -235,11 +237,12 @@ public class PacketActivityService {
 				JSONObject map = new JSONObject();
 				// 红包详情
 				map.put("packet_id", packet.getId());
+				
 				map.put("total_punts", packet.getTotalPunts());
 				map.put("total_parts", packet.getTotalPersons());
 				map.put("paket_date", DateUtil.format("yyyy-MM-dd", packet
 						.getCreatetime().getTime()));
-
+				map.put("return_punts", packet.getReturnPunts());
 				// 红包领取份数
 				List<PuntPacket> grabList = puntPacketDao
 						.findPuntPacketGrabedList(packet.getId());
@@ -333,15 +336,69 @@ public class PacketActivityService {
 			int userno_punts = 0; // userno 参数抢到注数
 			String is_thanks = "0"; // 已答谢状态,0-未答谢;1-已答谢
 			String thank_words = "";
+			boolean isMe = false;
+			int totalPunts = 0;
+			String acknowledge = "";
+			String nickname = "";
+			String imgurl = "";
+			int packet_user_award = 0;
 			JSONArray arry = new JSONArray();
+			Map<String, Object> packet_user_Map = new HashMap<String, Object>();
+			Date return_lottery_date = null;
 			if (grabList != null && grabList.size() > 0) {
+				
+				
 				for (PuntPacket puntPacket : grabList) {
+					if(puntPacket.getGetUserno().equals(packetUserno))
+					{
+						totalPunts += puntPacket.getRandomPunts();		
+						
+						
+						List<PuntList> puntList = puntListDao
+								.findPuntListGrabedList(puntPacket.getId());
+						if (puntList != null && puntList.size() > 0) {
+							for (PuntList punt : puntList) {
+								Calendar cal = punt.getOpentime();
+								cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) + 22);
+								if (new Date().after(cal.getTime()) && punt.getOrderprizeamt() == null) // 已开奖
+								{
+									int orderprizeamt = getPrizeAmt(punt.getOrderid());
+									// 更新中奖金额
+									cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 22);
+									puntListDao.merge(punt, orderprizeamt);
+								} else
+								{
+									cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) - 22); // 还原时间
+								}
+								
+								if (punt.getOrderprizeamt() == null)
+								{
+									if (return_lottery_date != null) {
+										if (return_lottery_date.after(cal.getTime())) {
+											return_lottery_date = cal.getTime();
+										}
+									} else {
+										return_lottery_date = cal.getTime();
+									}
+								}
+								
+								if (punt.getOrderprizeamt() != null
+										&& punt.getOrderprizeamt() > 0) {
+									packet_user_award += punt.getOrderprizeamt();
+								}
+							}
+						}
+						
+						continue;
+					}
+					
 					Map<String, Object> grapMap = new HashMap<String, Object>();
 					grapMap.put("punts", puntPacket.getRandomPunts());
 					grapMap.put("acknowledge", StringUtil.isEmpty(puntPacket.getThankWords()) ? "" : puntPacket.getThankWords());
 					get_punts += puntPacket.getRandomPunts();
 					if (userno.equals(puntPacket.getGetUserno()))
 					{
+						isMe = true;
 						userno_punts = puntPacket.getRandomPunts();
 						if (!StringUtil.isEmpty(puntPacket.getThankWords())) {
 							thank_words = puntPacket.getThankWords();
@@ -352,11 +409,20 @@ public class PacketActivityService {
 					CaseLotUserinfo grabUserInfo = caseLotActivityService
 							.caseLotchances(puntPacket.getGetUserno(),
 									Const.WX_PACKET_ACTIVITY);
+					
 					if (grabUserInfo != null) {
 						nickName = grabUserInfo.getNickname();
 						headimg = grabUserInfo.getHeadimgurl();
 					}
 					grapMap.put("nickname", nickName);
+					if(isMe && nickName.equals(""))
+					{
+						grapMap.put("nickname", "我");
+						isMe = false;
+					}
+					else
+						grapMap.put("nickname", nickName);
+					
 					grapMap.put("headimg", headimg);
 
 					// 中奖详情
@@ -401,9 +467,19 @@ public class PacketActivityService {
 
 					arry.put(grapMap);
 				}
+				
+				packet_user_Map.put("award", packet_user_award); // 中奖金额
+				packet_user_Map.put("get_punts", totalPunts); // 中奖金额
+				packet_user_Map.put("nickname", userInfo.getNickname()); // 中奖金额
+				packet_user_Map.put("headimgurl", userInfo.getHeadimgurl()); // 中奖金额
+				
+				packet_user_Map.put("return_lottery_date", return_lottery_date == null ? "" : DateUtil.format("MM月dd日", return_lottery_date));// 开奖时间
+				
 			}
 
+			map.put("packet_user_punts", packet_user_Map);
 			map.put("punt_list", arry.toString());
+			
 			map.put("get_punts", get_punts);
 			map.put("userno_punts", userno_punts);
 			map.put("is_thanks", is_thanks);
@@ -414,6 +490,8 @@ public class PacketActivityService {
 			throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
 		}
 	}
+	
+	 
 
 	/**
 	 * 答谢TA
@@ -596,15 +674,56 @@ public class PacketActivityService {
 		puntPacketDao.createPuntPacket(packetId, randomPunts);
 	}
 	
+	@Transactional
 	public int returnAllLeftPunts()
 	{
 		int ret = 0;
 		//在packet表中查找超过指定时间范围的红包，取红包id,userno
 		//List<PuntPacket> lstPuntPacket = puntPacketDao.findExpiredDatePuntPacket();
-		//根据红包id给送红包userno抢红包
-	
+		try
+		{
+		List<Packet> lstPacket = packetDao.findReturnPacketList();
+		String packet_userno = "";
+		String packet_id = "";
+		Map iMap = null;
+		int totalReturnPunts = 0;
+		List<PuntPacket> lstPuntPacket = null;
 		
+		Packet packet = null;
+		
+		for(int i = 0;i <lstPacket.size();i++)
+		{
+			 packet = lstPacket.get(i);
+			packet_userno = packet.getPacketUserno();
+			packet_id = String.valueOf(packet.getId());	
+			lstPuntPacket = PuntPacket.findLeftParts(packet_id);
+			
+			for(int j = 0;j < lstPuntPacket.size();j++)
+			{
+				iMap = getPunts(packet_userno,Const.WX_PACKET_CHANNEL,lstPuntPacket.get(j));
+				totalReturnPunts += Integer.parseInt(String.valueOf(iMap.get("punts")));
+			}
+			
+			 
+			packet.setReturnPunts(totalReturnPunts);
+			packet.merge();
+			totalReturnPunts = 0;
+		}
+		}
+		catch(Exception ex)
+		{			
+			logger.info("returnAllLeftPunts:"+ex.getMessage());
+			throw new WeixinException(ErrorCode.ERROR);
+		}
+		//根据红包id给送红包userno抢红包
 		return ret;
+	}
+	
+	@Transactional
+	public List<Packet> findReturnPacketList()
+	{
+		List<Packet> map = packetDao.findReturnPacketList();
+		return map;
 	}
 
 }

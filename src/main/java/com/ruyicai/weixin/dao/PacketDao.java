@@ -39,4 +39,11 @@ public class PacketDao {
 				.setParameter(1, userno);
 		return q.getResultList();
 	}
+	
+	public List<Packet> findReturnPacketList()
+	{
+		@SuppressWarnings("unchecked")
+		List<Packet> q = entityManager.createNativeQuery("SELECT * FROM packet where createtime <= date_sub(NOW(), interval 24 hour) and return_punts is null", Packet.class).getResultList();
+		return q;
+	}
 }
