@@ -43,10 +43,6 @@ public class CaseLotUserinfo {
 
 	@Column(name = "linkTimes")
 	private int linkTimes;
-	
-//	@Column(name = "subscribe")
-//	private String subscribe;
-	
 
 
 	public static CaseLotUserinfo findCaseLotUserinfo(CaseLotUserinfoPK id, boolean lock) {

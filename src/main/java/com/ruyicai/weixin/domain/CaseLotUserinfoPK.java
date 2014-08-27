@@ -18,7 +18,5 @@ public class CaseLotUserinfoPK implements Serializable {
 
 	@Column(name = "orderid", length = 100)
 	private String orderid;
-	
-
 
 }
