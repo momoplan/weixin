@@ -167,7 +167,7 @@ public class PacketActivityController {
 			@RequestParam(value = "award_userno", required = false) String award_userno,
 			@RequestParam(value = "packet_id", required = false) String packet_id,
 			@RequestParam(value = "callBackMethod", required = false) String callback) {
-		logger.info("getPuntsFromPacket award_userno:{} packet_id：{} ",
+		logger.info("getPacketStatus award_userno:{} packet_id：{} ",
 				award_userno, packet_id);
 		ResponseData rd = new ResponseData();
 		try {
@@ -186,11 +186,11 @@ public class PacketActivityController {
 			rd.setValue(map);
 
 		} catch (WeixinException e) {
-			logger.error("getPacketStatus error", e);
+			logger.error("getPacketStatus error1", e);
 			rd.setErrorCode(e.getErrorCode().value);
 			rd.setValue(e.getMessage());
 		} catch (Exception e) {
-			logger.error("getPacketStatus error", e);
+			logger.error("getPacketStatus error2", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
 			rd.setValue(e.getMessage());
 		}

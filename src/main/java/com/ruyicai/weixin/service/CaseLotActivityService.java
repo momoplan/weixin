@@ -59,7 +59,7 @@ public class CaseLotActivityService {
 			{
 				caseLotUserinfo.setHeadimgurl(headimgurl);
 				caseLotUserinfo.setNickname(nickname);
-				caseLotUserinfo.persist();
+				caseLotUserinfo.merge();
 			}
 		}
 		return caseLotUserinfo;
@@ -180,7 +180,6 @@ public class CaseLotActivityService {
 			WeixinUserDTO dto = null;
 			String nickname = "";
 			String headimgurl = "";
-			String subscribe = "0";
 			try {
 				dto = weixinService.findUserinfoByOpenid(accessToken, openid);
 
@@ -189,8 +188,6 @@ public class CaseLotActivityService {
 							.getNickname() : "";
 					headimgurl = StringUtils.isNotEmpty(dto.getHeadimgurl()) ? dto
 							.getHeadimgurl() : "";
-					subscribe = String.valueOf(dto.getSubscribe());
-
 				}
 
 			} catch (Exception ex) {

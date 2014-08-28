@@ -177,7 +177,6 @@ public class PacketActivityService {
 			logger.info("caseLotActivityService.caseLotchances award_userno{}",
 					award_userno);
 			throw new WeixinException(ErrorCode.ERROR);
-
 		}
 
 		return map;
@@ -202,15 +201,24 @@ public class PacketActivityService {
 			try
 			{
 				if (packet.getPacketUserno().equals(award_userno))
+				{
+					logger.info("不能抢自己送的红包 - packet_id:{} award_userno:{}", packet_id, award_userno);
 					return 3; // 送红包的抢不了
+				}
 
 				List<PuntPacket> lstPuntPacket = PuntPacket.findByGetUserno(award_userno, packet_id);
 				if (lstPuntPacket != null && lstPuntPacket.size() > 0)
+				{
+					logger.info("红包已抢过 - packet_id:{} award_userno:{}", packet_id, award_userno);
 					return 2; // 已抢过
+				}
 
 				List<PuntPacket> puntPacket = PuntPacket.findLeftParts(packet_id);
 				if (null == puntPacket || puntPacket.size() == 0)
+				{
+					logger.info("红包已抢完 - packet_id:{} award_userno:{}", packet_id, award_userno);
 					return 1; // 已抢完
+				}
 
 			} catch (WeixinException ex)
 			{
