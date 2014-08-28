@@ -2,13 +2,10 @@ package com.ruyicai.weixin.dao;
 
 import java.util.List;
 
-import com.ruyicai.weixin.consts.Const;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +19,6 @@ public class PuntPacketDao {
 
 	@PersistenceContext
 	private EntityManager entityManager;
-
-
 	
 	@Transactional
 	public PuntPacket createPuntPacket(int packetId, int randomPunts)

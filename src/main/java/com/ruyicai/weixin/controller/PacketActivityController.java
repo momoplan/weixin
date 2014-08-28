@@ -1,7 +1,6 @@
 package com.ruyicai.weixin.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,11 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
- 
-
-
 import com.ruyicai.weixin.consts.Const;
-import com.ruyicai.weixin.dao.PacketDao;
 import com.ruyicai.weixin.domain.Packet;
 import com.ruyicai.weixin.dto.lottery.ResponseData;
 import com.ruyicai.weixin.exception.ErrorCode;
