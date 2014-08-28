@@ -116,7 +116,7 @@ public class CommonService {
 			JSONObject fromObject = JSONObject.fromObject(result);
 			if (fromObject != null)
 			{
-				if ("0".equals(fromObject.get("error_code")))
+				if ("0000".equals(fromObject.get("error_code")))
 				{
 					json = JSONObject.fromObject(fromObject.get("result"));
 				}

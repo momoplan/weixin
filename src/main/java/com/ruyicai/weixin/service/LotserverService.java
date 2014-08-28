@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.ruyicai.advert.util.HttpUtil;
+import com.ruyicai.weixin.util.StringUtil;
 
 @Service
 public class LotserverService {
@@ -93,4 +94,5 @@ public class LotserverService {
 		result = result.replace("(", "").replace(")", "");
 		return result;
 	}
+	
 }
