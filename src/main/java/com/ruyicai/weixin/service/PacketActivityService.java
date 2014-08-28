@@ -426,11 +426,11 @@ public class PacketActivityService {
 					if(isMe && nickName.equals(""))
 					{
 						grapMap.put("nickname", "我");
-						isMe = false;
+						
 					}
 					else
 						grapMap.put("nickname", nickName);
-					
+					isMe = false;
 					grapMap.put("headimg", headimg);
 
 					// 中奖详情

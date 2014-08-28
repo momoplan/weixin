@@ -1,8 +1,16 @@
 package com.ruyicai.weixin.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
+
+import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.ruyicai.weixin.consts.Const;
 import com.ruyicai.weixin.domain.Packet;
@@ -32,7 +42,7 @@ public class PacketActivityController {
 
 	@Autowired
 	PacketActivityService packetActivityService;
-	
+
 	@Autowired
 	CaseLotActivityService caseLotActivityService;
 
@@ -117,8 +127,10 @@ public class PacketActivityController {
 			}
 
 			// 判断用户是否存在
-			caseLotActivityService.caseLotchances(award_userno, Const.WX_PACKET_ACTIVITY);
-			int status = packetActivityService.getPacketStatus(award_userno, packet_id);
+			caseLotActivityService.caseLotchances(award_userno,
+					Const.WX_PACKET_ACTIVITY);
+			int status = packetActivityService.getPacketStatus(award_userno,
+					packet_id);
 			if (status == 0) {
 				Map<String, Object> imap = packetActivityService.getPunts(
 						award_userno, channel, packet_id);
@@ -127,14 +139,11 @@ public class PacketActivityController {
 				rd.setValue(imap);
 			} else {
 				String value = "";
-				if (status == 1)
-				{
+				if (status == 1) {
 					value = "红包已抢完";
-				} else if (status == 2)
-				{
+				} else if (status == 2) {
 					value = "你已抢过红包";
-				} else
-				{
+				} else {
 					value = "不能抢自己发的红包";
 				}
 				rd.setValue(value);
@@ -171,10 +180,9 @@ public class PacketActivityController {
 
 			Map<String, String> map = packetActivityService.doGetPacketStus(
 					award_userno, packet_id);
-			
-			
+
 			rd.setErrorCode(ErrorCode.OK.value);
-			
+
 			rd.setValue(map);
 
 		} catch (WeixinException e) {
@@ -188,7 +196,8 @@ public class PacketActivityController {
 		}
 		return JsonMapper.toJsonP(callback, rd);
 	}
-    //送到的红包列表
+
+	// 送到的红包列表
 	@RequestMapping(value = "/getPacketList", method = RequestMethod.GET)
 	@ResponseBody
 	public String getPacketList(
@@ -278,7 +287,7 @@ public class PacketActivityController {
 		return JsonMapper.toJsonP(callback, rd);
 	}
 
-	//领取的列表
+	// 领取的列表
 	@RequestMapping(value = "/getMyPunts", method = RequestMethod.GET)
 	@ResponseBody
 	public String getMyPunts(
@@ -305,39 +314,36 @@ public class PacketActivityController {
 		}
 		return JsonMapper.toJsonP(callback, rd);
 	}
-	
+
 	@RequestMapping(value = "/getActivityEnv", method = RequestMethod.GET)
 	@ResponseBody
-	public String getActivityEnv(@RequestParam(value = "callBackMethod", required = true) String callback)
-	{
+	public String getActivityEnv(
+			@RequestParam(value = "callBackMethod", required = true) String callback) {
 		ResponseData rd = new ResponseData();
-		try
-		{
+		try {
 			rd.setValue(packetActivityService.doGetActivityEnv());
 			rd.setErrorCode(ErrorCode.OK.value);
-		} catch (WeixinException e)
-		{
+		} catch (WeixinException e) {
 			rd.setErrorCode(e.getErrorCode().value);
 			rd.setValue(e.getErrorCode().memo);
-		} catch (Exception e)
-		{
+		} catch (Exception e) {
 			logger.error("getActivityEnv error", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
 			rd.setValue(ErrorCode.ERROR.memo);
 		}
 		return JsonMapper.toJsonP(callback, rd);
 	}
-	
- 
+
 	@RequestMapping(value = "/returnAllLeftPunts", method = RequestMethod.GET)
 	@ResponseBody
-	public String returnAllLeftPunts(@RequestParam(value = "callBackMethod", required = true) String callback) {
-		 
+	public String returnAllLeftPunts(
+			@RequestParam(value = "callBackMethod", required = true) String callback) {
+
 		ResponseData rd = new ResponseData();
 		try {
 
-			int returnPunts = packetActivityService.returnAllLeftPunts();		
-			rd.setErrorCode(ErrorCode.OK.value);			
+			int returnPunts = packetActivityService.returnAllLeftPunts();
+			rd.setErrorCode(ErrorCode.OK.value);
 			rd.setValue(returnPunts);
 
 		} catch (WeixinException e) {
@@ -351,5 +357,62 @@ public class PacketActivityController {
 		}
 		return JsonMapper.toJsonP(callback, rd);
 	}
-	
+
+	@RequestMapping(value = "/upload")
+	@ResponseBody
+	public String upload(
+			@RequestParam(value = "file", required = false) MultipartFile file) {
+		System.out.println("开始");
+		// String path = "";
+		String path = "c:\\Dev\\upload";
+		String fileName = file.getOriginalFilename();
+		int x = 0;
+		int y = 0;
+		int w = 200;
+		int h = 200;
+
+		BufferedImage input;
+		try {
+			
+			 
+	        CommonsMultipartFile cf= (CommonsMultipartFile)file; 
+	        DiskFileItem fi = (DiskFileItem)cf.getFileItem(); 
+	        File f1 = fi.getStoreLocation();
+			input = ImageIO.read(f1);
+
+			BufferedImage saveImage = input.getSubimage(x, y, w, h);
+
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyymmddHHmmss");
+			String name = sdf.format(new Date());
+
+			String format = "jpg";
+			File f = new File(path + File.separator + name + "." + format);
+
+			ImageIO.write(saveImage, format, f);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println(fileName);
+		// System.out.println(path);
+		// // String fileName = new Date().getTime()+".jpg";
+		// // System.out.println(path);
+		// File targetFile = new File(path, fileName);
+		// if (!targetFile.exists()) {
+		// targetFile.mkdirs();
+		// }
+		// //
+		// // 保存
+		// try {
+		// file.transferTo(targetFile);
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+		// model.addAttribute("fileUrl",
+		// request.getContextPath()+"/upload/"+fileName);
+		//
+		return "result";
+	}
+
 }
