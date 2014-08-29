@@ -44,9 +44,6 @@ public class CaseLotUserinfo {
 	@Column(name = "linkTimes")
 	private int linkTimes;
 	
-//	@Column(name = "subscribe")
-//	private String subscribe;
-	
 	@Column(name = "settingImgurl")
 	private String settingImgurl;
 

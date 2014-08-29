@@ -120,11 +120,12 @@ public class PacketActivityService {
 
 			// 生成投注数字
 			String[] result = DoubleBall.getDoubleBallsByString(punts);
+			int puntId = puntPacket.getId();
 			for (int i = 0; i < punts; i++) {
-				doCreatePuntList(result[i], award_userno, channel, puntPacket.getId());
+				doCreatePuntList(result[i], award_userno, channel, puntId);
 			}
 
-			updatePuntPacket(puntPacket, award_userno);			
+			updatePuntPacket(puntPacket, award_userno);
 			// 获取最新期开奖时间
 			String ret = commonService.getBatchInfo();
 			Calendar cal_open = Calendar.getInstance();			
@@ -177,7 +178,6 @@ public class PacketActivityService {
 			logger.info("caseLotActivityService.caseLotchances award_userno{}",
 					award_userno);
 			throw new WeixinException(ErrorCode.ERROR);
-
 		}
 
 		return map;
@@ -202,15 +202,24 @@ public class PacketActivityService {
 			try
 			{
 				if (packet.getPacketUserno().equals(award_userno))
+				{
+					logger.info("不能抢自己送的红包 - packet_id:{} award_userno:{}", packet_id, award_userno);
 					return 3; // 送红包的抢不了
+				}
 
 				List<PuntPacket> lstPuntPacket = PuntPacket.findByGetUserno(award_userno, packet_id);
 				if (lstPuntPacket != null && lstPuntPacket.size() > 0)
+				{
+					logger.info("红包已抢过 - packet_id:{} award_userno:{}", packet_id, award_userno);
 					return 2; // 已抢过
+				}
 
 				List<PuntPacket> puntPacket = PuntPacket.findLeftParts(packet_id);
 				if (null == puntPacket || puntPacket.size() == 0)
+				{
+					logger.info("红包已抢完 - packet_id:{} award_userno:{}", packet_id, award_userno);
 					return 1; // 已抢完
+				}
 
 			} catch (WeixinException ex)
 			{
@@ -345,9 +354,6 @@ public class PacketActivityService {
 			String thank_words = "";
 			boolean isMe = false;
 			int totalPunts = 0;
-			String acknowledge = "";
-			String nickname = "";
-			String imgurl = "";
 			String isOpen = "0"; // 是否开奖,0-未开奖:1-已开奖
 			int packet_user_award = 0;
 			JSONArray arry = new JSONArray();
@@ -355,6 +361,8 @@ public class PacketActivityService {
 			Date return_lottery_date = null;
 			if (grabList != null && grabList.size() > 0) {
 				for (PuntPacket puntPacket : grabList) {
+					get_punts += puntPacket.getRandomPunts();
+					
 					if(puntPacket.getGetUserno().equals(packetUserno))
 					{
 						totalPunts += puntPacket.getRandomPunts();		
@@ -405,7 +413,6 @@ public class PacketActivityService {
 					Map<String, Object> grapMap = new HashMap<String, Object>();
 					grapMap.put("punts", puntPacket.getRandomPunts());
 					grapMap.put("acknowledge", StringUtil.isEmpty(puntPacket.getThankWords()) ? "" : puntPacket.getThankWords());
-					get_punts += puntPacket.getRandomPunts();
 					if (userno.equals(puntPacket.getGetUserno()))
 					{
 						isMe = true;
@@ -613,11 +620,18 @@ public class PacketActivityService {
 	 * 
 	 * @return
 	 */
-	public Map<String, String> doGetActivityEnv() {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("total_packet_person", "1200");
-		map.put("total_get_person", "1200");
-		map.put("total_win", "100000");
+	public Map<String, Object> doGetActivityEnv() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Packet> packetList = Packet.findAllPackets();
+		
+		int beanchmark = 10000;
+		if (packetList != null)
+			beanchmark += packetList.size() * 10;
+		
+		map.put("total_packet_person", beanchmark);
+		map.put("total_get_person", 1000);
+		map.put("total_win", (int)(beanchmark * 25 * 200 * 0.56));
+		
 		return map;
 	}
 	

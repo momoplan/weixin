@@ -12,5 +12,7 @@ public class Const {
 	
 	public static int WX_RETURN_DAY = 1;
 	public static String WX_PACKET_CHANNEL = "1101";
+	
+	public static String WEIXIN_NO = "gh_894976f750e3";
 
 }

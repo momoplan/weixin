@@ -2,7 +2,7 @@ package com.ruyicai.weixin.controller;
 
 import java.util.HashMap;
 import java.util.Map;
-import com.ruyicai.weixin.service.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,13 +16,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ruyicai.weixin.consts.Const;
 import com.ruyicai.weixin.domain.CaseLotUserinfo;
+import com.ruyicai.weixin.domain.Subscriber;
 import com.ruyicai.weixin.dto.WeixinUserDTO;
 import com.ruyicai.weixin.dto.lottery.ResponseData;
 import com.ruyicai.weixin.exception.ErrorCode;
 import com.ruyicai.weixin.service.CaseLotActivityService;
 import com.ruyicai.weixin.service.FileService;
 import com.ruyicai.weixin.service.LotteryService;
+import com.ruyicai.weixin.service.SubscriberService;
 import com.ruyicai.weixin.service.WeixinService;
 import com.ruyicai.weixin.service.WinInfoImageService;
 import com.ruyicai.weixin.util.JsonMapper;
@@ -42,6 +45,8 @@ public class StaticController {
 	private CaseLotActivityService caseLotActivityService;
 	@Autowired
 	private FileService fileService;
+	@Autowired
+	SubscriberService subscriberService;
 
 	@RequestMapping(value = "/wininfo")
 	public @ResponseBody ResponseData wininfo(
@@ -104,20 +109,9 @@ public class StaticController {
 			rd.setErrorCode(ErrorCode.OK.value);
 			Map<String, Object> map = new HashMap<String, Object>();
 
-			String subsrcibe = "0";
-			String accessToken = weixinService.getAccessToken();
-			try {
-				WeixinUserDTO dto = null;
-				dto = weixinService.findUserinfoByOpenid(accessToken, openid);
-				if (null != dto) {
-					subsrcibe = String.valueOf(dto.getSubscribe());
-				}
-			} catch (Exception ex) {
-				logger.info("createBigUserAndCaseLotUserinfo-findUserinfoByOpenid:"
-						+ ex.getMessage());
-			}
+			Subscriber subscriber = subscriberService.findSubscriber(openid, Const.WEIXIN_NO);
 			map.put("openid", openid);
-			map.put("subscribe", subsrcibe);
+			map.put("subscribe", subscriber == null ? 0 : subscriber.getHasSubscribe());
 			map.put("caselotuserinfo", caselotuserinfo);
 
 			rd.setValue(map);
