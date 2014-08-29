@@ -37,7 +37,7 @@
 
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<property name="maxUploadSize" value="2097152"></property>
+		<property name="maxUploadSize" value="20971520"></property>
 	</bean>
 
 	<!-- 容器默认的DefaultServletHandler处理 所有静态内容与无RequestMapping处理的URL -->

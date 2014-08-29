@@ -76,6 +76,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 		<!-- ImageMagick Java接口 -->
 		<dependency>
 			<groupId>org.im4java</groupId>
@@ -163,6 +164,13 @@
 			<groupId>net.sf.flexjson</groupId>
 			<artifactId>flexjson</artifactId>
 			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>sun.misc</groupId>
+			<artifactId>BASE64Decoder</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/sun.misc.BASE64Decoder.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -518,6 +526,28 @@
 					</webAppConfig>
 				</configuration>
 			</plugin>
+			<plugin>
+            <groupId>org.apache.maven.plugins</groupId>  
+            <artifactId>maven-compiler-plugin</artifactId>  
+            <version>2.3.1</version>
+            <dependencies>  
+                <dependency>  
+                    <groupId>org.codehaus.plexus</groupId>  
+                    <artifactId>plexus-compiler-javac</artifactId>  
+                    <version>1.8.1</version>  
+                </dependency>  
+            </dependencies>  
+              
+            <configuration>
+                <source>1.5</source>
+                <target>1.5</target>
+                <encoding>UTF-8</encoding>
+                <compilerArguments>
+                     <verbose />
+                      <bootclasspath>${java.home}/lib/rt.jar</bootclasspath>
+                </compilerArguments> 
+            </configuration>            
+            </plugin> 
 		</plugins>
 	</build>
 	<profiles>
@@ -545,16 +575,16 @@
 		<profile>
 			<id>prelaunch</id>
 			<properties>
-				<database.url>jdbc:mysql://192.168.0.92:3306/weixin?characterEncoding=utf8</database.url>
+				<database.url>jdbc:mysql://202.43.152.164:13306/weixin?characterEncoding=utf8</database.url>
 				<database.driverClassName>com.mysql.jdbc.Driver</database.driverClassName>
 				<database.username>jrtConsole</database.username>
 				<database.password>jrtConsole</database.password>
 				<database.pool.maxActive>50</database.pool.maxActive>
 				<database.pool.maxIdle>50</database.pool.maxIdle>
 				<weixinName>sunyang</weixinName>
-				<lotteryurl>http://192.168.0.42:8080/lottery</lotteryurl>
-				<lotterycoreurl>http://192.168.0.42:8080/lottery</lotterycoreurl>
-				<lotserverurl>http://192.168.0.42/lotserver</lotserverurl>
+			<lotteryurl>http://202.43.152.173:8080/lottery</lotteryurl>
+				<lotterycoreurl>http://202.43.152.173:8080/lottery</lotterycoreurl>
+				<lotserverurl>http://202.43.152.173:9088/lotserver</lotserverurl>
 				<imageMagickPath>E:\ImageMagick-6.8.7-Q8</imageMagickPath>
 				<imageLocation>E:\image</imageLocation>
 			</properties>

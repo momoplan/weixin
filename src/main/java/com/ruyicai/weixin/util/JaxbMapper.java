@@ -117,7 +117,6 @@ public class JaxbMapper {
 		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		marshaller.setProperty(Marshaller.JAXB_FRAGMENT, fragment);
 		marshaller.setProperty("com.sun.xml.bind.characterEscapeHandler", new CharacterEscapeHandler() {
-			@Override
 			public void escape(char[] ch, int start, int length, boolean isAttVal, Writer writer) throws IOException {
 				writer.write(ch, start, length);
 			}

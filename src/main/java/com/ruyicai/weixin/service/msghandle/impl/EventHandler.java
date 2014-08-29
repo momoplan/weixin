@@ -38,7 +38,6 @@ public class EventHandler implements IMsgHandler {
 	@Autowired
 	private CaseLotActivityService caseLotActivityService;
 
-	@Override
 	public ResponseBaseMessage handler(RequestMessage requestMessage) {
 		String event = requestMessage.getEvent();
 		if (event.equalsIgnoreCase("subscribe")) {

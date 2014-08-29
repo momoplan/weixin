@@ -1,8 +1,13 @@
 package com.ruyicai.weixin.controller;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,6 +16,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.swing.filechooser.FileSystemView;
 
 import org.apache.commons.fileupload.disk.DiskFileItem;
@@ -26,8 +32,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import Decoder.BASE64Decoder;
+
 import com.ruyicai.weixin.consts.Const;
 import com.ruyicai.weixin.dao.PacketDao;
+import com.ruyicai.weixin.domain.CaseLotUserinfo;
 import com.ruyicai.weixin.domain.Packet;
 import com.ruyicai.weixin.dto.lottery.ResponseData;
 import com.ruyicai.weixin.exception.ErrorCode;
@@ -362,61 +371,239 @@ public class PacketActivityController {
 		return JsonMapper.toJsonP(callback, rd);
 	}
 
-	@RequestMapping(value = "/upload")
-	@ResponseBody
-	public String upload(
-			@RequestParam(value = "file", required = false) MultipartFile file) {
-		System.out.println("开始");
-		// String path = "";
-		String path = "c:\\Dev\\upload";
-		String fileName = file.getOriginalFilename();
-		int x = 0;
-		int y = 0;
-		int w = 200;
-		int h = 200;
-
-		BufferedImage input;
+	public String readTxtFile(String filePath) {
+		String ret = "";
 		try {
-			
-			 
-	        CommonsMultipartFile cf= (CommonsMultipartFile)file; 
-	        DiskFileItem fi = (DiskFileItem)cf.getFileItem(); 
-	        File f1 = fi.getStoreLocation();
-			input = ImageIO.read(f1);
-
-			BufferedImage saveImage = input.getSubimage(x, y, w, h);
-
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyymmddHHmmss");
-			String name = sdf.format(new Date());
-
-			String format = "jpg";
-			File f = new File(path + File.separator + name + "." + format);
-
-			ImageIO.write(saveImage, format, f);
-
-		} catch (IOException e) {
+			String encoding = "GBK";
+			File file = new File(filePath);
+			if (file.isFile() && file.exists()) { // 判断文件是否存在
+				InputStreamReader read = new InputStreamReader(
+						new FileInputStream(file), encoding);// 考虑到编码格式
+				BufferedReader bufferedReader = new BufferedReader(read);
+				String lineTxt = null;
+				while ((lineTxt = bufferedReader.readLine()) != null) {
+					System.out.println(lineTxt);
+					ret += lineTxt;
+				}
+				read.close();
+			} else {
+				System.out.println("找不到指定的文件");
+			}
+		} catch (Exception e) {
+			System.out.println("读取文件内容出错");
 			e.printStackTrace();
 		}
 
-		System.out.println(fileName);
-		// System.out.println(path);
-		// // String fileName = new Date().getTime()+".jpg";
-		// // System.out.println(path);
-		// File targetFile = new File(path, fileName);
-		// if (!targetFile.exists()) {
-		// targetFile.mkdirs();
-		// }
-		// //
-		// // 保存
-		// try {
-		// file.transferTo(targetFile);
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
-		// model.addAttribute("fileUrl",
-		// request.getContextPath()+"/upload/"+fileName);
-		//
-		return "result";
+		return ret;
+
 	}
+
+	public boolean GenerateImage(String imgStr, String path) { // 对字节数组字符串进行Base64解码并生成图片
+		if (imgStr == null) // 图像数据为空
+			return false;
+		BASE64Decoder decoder = new BASE64Decoder();
+		try {
+			// Base64解码
+			byte[] b = decoder.decodeBuffer(imgStr);
+			for (int i = 0; i < b.length; ++i) {
+				if (b[i] < 0) {// 调整异常数据
+					b[i] += 256;
+				}
+			}
+			// 生成jpeg图片
+			String imgFilePath = path;// 新生成的图片
+			OutputStream out = new FileOutputStream(imgFilePath);
+			out.write(b);
+			out.flush();
+			out.close();
+			return true;
+		} catch (Exception e) {
+			logger.info(e.getMessage());
+			return false;
+		}
+	}
+
+	@RequestMapping(value = "/upload")
+	@ResponseBody
+	public void uploadorginimg(
+			@RequestParam(value = "data", required = false) String file,@RequestParam(value = "userno", required = false) String userno,HttpServletRequest request,HttpServletResponse response) {
+		System.out.println("开始");
+		String data = "";
+		if (file.length() > 0)
+			data = file;
+		else
+			data = readTxtFile("c:\\Dev\\canvas.txt");
+		
+		//logger.info("data:"+data);
+		logger.info("userno:"+userno);
+		
+		String path = this.getClass().getResource("/../../").toString(); 
+		logger.info("path:"+path);
+		path = path.replace("file:/", "");
+		logger.info("path.indexOf(:)==0:"+ String.valueOf(path.indexOf(":")==0));
+		if(path.indexOf(":")==-1)
+		{
+			path = "/"+path;
+			logger.info("path2:"+path);
+		}
+		
+		path = path.replace("weixin", "settingimg");
+		logger.info("path5:"+path);
+		System.out.println("path4:"+path);
+		
+		String format = "jpg";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyymmddHHmmss");
+		String name = sdf.format(new Date());
+		String allPath = path + name + "." + format;
+		
+		logger.info("GenerateImage pre");
+		if (GenerateImage(data, allPath));
+		{
+			logger.info("GenerateImage done");
+			try
+			{
+				CaseLotUserinfo clUserInfo = caseLotActivityService.findOrCreateCaseLotUserinfo(userno, "HM00002", "", "");
+				clUserInfo.setSettingImgurl(name+"."+format);
+				clUserInfo.merge();
+			}
+			catch(Exception ex)
+			{
+				logger.info("caseLotActivityService.findOrCreateCaseLotUserinfo userno:"+userno);
+				throw new WeixinException(ErrorCode.ERROR);
+			}
+			String redirectURL = "http://192.168.30.80:8080/html5/wechart/wxpay/sendfriend.html?urlname="+"http://"+request.getLocalAddr()+":"+request.getLocalPort()+"/settingimg/"+ name+"."+format;
+
+			try {
+				response.sendRedirect(redirectURL);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+//			return "http://"+request.getLocalAddr()+":"+request.getLocalPort()+"/weixin/"+ name+"."+format;
+		}
+		 
+
+	}
+
+	@RequestMapping(value = "/uploadorginimg")
+	@ResponseBody
+	public void upload(
+			@RequestParam(value = "file", required = false) MultipartFile file,@RequestParam(value = "userno", required = false) String userno,HttpServletRequest request,HttpServletResponse response) {
+		System.out.println("开始");
+		String path = this.getClass().getResource("/../../").toString(); 
+		logger.info("path:"+path);
+		path = path.replace("file:/", "");
+		logger.info("path.indexOf(:)==0:"+ String.valueOf(path.indexOf(":")==0));
+		if(path.indexOf(":")==-1)
+		{
+			path = "/"+path;
+			logger.info("path2:"+path);
+		}
+		
+		logger.info("");
+		path = path.replace("weixin", "images");
+		logger.info("path5:"+path);
+		System.out.println("path4:"+path);
+		BufferedImage input;
+        String allPath = "";	
+        String name = "";
+        String format = "jpg";
+		try {
+			CommonsMultipartFile cf = (CommonsMultipartFile) file;
+			DiskFileItem fi = (DiskFileItem) cf.getFileItem();
+			File f1 = fi.getStoreLocation();
+			input = ImageIO.read(f1);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyymmddHHmmss");
+			 name = sdf.format(new Date());
+		 
+			allPath = path + name + "." + format;
+			System.out.println("allPath:"+allPath);
+			File f = new File(allPath);
+			ImageIO.write(input, format, f);
+		} catch (IOException e) {
+			logger.info("/uploadorginimg1:"+e.getMessage());
+			e.printStackTrace();
+		}
+
+		System.out.println(allPath);
+		
+		String redirectURL = "http://"+request.getLocalAddr()+":"+request.getLocalPort()+"/uploadimg/paipai.html?userno="+userno+"&urlname="+"http://"+request.getLocalAddr()+":"+request.getLocalPort()+"/images/"+ name+"."+format;
+
+		try {
+			response.sendRedirect(redirectURL);
+		} catch (IOException e) {
+			logger.info("/uploadorginimg:"+e.getMessage());
+			e.printStackTrace();
+		}
+		
+		 
+		
+		//return "<script>parent.callback('http://"+request.getLocalAddr()+":"+request.getLocalPort()+"/weixin/"+ name+"."+format +"')</script>";
+	}
+
+	// @RequestMapping(value = "/upload")
+	// @ResponseBody
+	// public String upload(
+	// @RequestParam(value = "file", required = false) MultipartFile file) {
+	// System.out.println("开始");
+	//
+	// GenerateImage(readTxtFile("c:\\Dev\\canvas.txt"));
+	//
+	// // String path = "";
+	// String path = "c:\\Dev\\upload";
+	// //String path = this.getClass().getResource("/../../").toString();
+	//
+	//
+	//
+	// //System.out.println(this.getClass().getResource("/../../").toString());
+	// String fileName = file.getOriginalFilename();
+	// int x = 0;
+	// int y = 0;
+	// int w = 200;
+	// int h = 200;
+	//
+	// BufferedImage input;
+	// try {
+	//
+	// CommonsMultipartFile cf = (CommonsMultipartFile) file;
+	// DiskFileItem fi = (DiskFileItem) cf.getFileItem();
+	// File f1 = fi.getStoreLocation();
+	// input = ImageIO.read(f1);
+	//
+	//
+	// BufferedImage saveImage = input.getSubimage(x, y, w, h);
+	//
+	// SimpleDateFormat sdf = new SimpleDateFormat("yyyymmddHHmmss");
+	// String name = sdf.format(new Date());
+	//
+	// String format = "jpg";
+	// File f = new File(path + File.separator + name + "." + format);
+	//
+	// ImageIO.write(saveImage, format, f);
+	//
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	//
+	// System.out.println(fileName);
+	// // System.out.println(path);
+	// // // String fileName = new Date().getTime()+".jpg";
+	// // // System.out.println(path);
+	// // File targetFile = new File(path, fileName);
+	// // if (!targetFile.exists()) {
+	// // targetFile.mkdirs();
+	// // }
+	// // //
+	// // // 保存
+	// // try {
+	// // file.transferTo(targetFile);
+	// // } catch (Exception e) {
+	// // e.printStackTrace();
+	// // }
+	// // model.addAttribute("fileUrl",
+	// // request.getContextPath()+"/upload/"+fileName);
+	// //
+	// return "result";
+	// }
 
 }

@@ -25,7 +25,6 @@ import com.ruyicai.weixin.service.msghandle.IMsgHandler;
 @Service(value = "location")
 public class LocationHandler implements IMsgHandler {
 
-	@Override
 	public ResponseBaseMessage handler(RequestMessage requestMessage) {
 		return null;
 	}

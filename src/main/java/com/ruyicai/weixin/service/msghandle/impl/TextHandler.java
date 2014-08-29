@@ -29,7 +29,6 @@ import com.ruyicai.weixin.util.DateUtil;
 @Service(value = "text")
 public class TextHandler implements IMsgHandler {
 
-	@Override
 	public ResponseBaseMessage handler(RequestMessage requestMessage) {
 		String content = requestMessage.getContent();
 		if (content.equalsIgnoreCase("双色球")) {
