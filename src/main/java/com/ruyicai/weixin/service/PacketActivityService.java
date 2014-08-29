@@ -175,7 +175,11 @@ public class PacketActivityService {
 			CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(
 					packet.getPacketUserno(), Const.WX_PACKET_ACTIVITY);
 			
-			map.put("headimgurl", userInfo.getHeadimgurl());
+			String imgurl = userInfo.getSettingImgurl();
+			if(StringUtil.isEmpty(imgurl))
+				imgurl = userInfo.getHeadimgurl();
+			
+			map.put("headimgurl", imgurl);
 			map.put("nickname", userInfo.getNickname());
 		} catch (Exception ex) {
 			logger.info("caseLotActivityService.caseLotchances award_userno{}",
@@ -322,6 +326,7 @@ public class PacketActivityService {
 					packetUserno, Const.WX_PACKET_ACTIVITY);
 			if (userInfo != null) {
 				nickName = userInfo.getNickname();
+			 
 				headimg = userInfo.getHeadimgurl();
 			}
 			map.put("nickname", nickName);
