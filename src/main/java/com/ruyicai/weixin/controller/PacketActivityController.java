@@ -11,7 +11,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map; 
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -463,7 +463,11 @@ public class PacketActivityController {
 			try {
 				CaseLotUserinfo clUserInfo = caseLotActivityService
 						.findOrCreateCaseLotUserinfo(userno, "HM00002", "", "");
-				clUserInfo.setSettingImgurl(name + "." + format);
+				clUserInfo.setSettingImgurl("http://"
+						+ request.getLocalAddr()
+						+ ":"
+						+ request.getLocalPort()
+						+ "/settingimg/"+name + "." + format);
 				clUserInfo.merge();
 			} catch (Exception ex) {
 				logger.info("caseLotActivityService.findOrCreateCaseLotUserinfo userno:"
