@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimerTask;
 
 import net.sf.json.JSONObject;
 
@@ -454,8 +455,7 @@ public class PacketActivityService {
 				packet_user_Map.put("award", packet_user_award); // 中奖金额
 				packet_user_Map.put("get_punts", totalPunts); // 领取注
 				packet_user_Map.put("nickname", userInfo.getNickname()); // 用户昵称
-				packet_user_Map.put("headimgurl", userInfo.getHeadimgurl()); // 用户头像
-				
+				packet_user_Map.put("headimgurl", userInfo.getHeadimgurl()); // 用户头像				
 				packet_user_Map.put("return_lottery_date", return_lottery_date == null ? "" : DateUtil.format("MM月dd日", return_lottery_date));// 开奖时间
 				
 			}
@@ -689,5 +689,22 @@ public class PacketActivityService {
 		List<Packet> map = packetDao.findReturnPacketList();
 		return map;
 	}
+	
+	public void timerReturnPunt()
+	{
+		java.util.Timer timer = new java.util.Timer(true); 
+
+		TimerTask task = new TimerTask() { 
+		public void run() { 
+		//每次需要执行的代码放到这里面。 
+			logger.info("start return punts");
+			returnAllLeftPunts();
+		} 
+		}; 
+
+ 
+		timer.schedule(task, 1000 * 60 * 60) ;
+	}
+	
 
 }

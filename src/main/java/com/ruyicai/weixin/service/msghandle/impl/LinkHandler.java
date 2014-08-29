@@ -22,7 +22,6 @@ import com.ruyicai.weixin.service.msghandle.IMsgHandler;
 @Service(value = "link")
 public class LinkHandler implements IMsgHandler {
 
-	@Override
 	public ResponseBaseMessage handler(RequestMessage requestMessage) {
 		return null;
 	}

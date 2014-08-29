@@ -16,7 +16,6 @@ public abstract class BenchmarkTask implements Runnable {
 	protected long previousRequests = 0L;
 	protected long nextPrintTime;
 
-	@Override
 	public void run() {
 		setUp();
 		onThreadStart();

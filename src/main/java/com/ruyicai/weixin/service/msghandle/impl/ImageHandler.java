@@ -21,7 +21,6 @@ import com.ruyicai.weixin.service.msghandle.IMsgHandler;
 @Service(value = "image")
 public class ImageHandler implements IMsgHandler {
 
-	@Override
 	public ResponseBaseMessage handler(RequestMessage requestMessage) {
 		return null;
 	}
