@@ -470,7 +470,7 @@ public class PacketActivityController {
 						+ userno);
 				throw new WeixinException(ErrorCode.ERROR);
 			}
-			String redirectURL = "http://192.168.30.80:8080/html5/wechart/wxpay/sendfriend.html?urlname="
+			String redirectURL = "http://wx.ruyicai.com/wxpay/sendfriend.html?urlname="
 					+ "http://"
 					+ request.getLocalAddr()
 					+ ":"
