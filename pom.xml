@@ -9,6 +9,7 @@
 	<name>weixin</name>
 	<properties>
 		<aspectj.version>1.7.2</aspectj.version>
+		<camel.version>2.12.2</camel.version>
 		<java.version>6</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<roo.version>1.2.4.RELEASE</roo.version>
@@ -362,6 +363,27 @@
 			<artifactId>tiles-jsp</artifactId>
 			<version>2.2.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>1.7.2</version>
+		</dependency>
+		<!-- camel -->
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spring</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jms</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spring-javaconfig</artifactId>
+			<version>${camel.version}</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>weixin</finalName>
@@ -538,6 +560,7 @@
 				<lotteryurl>http://202.43.152.173:8080/lottery</lotteryurl>
 				<lotterycoreurl>http://202.43.152.173:8080/lottery</lotterycoreurl>
 				<lotserverurl>http://202.43.152.173:9088/lotserver</lotserverurl>
+				<jms.new-issue.brokerURL>tcp://192.168.0.92:61616</jms.new-issue.brokerURL>
 				<imageMagickPath>C:\Tools\ImageMagick-6.8.7-Q8</imageMagickPath>
 				<imageLocation>C:\image</imageLocation>
 			</properties>
@@ -555,6 +578,7 @@
 				<lotteryurl>http://192.168.0.42:8080/lottery</lotteryurl>
 				<lotterycoreurl>http://192.168.0.42:8080/lottery</lotterycoreurl>
 				<lotserverurl>http://192.168.0.42/lotserver</lotserverurl>
+				<jms.new-issue.brokerURL>tcp://192.168.0.92:61616</jms.new-issue.brokerURL>
 				<imageMagickPath>E:\ImageMagick-6.8.7-Q8</imageMagickPath>
 				<imageLocation>E:\image</imageLocation>
 			</properties>
@@ -572,6 +596,7 @@
 				<lotteryurl>http://192.168.99.6/lotteryprize</lotteryurl>
 				<lotterycoreurl>http://192.168.99.6/lottery</lotterycoreurl>
 				<lotserverurl>http://192.168.99.122/lotserver</lotserverurl>
+				<jms.new-issue.brokerURL>failover://(tcp://192.168.99.30:61616,tcp://192.168.99.31:61616)?randomize=false</jms.new-issue.brokerURL>
 				<imageMagickPath></imageMagickPath>
 				<imageLocation>/home/appusr/images_weixin</imageLocation>
 			</properties>

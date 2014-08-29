@@ -33,4 +33,11 @@ public class PuntListDao {
 		return punt;
 	}
 	
+	public List<PuntList> findPuntListNotPrized(String opentime)
+	{
+		TypedQuery<PuntList> q = entityManager.createQuery("select o from PuntList o where DATE_FORMAT(o.opentime,'%Y-%m-%d') = ? and o.orderprizeamt is null ", PuntList.class)
+				.setParameter(1, opentime);
+		return q.getResultList();
+	}
+	
 }
