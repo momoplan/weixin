@@ -35,8 +35,7 @@ import com.ruyicai.weixin.util.StringUtil;
 @Service
 public class PacketActivityService {
 
-	private Logger logger = LoggerFactory
-			.getLogger(PacketActivityService.class);
+	private Logger logger = LoggerFactory.getLogger(PacketActivityService.class);
 
 	@Autowired
 	PacketDao packetDao;
@@ -139,11 +138,16 @@ public class PacketActivityService {
 				throw new WeixinException(ErrorCode.ERROR);
 			}
 			
+			String pund = "43260902000"; // 奖池值
+			JSONObject preOrderInfo = commonService.getPreBatchInfo();
+			if (preOrderInfo != null)
+				pund = preOrderInfo.getString("prizePoolAmount");
+			
 			Map<String, Object> iMap = new HashMap<String, Object>();
 			iMap.put("punts", String.valueOf(punts));
 			iMap.put("lottery_type", "双色球");
 			iMap.put("lottery_date", format1.format(cal_open.getTime()));
-			iMap.put("pund", "5451080226");
+			iMap.put("pund", pund);
 			iMap.put("puntlist", result);
 
 			return iMap;

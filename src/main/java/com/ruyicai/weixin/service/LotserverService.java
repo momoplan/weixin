@@ -68,6 +68,18 @@ public class LotserverService {
 	}
 	
 	/**
+	 * 获取上一期信息
+	 * 
+	 * @return
+	 */
+	public String doGetPreBatchInfo() {
+		String url = lotserverurl + "/SendRequestServlet?parameter={\"command\":\"QueryLot\",\"type\":\"winInfoList\",\"lotno\":\"F47104\",\"pageindex\":\"1\",\"maxresult\":\"1\"}&callBackMethod=";
+		String result = HttpUtil.sendRequestByPost(url, "", true);
+		result = result.replace("(", "").replace(")", "");
+		return result;
+	}
+	
+	/**
 	 * 根据期号查询开奖信息
 	 * 
 	 * @param batchcode 期号

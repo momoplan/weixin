@@ -1,8 +1,11 @@
 package com.ruyicai.weixin.service;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +15,8 @@ import com.ruyicai.weixin.util.StringUtil;
 
 @Service
 public class CommonService {
+	
+	private Logger logger = LoggerFactory.getLogger(CommonService.class);
 	
 	@Autowired
 	private LotteryService lotteryService;
@@ -108,4 +113,39 @@ public class CommonService {
 		}
 		return json;
 	}
+	
+	/**
+	 * 获取上一期信息
+	 * 
+	 * @return
+	 */
+	public JSONObject getPreBatchInfo()
+	{
+		JSONObject json = null;
+		try
+		{
+			String result = lotserverService.doGetPreBatchInfo();
+			if (!StringUtil.isEmpty(result))
+			{
+				JSONObject fromObject = JSONObject.fromObject(result);
+				if (fromObject != null)
+				{
+					if ("0000".equals(fromObject.get("error_code")))
+					{
+						JSONArray array = (JSONArray) fromObject.get("result");
+						if (array != null && array.size() > 0)
+						{
+							json = JSONObject.fromObject(array.get(0));
+						}
+					}
+				}
+			}
+		} catch (Exception e)
+		{
+			logger.error("获取上一期信息异常", e);
+		}
+
+		return json;
+	}
+	
 }
