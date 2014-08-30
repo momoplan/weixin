@@ -408,6 +408,7 @@ public class PacketActivityController {
 				}
 			}
 			// 生成jpeg图片
+			logger.info("生成jpeg图片");
 			String imgFilePath = path;// 新生成的图片
 			OutputStream out = new FileOutputStream(imgFilePath);
 			out.write(b);
@@ -447,6 +448,7 @@ public class PacketActivityController {
 		}
 
 		path = path.replace("weixin", "settingimg");
+		path = path.replace("settingimg_tomcat", "weixin_tomcat");
 		logger.info("path5:" + path);
 		System.out.println("path4:" + path);
 
@@ -456,19 +458,15 @@ public class PacketActivityController {
 		String allPath = path + name + "." + format;
 
 		logger.info("GenerateImage pre");
-		if (GenerateImage(data, allPath))
-			;
+		if (GenerateImage(data, allPath))	 
 		{
 			logger.info("GenerateImage done");
 			try {
 				CaseLotUserinfo clUserInfo = caseLotActivityService
 						.findOrCreateCaseLotUserinfo(userno, "HM00002", "", "");
-				clUserInfo.setSettingImgurl("http://"
-						+ request.getLocalAddr()
-						+ ":"
-						+ request.getLocalPort()
-						+ "/settingimg/"+name + "." + format);
+				clUserInfo.setSettingImgurl("http://www.ruyicai.com/settingimg/"+name + "." + format);
 				clUserInfo.merge();
+				logger.info("setting img done" );
 			} catch (Exception ex) {
 				logger.info("caseLotActivityService.findOrCreateCaseLotUserinfo userno:"
 						+ userno);
@@ -512,6 +510,8 @@ public class PacketActivityController {
 
 		logger.info("");
 		path = path.replace("weixin", "images");
+		path = path.replace("images_tomcat", "weixin_tomcat");
+		
 		logger.info("path5:" + path);
 		System.out.println("path4:" + path);
 		BufferedImage input;
@@ -543,8 +543,7 @@ public class PacketActivityController {
 //				+ ":" + request.getLocalPort() + "/images/" + name + "."
 //				+ format;
 		
-		String redirectURL = "http://" + request.getLocalAddr() + ":"
-				+ request.getLocalPort() + "/uploadimg/paipai.html?userno="
+		String redirectURL = "http://www.ruyicai.com/uploadimg/paipai.html?userno="
 				+ userno + "&urlname=" + "http://www.ruyicai.com/images/" + name + "."
 				+ format;
 
