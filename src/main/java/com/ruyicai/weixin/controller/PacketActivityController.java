@@ -160,8 +160,15 @@ public class PacketActivityController {
 				rd.setErrorCode(String.valueOf(status));
 			}
 		} catch (WeixinException e) {
-			rd.setErrorCode(e.getErrorCode().value);
-			rd.setValue(e.getErrorCode().memo);
+			if (e.getErrorCode().value.equals(ErrorCode.DATA_NOT_EXISTS.value))
+			{
+				rd.setValue(1);
+				rd.setErrorCode(String.valueOf(1));
+			} else
+			{
+				rd.setErrorCode(e.getErrorCode().value);
+				rd.setValue(e.getErrorCode().memo);
+			}
 		} catch (Exception e) {
 			logger.error("getPuntsFromPacket error2", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);

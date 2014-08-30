@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
@@ -79,21 +80,21 @@ public class PuntPacketDao {
 		return q.getResultList();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Transactional
-	public PuntPacket findOneNotAawardPart(String packet_id) {
-    	String sql = "SELECT * FROM punt_packet WHERE get_userno IS NULL AND packet_id = "+packet_id+" LIMIT 1 FOR UPDATE";
-    	List<PuntPacket> lstPuntPacket = entityManager.createNativeQuery(sql, PuntPacket.class).getResultList();
-    	if(lstPuntPacket.size() >0)
-    		return  lstPuntPacket.get(0);
-    	else
-    		return null;
+	public int findOneNotAawardPart(String packet_id, String get_userno) {
+		String sql = "update punt_packet p1 set p1.get_userno = ? "
+				+ " where not exists (select 1 from (select id from punt_packet where (get_userno = ? or get_userno = ?) and packet_id = ?) p2 )"
+				+ " and p1.id = (select id from (select id from punt_packet p "
+					+ " where p.get_userno is null and p.packet_id = ? limit 1) p3)";
+		
+		Query q = entityManager.createNativeQuery(sql).setParameter(1, get_userno + "_0").setParameter(2, get_userno).setParameter(3, get_userno + "_0").setParameter(4, packet_id).setParameter(5, packet_id);
+    	return q.executeUpdate();
     }
 	
 	@SuppressWarnings("unchecked")
 	public List<PuntPacket> findByGetUserno(String getUserno,String packet_id) {
-		String sql = "SELECT * FROM punt_packet WHERE packet_id = '"+packet_id+"' AND get_userno = " +getUserno;
-		return entityManager.createNativeQuery(sql, PuntPacket.class).getResultList();
+		String sql = "SELECT * FROM punt_packet WHERE  1 = 1 AND (get_userno = ? OR get_userno = ? ) AND packet_id = ?";
+		return entityManager.createNativeQuery(sql, PuntPacket.class).setParameter(1, getUserno).setParameter(2, getUserno + "_0").setParameter(3, packet_id).getResultList();
 	}
 	
 	@SuppressWarnings("unchecked")

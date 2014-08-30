@@ -159,8 +159,14 @@ public class PacketActivityService {
 	@Transactional
 	public PuntPacket getPuntPacket(String award_userno, String channel, String packet_id)
 	{
-		PuntPacket puntPacket = puntPacketDao.findOneNotAawardPart(packet_id);
-		if (puntPacket != null) {
+		int result = puntPacketDao.findOneNotAawardPart(packet_id, award_userno);
+		if (result != 0) {
+			List<PuntPacket> list = puntPacketDao.findByGetUserno(award_userno, packet_id);
+			if (list == null || list.size() == 0)
+			{
+				throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
+			}
+			PuntPacket puntPacket = list.get(0);
 			processPuntPacket(puntPacket, award_userno, channel);
 			return puntPacket;
 		} else {
@@ -359,7 +365,9 @@ public class PacketActivityService {
 			if (userInfo != null) {
 				nickName = userInfo.getNickname();
 			 
-				headimg = userInfo.getHeadimgurl();
+				headimg = userInfo.getSettingImgurl();
+				if (StringUtil.isEmpty(headimg))
+					headimg = userInfo.getHeadimgurl();
 			}
 			map.put("nickname", nickName);
 			map.put("headimg", headimg);
