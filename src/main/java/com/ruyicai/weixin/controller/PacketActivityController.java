@@ -475,11 +475,7 @@ public class PacketActivityController {
 				throw new WeixinException(ErrorCode.ERROR);
 			}
 			String redirectURL = "http://wx.ruyicai.com/wxpay/sendfriend.html?urlname="
-					+ "http://"
-					+ request.getLocalAddr()
-					+ ":"
-					+ request.getLocalPort()
-					+ "/settingimg/"
+					+ "http://www.ruyicai.com/settingimg/"
 					+ name
 					+ "."
 					+ format;
@@ -541,10 +537,15 @@ public class PacketActivityController {
 
 		System.out.println(allPath);
 
+//		String redirectURL = "http://" + request.getLocalAddr() + ":"
+//				+ request.getLocalPort() + "/uploadimg/paipai.html?userno="
+//				+ userno + "&urlname=" + "http://" + request.getLocalAddr()
+//				+ ":" + request.getLocalPort() + "/images/" + name + "."
+//				+ format;
+		
 		String redirectURL = "http://" + request.getLocalAddr() + ":"
 				+ request.getLocalPort() + "/uploadimg/paipai.html?userno="
-				+ userno + "&urlname=" + "http://" + request.getLocalAddr()
-				+ ":" + request.getLocalPort() + "/images/" + name + "."
+				+ userno + "&urlname=" + "http://www.ruyicai.com/images/" + name + "."
 				+ format;
 
 		try {
