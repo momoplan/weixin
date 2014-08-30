@@ -1,5 +1,6 @@
 package com.ruyicai.weixin.dao;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -40,4 +41,17 @@ public class PuntListDao {
 		return q.getResultList();
 	}
 	
+	@Transactional
+	public PuntList createPuntList(String batchcode, Calendar cal_open, String betcode, int puntId, String orderId)
+	{
+		PuntList pList = new PuntList();
+		pList.setBatchcode(batchcode);
+		pList.setOpentime(cal_open);
+		pList.setBetcode(betcode);
+		pList.setPuntId(puntId);
+		pList.setOrderid(orderId);
+		pList.setCreatetime(Calendar.getInstance());
+		pList.persist();
+		return pList;
+	}
 }

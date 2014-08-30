@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimerTask;
 
 import net.sf.json.JSONObject;
 
@@ -106,7 +105,7 @@ public class PacketActivityService {
 	 */
 	 
 	public Map<String, Object> getPunts(String award_userno, String channel, String packet_id) {
-		PuntPacket puntPacket = PuntPacket.findOneNotAawardPart(packet_id);
+		PuntPacket puntPacket = puntPacketDao.findOneNotAawardPart(packet_id);
 		 return getPunts( award_userno,  channel,  puntPacket);
 	}
 	
@@ -119,7 +118,7 @@ public class PacketActivityService {
 					String.valueOf(200 * punts), channel, "微信号服务号抢红包奖励");
 
 			// 更新每份红包
-			updatePuntPacket(puntPacket, award_userno);
+			puntPacketDao.updatePuntPacket(puntPacket, award_userno);
 			
 			// 生成投注数字
 			String[] result = DoubleBall.getDoubleBallsByString(punts);
@@ -129,13 +128,12 @@ public class PacketActivityService {
 			}
 
 			// 获取最新期开奖时间
-			String ret = commonService.getBatchInfo();
-			Calendar cal_open = Calendar.getInstance();			
+			JSONObject ret = commonService.getBatchInfo();
+			Calendar cal_open = Calendar.getInstance();
 			java.text.DateFormat format1 = new java.text.SimpleDateFormat(
 					"yyyy-MM-dd");
 			try {
-				JSONObject fromObject = JSONObject.fromObject(ret);
-				Date dt = format1.parse("20" + fromObject.getString("endtime"));
+				Date dt = format1.parse("20" + ret.getString("endtime"));
 				cal_open.setTime(dt);
 			} catch (ParseException e) {
 				throw new WeixinException(ErrorCode.ERROR);
@@ -214,14 +212,14 @@ public class PacketActivityService {
 					return 3; // 送红包的抢不了
 				}
 
-				List<PuntPacket> lstPuntPacket = PuntPacket.findByGetUserno(award_userno, packet_id);
+				List<PuntPacket> lstPuntPacket = puntPacketDao.findByGetUserno(award_userno, packet_id);
 				if (lstPuntPacket != null && lstPuntPacket.size() > 0)
 				{
 					logger.info("红包已抢过 - packet_id:{} award_userno:{}", packet_id, award_userno);
 					return 2; // 已抢过
 				}
 
-				List<PuntPacket> puntPacket = PuntPacket.findLeftParts(packet_id);
+				List<PuntPacket> puntPacket = puntPacketDao.findLeftParts(packet_id);
 				if (null == puntPacket || puntPacket.size() == 0)
 				{
 					logger.info("红包已抢完 - packet_id:{} award_userno:{}", packet_id, award_userno);
@@ -597,17 +595,16 @@ public class PacketActivityService {
 	@Async
 	public void doCreatePuntList(String betcode, String award_userno, String channel, int puntId)
 	{
-		Calendar cal_open = Calendar.getInstance();
-		String ret = commonService.getBatchInfo();
+		JSONObject ret = commonService.getBatchInfo();
 		String batchcode = "";
-
+		Calendar cal_open = Calendar.getInstance();
+		
 		java.text.DateFormat format1 = new java.text.SimpleDateFormat(
 				"yyyy-MM-dd");
 		try {
-			JSONObject fromObject = JSONObject.fromObject(ret);
-			Date dt = format1.parse("20" + fromObject.getString("endtime"));
+			Date dt = format1.parse("20" + ret.getString("endtime"));
 			cal_open.setTime(dt);
-			batchcode = fromObject.getString("batchcode");
+			batchcode = ret.getString("batchcode");
 		} catch (ParseException e) {
 			throw new WeixinException(ErrorCode.ERROR);
 		}
@@ -615,26 +612,9 @@ public class PacketActivityService {
 		ret = commonService.getDoubleDallBet(award_userno, "200",
 				channel, "0001" + betcode + "^_1_200_200");
 		
-		JSONObject fromObject = JSONObject.fromObject(ret);
-		String orderId = fromObject.getString("orderId");
+		String orderId = ret.getString("orderId");
 		
-		PuntList pList = new PuntList();
-		pList.setBatchcode(batchcode);
-		pList.setOpentime(cal_open);
-		pList.setBetcode(betcode);
-		pList.setPuntId(puntId);
-		pList.setOrderid(orderId);
-		pList.setCreatetime(Calendar.getInstance());
-		pList.persist();
-	}
-	
-	@Transactional
-	public void updatePuntPacket(PuntPacket puntPacket, String award_userno)
-	{
-		puntPacket.setGetUserno(award_userno);
-		puntPacket.setGetTime(Calendar.getInstance());
-		puntPacket.merge();
-		puntPacket.flush();
+		puntListDao.createPuntList(batchcode, cal_open, betcode, puntId, orderId);
 	}
 	
 	@Async
@@ -643,6 +623,11 @@ public class PacketActivityService {
 		puntPacketDao.createPuntPacket(packetId, randomPunts);
 	}
 	
+	/**
+	 * 24小时返还红包处理
+	 * 
+	 * @return
+	 */
 	@Transactional
 	public int returnAllLeftPunts()
 	{
@@ -651,33 +636,31 @@ public class PacketActivityService {
 		//List<PuntPacket> lstPuntPacket = puntPacketDao.findExpiredDatePuntPacket();
 		try
 		{
-		List<Packet> lstPacket = packetDao.findReturnPacketList();
-		String packet_userno = "";
-		String packet_id = "";
-		Map iMap = null;
-		int totalReturnPunts = 0;
-		List<PuntPacket> lstPuntPacket = null;
-		
-		Packet packet = null;
-		
-		for(int i = 0;i <lstPacket.size();i++)
-		{
-			 packet = lstPacket.get(i);
-			packet_userno = packet.getPacketUserno();
-			packet_id = String.valueOf(packet.getId());	
-			lstPuntPacket = PuntPacket.findLeftParts(packet_id);
-			
-			for(int j = 0;j < lstPuntPacket.size();j++)
+			int totalReturnPunts = 0;
+			List<Packet> lstPacket = packetDao.findReturnPacketList();
+			if (lstPacket != null && lstPacket.size() > 0)
 			{
-				iMap = getPunts(packet_userno,Const.WX_PACKET_CHANNEL,lstPuntPacket.get(j));
-				totalReturnPunts += Integer.parseInt(String.valueOf(iMap.get("punts")));
+				for(int i = 0;i <lstPacket.size();i++)
+				{
+					Packet packet = lstPacket.get(i);
+					String packet_userno = packet.getPacketUserno();
+					String packet_id = String.valueOf(packet.getId());	
+					List<PuntPacket> lstPuntPacket = puntPacketDao.findLeftParts(packet_id);
+
+					if (lstPuntPacket != null && lstPuntPacket.size() > 0)
+					{
+						for(int j = 0;j < lstPuntPacket.size();j++)
+						{
+							Map<String, Object> iMap = getPunts(packet_userno,Const.WX_PACKET_CHANNEL,lstPuntPacket.get(j));
+							totalReturnPunts += Integer.parseInt(String.valueOf(iMap.get("punts")));
+						}
+					}
+
+					packet.setReturnPunts(totalReturnPunts);
+					packet.merge();
+					totalReturnPunts = 0;
+				}
 			}
-			
-			 
-			packet.setReturnPunts(totalReturnPunts);
-			packet.merge();
-			totalReturnPunts = 0;
-		}
 		}
 		catch(Exception ex)
 		{			
@@ -687,29 +670,5 @@ public class PacketActivityService {
 		//根据红包id给送红包userno抢红包
 		return ret;
 	}
-	
-	@Transactional
-	public List<Packet> findReturnPacketList()
-	{
-		List<Packet> map = packetDao.findReturnPacketList();
-		return map;
-	}
-	
-	public void timerReturnPunt()
-	{
-		java.util.Timer timer = new java.util.Timer(true); 
-
-		TimerTask task = new TimerTask() { 
-		public void run() { 
-		//每次需要执行的代码放到这里面。 
-			logger.info("start return punts");
-			returnAllLeftPunts();
-		} 
-		}; 
-
- 
-		timer.schedule(task, 1000 * 60 * 60) ;
-	}
-	
 
 }

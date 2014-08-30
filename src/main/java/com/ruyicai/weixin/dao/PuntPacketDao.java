@@ -1,5 +1,6 @@
 package com.ruyicai.weixin.dao;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -28,6 +29,15 @@ public class PuntPacketDao {
 		puntPacket.setRandomPunts(randomPunts);
 		puntPacket.persist();
 		return puntPacket;
+	}
+	
+	@Transactional
+	public void updatePuntPacket(PuntPacket puntPacket, String award_userno)
+	{
+		puntPacket.setGetUserno(award_userno);
+		puntPacket.setGetTime(Calendar.getInstance());
+		puntPacket.merge();
+		puntPacket.flush();
 	}
 	
 	public List<PuntPacket> findPuntPacketGrabedList(int packetId)
@@ -69,11 +79,26 @@ public class PuntPacketDao {
 		return q.getResultList();
 	}
 	
-//	public List<PuntPacket> findExpiredDatePuntPacket()
-//	{		
-//		String strSQL = "SELECT * FROM `punt_packet` where get_userno is null and createtime <= date_sub(NOW(), interval "+ Const.WX_RETURN_DAY +" day) ;";
-//		@SuppressWarnings("unchecked")
-//		List<PuntPacket> q = entityManager.createNativeQuery(strSQL).getResultList();
-//		return q;
-//	}
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public PuntPacket findOneNotAawardPart(String packet_id) {
+    	String sql = "SELECT * FROM punt_packet WHERE get_userno IS NULL AND packet_id = "+packet_id+" LIMIT 1 FOR UPDATE";
+    	List<PuntPacket> lstPuntPacket = entityManager.createNativeQuery(sql, PuntPacket.class).getResultList();
+    	if(lstPuntPacket.size() >0)
+    		return  lstPuntPacket.get(0);
+    	else
+    		return null;
+    }
+	
+	@SuppressWarnings("unchecked")
+	public List<PuntPacket> findByGetUserno(String getUserno,String packet_id) {
+		String sql = "SELECT * FROM punt_packet WHERE packet_id = '"+packet_id+"' AND get_userno = " +getUserno;
+		return entityManager.createNativeQuery(sql, PuntPacket.class).getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<PuntPacket> findLeftParts(String packet_id) {
+    	String sql = "SELECT * FROM punt_packet WHERE get_userno IS NULL AND packet_id = "+packet_id;
+    	return entityManager.createNativeQuery(sql, PuntPacket.class).getResultList();
+    }
 }

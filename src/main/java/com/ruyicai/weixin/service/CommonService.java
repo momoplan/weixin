@@ -21,8 +21,11 @@ public class CommonService {
 	
 	/**
 	 * 赠送彩金
+	 * 
 	 * @param userNo
 	 * @param point
+	 * @param channel
+	 * @param memo
 	 * @return
 	 */
 	public String presentDividend(String userNo, String point, String channel, String memo) {
@@ -43,64 +46,45 @@ public class CommonService {
 	
 	/**
 	 * 投注
+	 * 
 	 * @param userNo
-	 * @param point
+	 * @param amount
+	 * @param channel
+	 * @param bet_code
 	 * @return
 	 */
-	public String getDoubleDallBet(String userNo, String amount, String channel, String bet_code)
+	public JSONObject getDoubleDallBet(String userNo, String amount, String channel, String bet_code)
 	{
 		String result = lotserverService.DoubleDallBet( userNo,  amount,  channel,  bet_code);
-		if (StringUtils.isBlank(result)) {
-			return "";
+		if (StringUtil.isEmpty(result)) {
+			return null;
 		}
 		JSONObject fromObject = JSONObject.fromObject(result);
 		if (fromObject==null) {
-			return "";
+			return null;
 		}
-		//return fromObject.getString("error_code");
-		return fromObject.toString();
+		return fromObject;
 	}
 	
 	/**
-	 * 投注
-	 * @param userNo
-	 * @param point
+	 * 查期号和开奖日期
+	 * 
 	 * @return
 	 */
-	public String getBatchInfo()
+	public JSONObject getBatchInfo()
 	{
 		String result = lotserverService.doGetBatchInfo();
-		if (StringUtils.isBlank(result)) {
-			return "";
+		if (StringUtil.isEmpty(result)) {
+			return null;
 		}
 		JSONObject fromObject = JSONObject.fromObject(result);
 		if (fromObject==null) {
-			return "";
+			return null;
 		}
-		//return fromObject.getString("error_code");
-		return fromObject.toString();
+		
+		return fromObject;
 	}
 	
-	/**
-	 * 投注
-	 * @param userNo
-	 * @param point
-	 * @return
-	 */
-	public String getOpenInfo(String batchcode)
-	{
-		String result = lotserverService.doGetBatchInfo();
-		if (StringUtils.isBlank(result)) {
-			return "";
-		}
-		JSONObject fromObject = JSONObject.fromObject(result);
-		if (fromObject==null) {
-			return "";
-		}
-		//return fromObject.getString("error_code");
-		return fromObject.toString();
-	}
-
 	/**
 	 * 根据购彩订单号获取订单详情
 	 * 

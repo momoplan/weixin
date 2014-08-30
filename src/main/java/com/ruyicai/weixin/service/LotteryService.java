@@ -267,12 +267,12 @@ public class LotteryService {
 	public String presentDividend(String userNo, String amount, String channel,
 			String memo) {
 		StringBuilder paramStr = new StringBuilder();
-		paramStr.append("userno=" + userNo);
-		paramStr.append("&amt=" + amount);
-		paramStr.append("&accesstype=" + Constants.accessType);
-		paramStr.append("&subchannel=" + Constants.subChannel);
-		paramStr.append("&channel=" + channel);
-		paramStr.append("&memo=" + memo);
+		paramStr.append("userno=").append(userNo)
+			.append("&amt=").append(amount)
+			.append("&accesstype=").append(Constants.accessType)
+			.append("&subchannel=").append(Constants.subChannel)
+			.append("&channel=").append(channel)
+			.append("&memo=").append(memo);
 
 		String url = lotterycoreurl + "/taccounts/doDirectChargeProcess";
 		String result = HttpUtil.sendRequestByPost(url, paramStr.toString(),

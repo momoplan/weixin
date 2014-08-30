@@ -98,30 +98,4 @@ privileged aspect PuntPacket_Roo_Jpa_ActiveRecord {
         return merged;
     }
     
-    @SuppressWarnings("unchecked")
-    @Transactional
-	public static PuntPacket PuntPacket.findOneNotAawardPart(String packet_id) {
-    	String sql = "SELECT * FROM punt_packet WHERE get_userno IS NULL AND packet_id = "+packet_id+" LIMIT 1 FOR UPDATE";
-    	List<PuntPacket> lstPuntPacket = entityManager().createNativeQuery(sql, PuntPacket.class).getResultList();
-    	if(lstPuntPacket.size() >0)
-    		return  lstPuntPacket.get(0);
-    	else
-    		return null;
-    }
-    
-    
-    @SuppressWarnings("unchecked")
-    @Transactional
-	public static List<PuntPacket> PuntPacket.findByGetUserno(String getUserno,String packet_id) {
-    	String sql = "SELECT * FROM punt_packet WHERE packet_id = '"+packet_id+"' AND get_userno = " +getUserno;
-    	return entityManager().createNativeQuery(sql, PuntPacket.class).getResultList();
-    }
-    
-    @SuppressWarnings("unchecked")
-    @Transactional
-	public static List<PuntPacket> PuntPacket.findLeftParts(String packet_id) {
-    	String sql = "SELECT * FROM punt_packet WHERE get_userno IS NULL AND packet_id = "+packet_id;
-    	return entityManager().createNativeQuery(sql, PuntPacket.class).getResultList();
-    }
-    
 }

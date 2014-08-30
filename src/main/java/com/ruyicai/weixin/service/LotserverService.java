@@ -25,6 +25,8 @@ public class LotserverService {
 	 * 
 	 * @param userNo
 	 * @param amount
+	 * @param channel
+	 * @param bet_code
 	 * @return
 	 */
 	public String DoubleDallBet(String userNo, String amount, String channel, String bet_code) {
