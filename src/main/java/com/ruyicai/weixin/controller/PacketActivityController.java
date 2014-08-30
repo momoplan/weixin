@@ -477,6 +477,7 @@ public class PacketActivityController {
 					+ name
 					+ "."
 					+ format;
+			logger.info(redirectURL);
 
 			try {
 				response.sendRedirect(redirectURL);
@@ -546,7 +547,7 @@ public class PacketActivityController {
 		String redirectURL = "http://www.ruyicai.com/uploadimg/paipai.html?userno="
 				+ userno + "&urlname=" + "http://www.ruyicai.com/images/" + name + "."
 				+ format;
-
+		logger.info(redirectURL);
 		try {
 			response.sendRedirect(redirectURL);
 		} catch (IOException e) {
