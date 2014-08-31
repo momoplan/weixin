@@ -156,17 +156,25 @@ public class PacketActivityService {
 		return result;
 	}
 	
+	/**
+	 * 获取红包
+	 * 
+	 * @param award_userno
+	 * @param channel
+	 * @param packet_id
+	 * @return
+	 */
 	@Transactional
 	public PuntPacket getPuntPacket(String award_userno, String channel, String packet_id)
 	{
-		int resutl = puntPacketDao.findOneNotAawardPart(packet_id, award_userno);
-		if (resutl == 1) {
-			List<PuntPacket> list = puntPacketDao.findByGetUserno(award_userno, packet_id);
-			if (list == null || list.size() == 0)
+		List<Packet> packetList = puntPacketDao.findOneNotAawardPart(packet_id);
+		if (packetList != null && packetList.size() > 0) {
+			List<PuntPacket> puntPacketList = puntPacketDao.findSinglePuntPart(packet_id);
+			if (puntPacketList == null || puntPacketList.size() == 0)
 			{
 				throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
 			}
-			PuntPacket puntPacket = list.get(0);
+			PuntPacket puntPacket = puntPacketList.get(0);
 			processPuntPacket(puntPacket, award_userno, channel);
 			return puntPacket;
 		} else {
@@ -451,16 +459,12 @@ public class PacketActivityService {
 						nickName = grabUserInfo.getNickname();
 						headimg = grabUserInfo.getHeadimgurl();
 					}
+					if(isMe && StringUtil.isEmpty(nickName))
+						nickName = "我";
+					
 					grapMap.put("nickname", nickName);
-					if(isMe && nickName.equals(""))
-					{
-						grapMap.put("nickname", "我");
-						
-					}
-					else
-						grapMap.put("nickname", nickName);
-					isMe = false;
 					grapMap.put("headimg", headimg);
+					isMe = false;
 
 					// 中奖详情
 					int award = 0;
@@ -496,10 +500,15 @@ public class PacketActivityService {
 					arry.put(grapMap);
 				}
 				
+				// 发红包用户返还详情
 				packet_user_Map.put("isOpen", isOpen); // 是否开奖
 				packet_user_Map.put("award", packet_user_award); // 中奖金额
 				packet_user_Map.put("get_punts", totalPunts); // 领取注
-				packet_user_Map.put("nickname", userInfo.getNickname()); // 用户昵称
+				String strNickName = userInfo.getNickname();
+				if ("1".equals(is_self) && StringUtil.isEmpty(strNickName))
+					strNickName = "我";
+				
+				packet_user_Map.put("nickname", strNickName); // 用户昵称
 				packet_user_Map.put("headimgurl", userInfo.getHeadimgurl()); // 用户头像				
 				packet_user_Map.put("return_lottery_date", return_lottery_date == null ? "" : DateUtil.format("MM月dd日", return_lottery_date));// 开奖时间
 				
@@ -656,8 +665,11 @@ public class PacketActivityService {
 		
 		if (ret != null)
 		{
-			String orderId = ret.getString("orderId");
-			puntListDao.createPuntList(batchcode, cal_open, betcode, puntId, orderId);
+			if (ret.containsValue("orderId"))
+			{
+				String orderId = ret.getString("orderId");
+				puntListDao.createPuntList(batchcode, cal_open, betcode, puntId, orderId);
+			}
 		}
 	}
 	
