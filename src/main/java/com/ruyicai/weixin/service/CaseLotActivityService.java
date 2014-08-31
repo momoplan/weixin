@@ -1,6 +1,8 @@
 package com.ruyicai.weixin.service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -45,18 +47,15 @@ public class CaseLotActivityService {
 			throw new IllegalArgumentException(
 					"the argument orderid is require.");
 		}
-		
-	 
-		CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo.findCaseLotUserinfo(new CaseLotUserinfoPK(userno, orderid));
+
+		CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo
+				.findCaseLotUserinfo(new CaseLotUserinfoPK(userno, orderid));
 		if (caseLotUserinfo == null) {
 			findActivityByOrderid(orderid);
 			caseLotUserinfo = CaseLotUserinfo.createCaseLotUserinfo(userno,
 					orderid, nickname, headimgurl);
-		}
-		else
-		{
-			if(!headimgurl.equals("") || !nickname.equals(""))
-			{
+		} else {
+			if (!headimgurl.equals("") || !nickname.equals("")) {
 				caseLotUserinfo.setHeadimgurl(headimgurl);
 				caseLotUserinfo.setNickname(nickname);
 				caseLotUserinfo.merge();
@@ -81,8 +80,8 @@ public class CaseLotActivityService {
 
 	@Transactional
 	public CaseLotUserinfo caseLotchances(String userno, String orderid) {
-//		logger.info("selectActivityDetail orderid:{},userno:{}", orderid,
-//				userno);
+		// logger.info("selectActivityDetail orderid:{},userno:{}", orderid,
+		// userno);
 		if (StringUtils.isEmpty(orderid)) {
 			throw new IllegalArgumentException(
 					"the argument orderid is require.");
@@ -171,10 +170,12 @@ public class CaseLotActivityService {
 	 * @param orderid
 	 * @return
 	 */
-	public CaseLotUserinfo createBigUserAndCaseLotUserinfo(String openid,
+	public Map<String, Object> createBigUserAndCaseLotUserinfo(String openid,
 			String orderid) {
 		logger.info("获取用户信息参数:openid:" + openid);
+		Map<String, Object> map = new HashMap<String, Object>();
 		CaseLotUserinfo caseLotUserinfo = null;
+		String Subscribe = "";
 		try {
 			String accessToken = weixinService.getAccessToken();
 			WeixinUserDTO dto = null;
@@ -188,6 +189,8 @@ public class CaseLotActivityService {
 							.getNickname() : "";
 					headimgurl = StringUtils.isNotEmpty(dto.getHeadimgurl()) ? dto
 							.getHeadimgurl() : "";
+					Subscribe = String.valueOf(dto.getSubscribe());
+
 				}
 
 			} catch (Exception ex) {
@@ -199,15 +202,14 @@ public class CaseLotActivityService {
 					nickname, Const.DEFAULT_BIGUSER_TYPE);
 			caseLotUserinfo = this.findOrCreateCaseLotUserinfo(userno, orderid,
 					nickname, headimgurl);
-			 
-			 
 
 		} catch (Exception e) {
 			logger.error("关注时同步执行 增加 HM00001的活动账户失败:", e.getMessage());
 		}
-		
-		 
-		return caseLotUserinfo;
+
+		map.put("subscribe", Subscribe);
+		map.put("caseLotUserinfo", caseLotUserinfo);
+		return map;
 	}
 
 	@Transactional

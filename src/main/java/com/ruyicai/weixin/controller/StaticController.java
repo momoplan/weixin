@@ -104,16 +104,20 @@ public class StaticController {
 			logger.info(
 					"/static/createBigUserAndCaseLotUserinfo openid:{} orderid:{}",
 					openid, orderid);
-			CaseLotUserinfo caselotuserinfo = caseLotActivityService
+			Map<String,Object> map1 = caseLotActivityService
 					.createBigUserAndCaseLotUserinfo(openid, orderid);
+			
+			String subscriber = String.valueOf(map1.get("subscribe"));
+			CaseLotUserinfo caselotuserinfo = (CaseLotUserinfo)map1.get("caseLotUserinfo");
+//			CaseLotUserinfo caselotuserinfo = caseLotActivityService
+//					.createBigUserAndCaseLotUserinfo(openid, orderid);
 			rd.setErrorCode(ErrorCode.OK.value);
 			Map<String, Object> map = new HashMap<String, Object>();
 
-			Subscriber subscriber = subscriberService.findSubscriber(openid, Const.WEIXIN_NO);
+			//Subscriber subscriber = subscriberService.findSubscriber(openid, Const.WEIXIN_NO);
 			map.put("openid", openid);
-			map.put("subscribe", subscriber == null ? 0 : subscriber.getHasSubscribe());
+			map.put("subscribe", subscriber.equals("1") ? 1 : 0);
 			map.put("caselotuserinfo", caselotuserinfo);
-
 			rd.setValue(map);
 		} catch (Exception e) {
 			logger.error("createBigUserAndCaseLotUserinfo error", e);
