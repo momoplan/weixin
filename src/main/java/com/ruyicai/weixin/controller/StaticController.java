@@ -116,7 +116,9 @@ public class StaticController {
 
 			//Subscriber subscriber = subscriberService.findSubscriber(openid, Const.WEIXIN_NO);
 			map.put("openid", openid);
-			map.put("subscribe", subscriber.equals("1") ? 1 : 0);
+			int SubscribeState = subscriber.equals("1") ? 1 : 0;
+			map.put("subscribe", SubscribeState);
+			logger.info(caselotuserinfo.getNickname()+"订阅状态为："+SubscribeState);
 			map.put("caselotuserinfo", caselotuserinfo);
 			rd.setValue(map);
 		} catch (Exception e) {
