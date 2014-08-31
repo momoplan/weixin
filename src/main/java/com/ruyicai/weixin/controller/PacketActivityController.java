@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -139,25 +140,26 @@ public class PacketActivityController {
 			// 判断用户是否存在
 			caseLotActivityService.caseLotchances(award_userno,
 					Const.WX_PACKET_ACTIVITY);
-			int status = packetActivityService.getPacketStatus(award_userno,
-					packet_id);
-			if (status == 0) {
-				Map<String, Object> imap = packetActivityService.getPunts(
-						award_userno, channel, packet_id);
+			Map<Integer, Object> status = packetActivityService.getPacketStatus(award_userno, packet_id);
+			
+			for (Entry<Integer, Object> entry : status.entrySet())
+			{
+				int k = entry.getKey();
+				Object v = entry.getValue();
+				if (k == 0)
+				{
+					Map<String, Object> imap = packetActivityService.getPunts(
+							award_userno, channel, packet_id);
 
-				rd.setErrorCode(ErrorCode.OK.value);
-				rd.setValue(imap);
-			} else {
-				String value = "";
-				if (status == 1) {
-					value = "红包已抢完";
-				} else if (status == 2) {
-					value = "你已抢过红包";
-				} else {
-					value = "不能抢自己发的红包";
+					rd.setErrorCode(ErrorCode.OK.value);
+					rd.setValue(imap);
+					break;
+				} else
+				{
+					rd.setErrorCode(String.valueOf(k));
+					rd.setValue(v);
+					break;
 				}
-				rd.setValue(value);
-				rd.setErrorCode(String.valueOf(status));
 			}
 		} catch (WeixinException e) {
 			if (e.getErrorCode().value.equals(ErrorCode.DATA_NOT_EXISTS.value))

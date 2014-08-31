@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.sf.json.JSONObject;
 
@@ -210,12 +211,22 @@ public class PacketActivityService {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	public Map doGetPacketStus(String award_userno, String packet_id) {
-		int ret = getPacketStatus(award_userno, packet_id);
+		int k = 1;
+		Map<Integer, Object> status = getPacketStatus(award_userno, packet_id);
 
-		Map<String, String> map = new HashMap<String, String>();
+		Object v = "";
+		for (Entry<Integer, Object> entry : status.entrySet())
+		{
+			k = entry.getKey();
+			v = entry.getValue();
+			break;
+		}
+		
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("award_userno", award_userno);
 		map.put("packet_id", packet_id);
-		map.put("status", String.valueOf(ret));
+		map.put("status", String.valueOf(k));
+		map.put("status_info", v);
 		try {
 			Packet packet = Packet.findPacket(Integer.parseInt(packet_id));
 			CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(
@@ -243,8 +254,9 @@ public class PacketActivityService {
 	 * @param packet_id
 	 * @return
 	 */
-	public int getPacketStatus(String award_userno, String packet_id)
+	public Map<Integer, Object> getPacketStatus(String award_userno, String packet_id)
 	{
+		Map<Integer, Object> status = new HashMap<Integer, Object>();
 		Packet packet = Packet.findPacket(Integer.parseInt(packet_id));
 		if (null == packet)
 		{
@@ -257,21 +269,59 @@ public class PacketActivityService {
 				if (packet.getPacketUserno().equals(award_userno))
 				{
 					logger.info("不能抢自己送的红包 - packet_id:{} award_userno:{}", packet_id, award_userno);
-					return 3; // 送红包的抢不了
+					status.put(3, "不能抢自己发的红包");
+					return status;
 				}
 
 				List<PuntPacket> lstPuntPacket = puntPacketDao.findByGetUserno(award_userno, packet_id);
 				if (lstPuntPacket != null && lstPuntPacket.size() > 0)
 				{
 					logger.info("红包已抢过 - packet_id:{} award_userno:{}", packet_id, award_userno);
-					return 2; // 已抢过
+					
+					// 返回已获得的红包详情
+					String pund = "43260902000"; // 奖池值
+					JSONObject preOrderInfo = commonService.getPreBatchInfo();
+					if (preOrderInfo != null)
+						pund = preOrderInfo.getString("prizePoolAmount");
+
+					PuntPacket puntPacket = lstPuntPacket.get(0);
+					List<PuntList> puntList = puntListDao.findPuntListGrabedList(puntPacket.getId());
+					String[] result = new String[puntPacket.getRandomPunts()];
+					Date lottery_date = null;
+					if (puntList != null && puntList.size() > 0)
+					{
+						for (int i = 0; i< puntList.size(); i++)
+						{
+							PuntList punt = puntList.get(i);
+							result[i] = punt.getBetcode();
+							Calendar cal = punt.getOpentime();
+							if (lottery_date != null) {
+								if (lottery_date.after(cal.getTime())) {
+									lottery_date = cal.getTime();
+								}
+							} else {
+								lottery_date = cal.getTime();
+							}
+						}
+					}
+					
+					Map<String, Object> iMap = new HashMap<String, Object>();
+					iMap.put("punts", String.valueOf(puntPacket.getRandomPunts()));
+					iMap.put("lottery_type", "双色球");
+					iMap.put("lottery_date", lottery_date == null ? "" : DateUtil.format("yyyy-MM-dd", lottery_date));
+					iMap.put("pund", pund);
+					iMap.put("puntlist", result);
+					
+					status.put(2, iMap);
+					return status;
 				}
 
 				List<PuntPacket> puntPacket = puntPacketDao.findLeftParts(packet_id);
 				if (null == puntPacket || puntPacket.size() == 0)
 				{
 					logger.info("红包已抢完 - packet_id:{} award_userno:{}", packet_id, award_userno);
-					return 1; // 已抢完
+					status.put(1, "红包已抢完");
+					return status;
 				}
 
 			} catch (WeixinException ex)
@@ -281,7 +331,8 @@ public class PacketActivityService {
 				throw new WeixinException(ErrorCode.PACKET_STATUS_EXIST);
 			}
 		}
-		return 0; // 有剩下
+		status.put(0, "红包可抢");
+		return status; // 有剩下
 	}
 
 	/**
@@ -665,7 +716,7 @@ public class PacketActivityService {
 		
 		if (ret != null)
 		{
-			if (ret.containsValue("orderId"))
+			if (ret.containsKey("orderId"))
 			{
 				String orderId = ret.getString("orderId");
 				puntListDao.createPuntList(batchcode, cal_open, betcode, puntId, orderId);
