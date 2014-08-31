@@ -189,7 +189,10 @@ public class CaseLotActivityService {
 							.getNickname() : "";
 					headimgurl = StringUtils.isNotEmpty(dto.getHeadimgurl()) ? dto
 							.getHeadimgurl() : "";
+							
+					
 					Subscribe = String.valueOf(dto.getSubscribe());
+					logger.info("Subscribe:"+Subscribe);
 
 				}
 
@@ -208,7 +211,11 @@ public class CaseLotActivityService {
 		}
 
 		map.put("subscribe", Subscribe);
+		logger.info("Subscribe:"+Subscribe);
+
 		map.put("caseLotUserinfo", caseLotUserinfo);
+		logger.info("caseLotUserinfo:"+caseLotUserinfo);
+
 		return map;
 	}
 

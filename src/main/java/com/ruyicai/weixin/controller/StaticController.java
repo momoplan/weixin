@@ -108,7 +108,9 @@ public class StaticController {
 					.createBigUserAndCaseLotUserinfo(openid, orderid);
 			
 			String subscriber = String.valueOf(map1.get("subscribe"));
+			logger.info("subscriber："+subscriber);
 			CaseLotUserinfo caselotuserinfo = (CaseLotUserinfo)map1.get("caseLotUserinfo");
+			logger.info("caselotuserinfo："+caselotuserinfo.getNickname());
 //			CaseLotUserinfo caselotuserinfo = caseLotActivityService
 //					.createBigUserAndCaseLotUserinfo(openid, orderid);
 			rd.setErrorCode(ErrorCode.OK.value);
