@@ -159,8 +159,8 @@ public class PacketActivityService {
 	@Transactional
 	public PuntPacket getPuntPacket(String award_userno, String channel, String packet_id)
 	{
-		int result = puntPacketDao.findOneNotAawardPart(packet_id, award_userno);
-		if (result != 0) {
+		int resutl = puntPacketDao.findOneNotAawardPart(packet_id, award_userno);
+		if (resutl == 1) {
 			List<PuntPacket> list = puntPacketDao.findByGetUserno(award_userno, packet_id);
 			if (list == null || list.size() == 0)
 			{
@@ -654,9 +654,11 @@ public class PacketActivityService {
 		ret = commonService.getDoubleDallBet(award_userno, "200",
 				channel, "0001" + betcode + "^_1_200_200");
 		
-		String orderId = ret.getString("orderId");
-		
-		puntListDao.createPuntList(batchcode, cal_open, betcode, puntId, orderId);
+		if (ret != null)
+		{
+			String orderId = ret.getString("orderId");
+			puntListDao.createPuntList(batchcode, cal_open, betcode, puntId, orderId);
+		}
 	}
 	
 	@Async

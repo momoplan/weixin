@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ruyicai.weixin.domain.Packet;
 import com.ruyicai.weixin.domain.PuntPacket;
 import com.ruyicai.weixin.exception.ErrorCode;
 import com.ruyicai.weixin.exception.WeixinException;
@@ -82,13 +83,15 @@ public class PuntPacketDao {
 	
 	@Transactional
 	public int findOneNotAawardPart(String packet_id, String get_userno) {
-		String sql = "update punt_packet p1 set p1.get_userno = ? "
-				+ " where not exists (select 1 from (select id from punt_packet where (get_userno = ? or get_userno = ?) and packet_id = ?) p2 )"
-				+ " and p1.id = (select id from (select id from punt_packet p "
-					+ " where p.get_userno is null and p.packet_id = ? limit 1) p3)";
+		String sql = "update punt_packet p set p.get_userno = ? "
+					+ " where not exists (select 1 from (select p1.id from punt_packet p1 where (p1.get_userno = ? or p1.get_userno = ?) and p1.packet_id = ?) p2)"
+						+ " and p.id = (select p4.id from (select p3.id from punt_packet p3 where p3.get_userno is null and p3.packet_id = ? limit 1) p4)";
 		
 		Query q = entityManager.createNativeQuery(sql).setParameter(1, get_userno + "_0").setParameter(2, get_userno).setParameter(3, get_userno + "_0").setParameter(4, packet_id).setParameter(5, packet_id);
     	return q.executeUpdate();
+		
+//		String sql = "select * from packet p where not exists (select 1 from punt_packet p1 where p1.get_userno = ? and p1.packet_id = ?) and p.get_userno is null and p.packet_id = ? limit 1 for update";
+//		return entityManager.createNativeQuery(sql, PuntPacket.class).setParameter(1, get_userno).setParameter(2, packet_id).setParameter(3, packet_id).getResultList();
     }
 	
 	@SuppressWarnings("unchecked")
@@ -99,7 +102,7 @@ public class PuntPacketDao {
 	
 	@SuppressWarnings("unchecked")
 	public List<PuntPacket> findLeftParts(String packet_id) {
-    	String sql = "SELECT * FROM punt_packet WHERE get_userno IS NULL AND packet_id = "+packet_id;
-    	return entityManager.createNativeQuery(sql, PuntPacket.class).getResultList();
+    	String sql = "SELECT * FROM punt_packet WHERE get_userno IS NULL AND packet_id = ?";
+    	return entityManager.createNativeQuery(sql, PuntPacket.class).setParameter(1, packet_id).getResultList();
     }
 }

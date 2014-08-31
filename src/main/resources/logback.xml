@@ -33,7 +33,7 @@
 	<logger name="org.springframework" level="ERROR" />
 
 	<root level="info">
-		<!-- <appender-ref ref="STDOUT" /> -->
+		<appender-ref ref="STDOUT" />
 		<appender-ref ref="logfile" />
 	</root>
 </configuration>  
