@@ -212,6 +212,7 @@ public class PacketActivityService {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	public Map doGetPacketStus(String award_userno, String packet_id) {
+		String packetEncrypt = packet_id;
 		packet_id = ToolsAesCrypt.Decrypt(packet_id, Const.PACKET_KEY); // 解密
 		if (StringUtil.isEmpty(packet_id))
 			throw new WeixinException(ErrorCode.ERROR);
@@ -228,10 +229,9 @@ public class PacketActivityService {
 			break;
 		}
 		
-		String packetEncrypt = ToolsAesCrypt.Encrypt(packet_id, Const.PACKET_KEY); // 加密
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("award_userno", award_userno);
-		map.put("packet_id", StringUtil.isEmpty(packetEncrypt) ? "" : packetEncrypt);
+		map.put("packet_id", packetEncrypt);
 		map.put("status", String.valueOf(k));
 		map.put("status_info", v);
 		try {
