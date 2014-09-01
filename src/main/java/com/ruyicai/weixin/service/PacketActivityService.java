@@ -32,6 +32,7 @@ import com.ruyicai.weixin.util.DateUtil;
 import com.ruyicai.weixin.util.DoubleBall;
 import com.ruyicai.weixin.util.RandomPacketUtil;
 import com.ruyicai.weixin.util.StringUtil;
+import com.ruyicai.weixin.util.ToolsAesCrypt;
 
 @Service
 public class PacketActivityService {
@@ -211,9 +212,14 @@ public class PacketActivityService {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	public Map doGetPacketStus(String award_userno, String packet_id) {
-		int k = 1;
+		packet_id = ToolsAesCrypt.Decrypt(packet_id, Const.PACKET_KEY); // 解密
+		if (StringUtil.isEmpty(packet_id))
+			throw new WeixinException(ErrorCode.ERROR);
+		
+		packet_id = packet_id.trim();
 		Map<Integer, Object> status = getPacketStatus(award_userno, packet_id);
 
+		int k = 1;
 		Object v = "";
 		for (Entry<Integer, Object> entry : status.entrySet())
 		{
@@ -222,9 +228,10 @@ public class PacketActivityService {
 			break;
 		}
 		
+		String packetEncrypt = ToolsAesCrypt.Encrypt(packet_id, Const.PACKET_KEY); // 加密
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("award_userno", award_userno);
-		map.put("packet_id", packet_id);
+		map.put("packet_id", StringUtil.isEmpty(packetEncrypt) ? "" : packetEncrypt);
 		map.put("status", String.valueOf(k));
 		map.put("status_info", v);
 		try {
@@ -350,7 +357,7 @@ public class PacketActivityService {
 			for (Packet packet : list) {
 				JSONObject map = new JSONObject();
 				// 红包详情
-				map.put("packet_id", packet.getId());
+				map.put("packet_id", ToolsAesCrypt.Encrypt(String.valueOf(packet.getId()), Const.PACKET_KEY)); //加密
 				
 				map.put("total_punts", packet.getTotalPunts());
 				map.put("total_parts", packet.getTotalPersons());
@@ -406,11 +413,13 @@ public class PacketActivityService {
 	 */
 	public Object doGetPacketInfo(String userno, String packetId)
 			throws Exception {
+		packetId = ToolsAesCrypt.Decrypt(packetId, Const.PACKET_KEY); // 解密
+		
 		Packet packet = Packet.findPacket(Integer.valueOf(packetId));
 		if (packet != null) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			String packetUserno = packet.getPacketUserno();
-			map.put("packet_id", packet.getId());
+			map.put("packet_id", ToolsAesCrypt.Encrypt(String.valueOf(packet.getId()), Const.PACKET_KEY)); // 加密
 			map.put("from_userno", packetUserno);
 			map.put("total_parts", packet.getTotalPersons());
 			map.put("total_punts", packet.getTotalPunts());
@@ -592,6 +601,7 @@ public class PacketActivityService {
 	 *            红包id
 	 */
 	public void doThankTa(String awardUserno, String thankWords, String packetId) {
+		packetId = ToolsAesCrypt.Decrypt(packetId, Const.PACKET_KEY);// 解密
 		PuntPacket puntPacket = puntPacketDao.thankWord(awardUserno,
 				thankWords, packetId);
 		if (puntPacket == null) {

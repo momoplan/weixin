@@ -43,6 +43,7 @@ import com.ruyicai.weixin.service.CaseLotActivityService;
 import com.ruyicai.weixin.service.PacketActivityService;
 import com.ruyicai.weixin.util.JsonMapper;
 import com.ruyicai.weixin.util.StringUtil;
+import com.ruyicai.weixin.util.ToolsAesCrypt;
 
 @RequestMapping(value = "/packetactivity")
 @Controller
@@ -103,7 +104,7 @@ public class PacketActivityController {
 					partsInt, puntsInt, greetings);
 			Map<String, String> json = new HashMap<String, String>();
 			json.put("userno", packet.getPacketUserno());
-			json.put("packet_id", String.valueOf(packet.getId()));
+			json.put("packet_id", ToolsAesCrypt.Encrypt(String.valueOf(packet.getId()), Const.PACKET_KEY));
 			json.put("punts", String.valueOf(packet.getTotalPunts()));
 			rd.setErrorCode(ErrorCode.OK.value);
 			rd.setValue(json);
@@ -140,7 +141,12 @@ public class PacketActivityController {
 			// 判断用户是否存在
 			caseLotActivityService.caseLotchances(award_userno,
 					Const.WX_PACKET_ACTIVITY);
-			Map<Integer, Object> status = packetActivityService.getPacketStatus(award_userno, packet_id);
+			
+			packet_id = ToolsAesCrypt.Decrypt(packet_id, Const.PACKET_KEY); // 解密
+			if (StringUtil.isEmpty(packet_id))
+				throw new WeixinException(ErrorCode.ERROR);
+			
+			Map<Integer, Object> status = packetActivityService.getPacketStatus(award_userno, packet_id.trim());
 			
 			for (Entry<Integer, Object> entry : status.entrySet())
 			{
@@ -149,7 +155,7 @@ public class PacketActivityController {
 				if (k == 0)
 				{
 					Map<String, Object> imap = packetActivityService.getPunts(
-							award_userno, channel, packet_id);
+							award_userno, channel, packet_id.trim());
 
 					rd.setErrorCode(ErrorCode.OK.value);
 					rd.setValue(imap);

@@ -65,7 +65,7 @@ public class OrderInfoService {
 			puntListDao.merge(punt, orderprizeamt);
 		} catch (WeixinException we)
 		{
-
+			logger.info(we.getErrorCode().value);
 		} catch (Exception e)
 		{
 			logger.error("更新中奖金额异常", e);
