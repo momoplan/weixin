@@ -478,7 +478,7 @@ public class PacketActivityController {
 			logger.info("GenerateImage done");
 			try {
 				CaseLotUserinfo clUserInfo = caseLotActivityService
-						.findOrCreateCaseLotUserinfo(userno, "HM00002", "", "");
+						.findOrCreateCaseLotUserinfo(userno, "HM00002", "", "","");
 				clUserInfo.setSettingImgurl("http://www.ruyicai.com/settingimg/"+name + "." + format);
 				clUserInfo.merge();
 				logger.info("setting img done" );

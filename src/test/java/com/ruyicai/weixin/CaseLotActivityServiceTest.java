@@ -17,10 +17,10 @@ public class CaseLotActivityServiceTest extends AbstractJUnit4SpringContextTests
 
 	@Test
 	public void testActivity() throws InterruptedException {
-		CaseLotUserinfo u1 = caseLotActivityService.findOrCreateCaseLotUserinfo("00007", "HM00001", "test1", "hehe1");
+		CaseLotUserinfo u1 = caseLotActivityService.findOrCreateCaseLotUserinfo("00007", "HM00001", "test1", "hehe1","");
 		Assert.assertNotNull(u1);
 		Assert.assertEquals(u1.getChances(), 1);
-		CaseLotUserinfo u2 = caseLotActivityService.findOrCreateCaseLotUserinfo("00008", "HM00001", "test2", "hehe2");
+		CaseLotUserinfo u2 = caseLotActivityService.findOrCreateCaseLotUserinfo("00008", "HM00001", "test2", "hehe2","");
 		Assert.assertNotNull(u2);
 		Assert.assertEquals(u2.getChances(), 1);
 		CaseLotUserinfo u3 = caseLotActivityService.joinActivity("00007", "HM00001", null);
@@ -31,7 +31,7 @@ public class CaseLotActivityServiceTest extends AbstractJUnit4SpringContextTests
 		CaseLotUserinfo u4 = caseLotActivityService.joinActivity("00008", "HM00001", "00007");
 		Assert.assertEquals(u4.getChances(), 0);
 		Thread.sleep(3 * 1000);
-		CaseLotUserinfo u5 = caseLotActivityService.findOrCreateCaseLotUserinfo("00007", "HM00001", "test1", "hehe1");
+		CaseLotUserinfo u5 = caseLotActivityService.findOrCreateCaseLotUserinfo("00007", "HM00001", "test1", "hehe1","");
 		Assert.assertEquals(u5.getLinkTimes(), u1.getLinkTimes() + 1);
 	}
 	
