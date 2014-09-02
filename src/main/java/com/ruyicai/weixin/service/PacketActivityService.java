@@ -821,7 +821,7 @@ public class PacketActivityService {
 	 * @return
 	 */
 	@Async
-	public void sendBetInfo(String openid,String totalPacketpunt,String total_punts)
+	public void sendBetInfo(String openid,String total_punts,String total_money)
 	{
 		String json = "{\"touser\":\"\",\"template_id\":\"\","
 				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}}";
@@ -830,8 +830,8 @@ public class PacketActivityService {
 		 
 		String templateid = "HZt4Rp3WoeeEXqJ8SMO-W3Je_7yy7qUjdOIvZAvfYCw";
 		String url = "http://www.baidu.com";
-		String topcolor = "#FF0000";
-		String color = "#00FF00";
+		String topcolor = "#DA2828";
+		String color = "#DA2828";
 		String betInfo = "共500注中奖 中奖金额共50000元";
 		
 		JSONObject jsono = JSONObject.fromObject(jsoBuy);
