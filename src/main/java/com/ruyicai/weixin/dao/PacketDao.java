@@ -29,6 +29,7 @@ public class PacketDao {
 		packet.setRealParts(parts);
 		packet.setGreetings(greetings);
 		packet.setCreatetime(Calendar.getInstance());
+		 
 		packet.persist();
 		return packet;
 	}

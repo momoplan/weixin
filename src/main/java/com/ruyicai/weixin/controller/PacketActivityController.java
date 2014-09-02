@@ -574,5 +574,28 @@ public class PacketActivityController {
 		// "<script>parent.callback('http://"+request.getLocalAddr()+":"+request.getLocalPort()+"/weixin/"+
 		// name+"."+format +"')</script>";
 	}
+	@RequestMapping(value = "/sendTemplateMsg", method = RequestMethod.GET)
+	@ResponseBody
+	public String sendTemplateMsg(@RequestParam(value = "openid", required = true) String openid,
+			@RequestParam(value = "callBackMethod", required = true) String callback) {
+
+		ResponseData rd = new ResponseData();
+		try {
+
+			int returnPunts = packetActivityService.sendTemplateMsg(openid);
+			rd.setErrorCode(ErrorCode.OK.value);
+			rd.setValue(returnPunts);
+
+		} catch (WeixinException e) {
+			logger.error("findReturnPacketList error", e);
+			rd.setErrorCode(e.getErrorCode().value);
+			rd.setValue(e.getMessage());
+		} catch (Exception e) {
+			logger.error("findReturnPacketList error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(e.getMessage());
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
 
 }

@@ -18,6 +18,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ruyicai.advert.util.HttpUtil;
 import com.ruyicai.weixin.consts.Const;
 import com.ruyicai.weixin.dao.PacketDao;
 import com.ruyicai.weixin.dao.PuntListDao;
@@ -53,6 +54,9 @@ public class PacketActivityService {
 
 	@Autowired
 	private CommonService commonService;
+	
+	@Autowired
+	private WeixinService weixinService;
 
 	@Autowired
 	CaseLotActivityService caseLotActivityService;
@@ -72,7 +76,7 @@ public class PacketActivityService {
 	public Packet doCreatePacket(String packetUserno, int parts, int punts,
 			String greetings) {
 		// 判断用户是否存在
-		caseLotActivityService.caseLotchances(packetUserno,
+		CaseLotUserinfo caseLotUserinfo = caseLotActivityService.caseLotchances(packetUserno,
 				Const.WX_PACKET_ACTIVITY);
 
 		// 扣款
@@ -89,6 +93,8 @@ public class PacketActivityService {
 			if (randomPunts > 0)
 				addPuntPacket(packetId, randomPunts);
 		}
+		
+		sendBuyInfo(caseLotUserinfo.getOpenid(),String.valueOf(parts),String.valueOf(punts));
 		return packet;
 	}
 
@@ -809,17 +815,129 @@ public class PacketActivityService {
 		return ret;
 	}
 	
-	private int sendTemplateMsg()
+	/**
+	 * 中奖信息模板
+	 * 
+	 * @return
+	 */
+	@Async
+	public void sendBetInfo(String openid,String totalPacketpunt,String total_punts)
 	{
-		int ret = 0;
-		String strTemplateMsg = "";
-		String strTotalInfo = "";
-		Map<String,Object> mapSend = new HashMap<String,Object>();
-		Map<String,String> mapData = new HashMap<String,String>();
-		mapData.put("productType", "彩票名称");
-		mapData.put("name", "彩票名称");
-		mapData.put("购买数量", strTotalInfo);
-		mapData.put("有效期", "24小时后未领取的彩票将返还到自己账户");
+		String json = "{\"touser\":\"\",\"template_id\":\"\","
+				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}}";
+		
+		String jsoBuy = "{\"title\": {\"value\":\"\",\"color\":\"\"},\"headinfo\": {\"value\":\"\",\"color\":\"\"},\"program\": {\"value\":\"\",\"color\":\"\"},\"result\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"},}";
+		 
+		String templateid = "HZt4Rp3WoeeEXqJ8SMO-W3Je_7yy7qUjdOIvZAvfYCw";
+		String url = "http://www.baidu.com";
+		String topcolor = "#FF0000";
+		String color = "#00FF00";
+		
+		JSONObject jsono = JSONObject.fromObject(jsoBuy);
+		
+		JSONObject jsonoSub = JSONObject.fromObject(jsono.get("title"));
+		jsonoSub.element("value", "如意彩彩票中奖通知：");
+		jsonoSub.element("color", color);		
+		jsono.element("title", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("headinfo"));
+		jsonoSub.element("value", "恭喜你领取的如意彩票中奖啦！");
+		jsonoSub.element("color", color);
+		jsono.element("headinfo", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("program"));
+		jsonoSub.element("value", "双色球");
+		jsonoSub.element("color", color);
+		jsono.element("program", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("result"));
+		jsonoSub.element("value", "24小时后未领取的彩票将返还到送红包账户");
+		jsonoSub.element("color", color);
+		jsono.element("result", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
+		jsonoSub.element("value", "");
+		jsonoSub.element("color", color);
+		jsono.element("remark", jsonoSub);
+		 	 
+		JSONObject jsonoMain = JSONObject.fromObject(json);		 
+		jsonoMain.element("touser", openid);		
+		jsonoMain.element("template_id", templateid);
+		jsonoMain.element("url", url);
+		jsonoMain.element("topcolor", topcolor);
+		jsonoMain.element("data", jsono);
+		 
+		System.out.println(jsonoMain);
+		sendTemplateMsg(jsonoMain.toString());
+		 
+	}
+	
+	/**
+	 * 送红包信息模板
+	 * 
+	 * @return
+	 */
+	@Async
+	public void sendBuyInfo(String openid,String totalPacketpunt,String total_punts)
+	{
+		String json = "{\"touser\":\"\",\"template_id\":\"\","
+				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}}";
+		
+		String jsoBuy = "{\"productType\": {\"value\":\"\",\"color\":\"\"},\"name\": {\"value\":\"\",\"color\":\"\"},\"number\": {\"value\":\"\",\"color\":\"\"},\"expDate\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"},}";
+		 
+		String templateid = "xYBPYEur-WrpGvUjMsLj2Iz_Kpsc4B_CvlB6OlGVI_w";
+		String url = "http://www.baidu.com";
+		String topcolor = "#FF0000";
+		String color = "#00FF00";
+		
+		JSONObject jsono = JSONObject.fromObject(jsoBuy);
+		
+		JSONObject jsonoSub = JSONObject.fromObject(jsono.get("productType"));
+		jsonoSub.element("value", "彩票名称");
+		jsonoSub.element("color", "#FFFFFF");		
+		jsono.element("productType", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("name"));
+		jsonoSub.element("value", "双色球");
+		jsonoSub.element("color", color);
+		jsono.element("name", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("number"));
+		jsonoSub.element("value", "共"+totalPacketpunt+"个红包,共"+total_punts+"注");
+		jsonoSub.element("color", color);
+		jsono.element("number", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("expDate"));
+		jsonoSub.element("value", "24小时后未领取的彩票将返还到送红包账户");
+		jsonoSub.element("color", color);
+		jsono.element("expDate", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
+		jsonoSub.element("value", "点击此消息进入送彩详情界面");
+		jsonoSub.element("color", color);
+		jsono.element("remark", jsonoSub);
+		 	 
+		JSONObject jsonoMain = JSONObject.fromObject(json);		 
+		jsonoMain.element("touser", openid);		
+		jsonoMain.element("template_id", templateid);
+		jsonoMain.element("url", url);
+		jsonoMain.element("topcolor", topcolor);
+		jsonoMain.element("data", jsono);
+		 
+		System.out.println(jsonoMain);
+		sendTemplateMsg(jsonoMain.toString());
+		 
+	}
+	
+	public int sendTemplateMsg(String strContent)
+	{
+		int ret = 0;			
+		String accessToken = weixinService.getAccessToken();
+		String sendUrl = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+accessToken;
+		logger.info("sendUrl:"+sendUrl);
+		String sendData = strContent.toString();
+		String ret1 = HttpUtil.sendRequestByPost(sendUrl, sendData, true);
+		logger.info("result:"+ret1);
 		
 		return ret;
 	}

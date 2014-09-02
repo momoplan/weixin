@@ -28,6 +28,7 @@ public class PuntPacketDao {
 		PuntPacket puntPacket = new PuntPacket();
 		puntPacket.setPacketId(packetId);
 		puntPacket.setRandomPunts(randomPunts);
+		puntPacket.setGetStatus((short) 0);
 		puntPacket.persist();
 		return puntPacket;
 	}
