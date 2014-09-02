@@ -139,7 +139,7 @@ public class PacketActivityController {
 			}
 
 			// 判断用户是否存在
-			caseLotActivityService.caseLotchances(award_userno,
+			CaseLotUserinfo caseLotUserinfo = caseLotActivityService.caseLotchances(award_userno,
 					Const.WX_PACKET_ACTIVITY);
 			
 			packet_id = ToolsAesCrypt.Decrypt(packet_id, Const.PACKET_KEY); // 解密
@@ -157,6 +157,8 @@ public class PacketActivityController {
 					Map<String, Object> imap = packetActivityService.getPunts(
 							award_userno, channel, packet_id.trim());
 
+					imap.put("packet_userno", caseLotUserinfo.getId().getUserno());
+					
 					rd.setErrorCode(ErrorCode.OK.value);
 					rd.setValue(imap);
 					break;

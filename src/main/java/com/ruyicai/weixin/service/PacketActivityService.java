@@ -273,6 +273,7 @@ public class PacketActivityService {
 		{
 			try
 			{
+				Map<String, Object> iMap = new HashMap<String, Object>();
 				if (packet.getPacketUserno().equals(award_userno))
 				{
 					logger.info("不能抢自己送的红包 - packet_id:{} award_userno:{}", packet_id, award_userno);
@@ -312,7 +313,6 @@ public class PacketActivityService {
 						}
 					}
 					
-					Map<String, Object> iMap = new HashMap<String, Object>();
 					iMap.put("punts", String.valueOf(puntPacket.getRandomPunts()));
 					iMap.put("lottery_type", "双色球");
 					iMap.put("lottery_date", lottery_date == null ? "" : DateUtil.format("yyyy-MM-dd", lottery_date));
