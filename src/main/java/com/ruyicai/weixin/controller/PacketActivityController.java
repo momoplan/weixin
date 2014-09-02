@@ -119,6 +119,7 @@ public class PacketActivityController {
 		return JsonMapper.toJsonP(callback, rd);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/getPuntsFromPacket", method = RequestMethod.GET)
 	@ResponseBody
 	public String getpuntsfrompacket(
@@ -152,21 +153,25 @@ public class PacketActivityController {
 			{
 				Map<String, Object> msg = new HashMap<String, Object>();
 				int k = entry.getKey();
-				Object v = entry.getValue();
+				Map<String, Object> v = (Map<String, Object>) entry.getValue();
 				if (k == 0)
 				{
 					Map<String, Object> imap = packetActivityService.getPunts(
 							award_userno, channel, packet_id.trim());
 					
-					imap.put("status_info", v);
+					for (Entry<String, Object> entryV : v.entrySet())
+					{
+						imap.put(entryV.getKey(), entryV.getValue());
+					}
+					
+					msg.put("status_info", imap);
 					rd.setErrorCode(ErrorCode.OK.value);
-					rd.setValue(imap);
 				} else
 				{
 					msg.put("status_info", v);
 					rd.setErrorCode(String.valueOf(k));
-					rd.setValue(msg);
 				}
+				rd.setValue(msg);
 				break;
 			}
 		} catch (WeixinException e) {
