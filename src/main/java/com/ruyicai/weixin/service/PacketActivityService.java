@@ -895,7 +895,7 @@ public class PacketActivityService {
 		
 		JSONObject jsonoSub = JSONObject.fromObject(jsono.get("productType"));
 		jsonoSub.element("value", "彩票名称");
-		jsonoSub.element("color", "#FFFFFF");		
+		jsonoSub.element("color", "#000000");		
 		jsono.element("productType", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("name"));
