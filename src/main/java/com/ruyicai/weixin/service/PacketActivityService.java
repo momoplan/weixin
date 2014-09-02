@@ -914,7 +914,7 @@ public class PacketActivityService {
 		jsono.element("expDate", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
-		jsonoSub.element("value", "\r\n点击此消息进入送彩详情界面");
+		jsonoSub.element("value", "");
 		jsonoSub.element("color", color);
 		jsono.element("remark", jsonoSub);
 		 	 
