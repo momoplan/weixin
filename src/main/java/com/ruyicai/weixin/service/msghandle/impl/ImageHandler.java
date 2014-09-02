@@ -24,5 +24,4 @@ public class ImageHandler implements IMsgHandler {
 	public ResponseBaseMessage handler(RequestMessage requestMessage) {
 		return null;
 	}
-
 }

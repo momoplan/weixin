@@ -202,6 +202,25 @@ public class PacketActivityService {
 		puntPacketDao.updatePuntPacket(puntPacket, award_userno);
 	}
 	
+	
+	/**
+	 * 更新获取的红包
+	 * 
+	 * @param puntPacket
+	 * @param award_userno
+	 * @param channel
+	 */
+	public void processPuntPacket(PuntPacket puntPacket, String award_userno, String channel,int get_status)
+	{
+		int punts = puntPacket.getRandomPunts();
+
+		// 送彩金接口
+		commonService.presentDividend(award_userno, String.valueOf(200 * punts), channel, "微信号服务号抢红包奖励");
+
+		// 更新每份红包
+		puntPacketDao.updatePuntPacket(puntPacket, award_userno);
+	}
+	
 	/**
 	 * 抢红包状态判断
 	 * 
@@ -273,12 +292,12 @@ public class PacketActivityService {
 		{
 			try
 			{
-				if (packet.getPacketUserno().equals(award_userno))
-				{
-					logger.info("不能抢自己送的红包 - packet_id:{} award_userno:{}", packet_id, award_userno);
-					status.put(3, "不能抢自己发的红包");
-					return status;
-				}
+//				if (packet.getPacketUserno().equals(award_userno))
+//				{
+//					logger.info("不能抢自己送的红包 - packet_id:{} award_userno:{}", packet_id, award_userno);
+//					status.put(3, "不能抢自己发的红包");
+//					return status;
+//				}
 
 				List<PuntPacket> lstPuntPacket = puntPacketDao.findByGetUserno(award_userno, packet_id);
 				if (lstPuntPacket != null && lstPuntPacket.size() > 0)
@@ -466,7 +485,7 @@ public class PacketActivityService {
 				for (PuntPacket puntPacket : grabList) {
 					get_punts += puntPacket.getRandomPunts();
 					
-					if(puntPacket.getGetUserno().equals(packetUserno))
+					if(puntPacket.getGetUserno().equals(packetUserno) && puntPacket.getGetStatus() == 1)
 					{
 						totalPunts += puntPacket.getRandomPunts();		
 						
@@ -638,7 +657,7 @@ public class PacketActivityService {
 					map.put("get_time", DateUtil.format("yyyy-MM-dd",
 							puntPacket.getGetTime().getTime())); // 领取红包时间
 					
-					if(fromUserno.equals(awardUserno))
+					if(fromUserno.equals(awardUserno) && puntPacket.getGetStatus() == 1)
 						map.put("isreturn", 1);
 					else
 						map.put("isreturn", 0);
@@ -768,7 +787,8 @@ public class PacketActivityService {
 					{
 						for(PuntPacket puntPacket : lstPuntPacket)
 						{
-							processPuntPacket(puntPacket, packet_userno, Const.WX_PACKET_CHANNEL);
+							//processPuntPacket(puntPacket, packet_userno, Const.WX_PACKET_CHANNEL);
+							processPuntPacket(puntPacket, packet_userno, Const.WX_PACKET_CHANNEL,1);
 							generatePunts(packet_userno, Const.WX_PACKET_CHANNEL, puntPacket);
 							totalReturnPunts += puntPacket.getRandomPunts();
 						}
@@ -786,6 +806,21 @@ public class PacketActivityService {
 			throw new WeixinException(ErrorCode.ERROR);
 		}
 		//根据红包id给送红包userno抢红包
+		return ret;
+	}
+	
+	private int sendTemplateMsg()
+	{
+		int ret = 0;
+		String strTemplateMsg = "";
+		String strTotalInfo = "";
+		Map<String,Object> mapSend = new HashMap<String,Object>();
+		Map<String,String> mapData = new HashMap<String,String>();
+		mapData.put("productType", "彩票名称");
+		mapData.put("name", "彩票名称");
+		mapData.put("购买数量", strTotalInfo);
+		mapData.put("有效期", "24小时后未领取的彩票将返还到自己账户");
+		
 		return ret;
 	}
 

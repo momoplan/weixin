@@ -41,6 +41,16 @@ public class PuntPacketDao {
 		puntPacket.flush();
 	}
 	
+	@Transactional
+	public void updatePuntPacket(PuntPacket puntPacket, String award_userno,short get_status)
+	{
+		puntPacket.setGetUserno(award_userno);
+		puntPacket.setGetStatus(get_status);	 
+		puntPacket.setGetTime(Calendar.getInstance());
+		puntPacket.merge();
+		puntPacket.flush();
+	}
+	
 	public List<PuntPacket> findPuntPacketGrabedList(int packetId)
 	{
 		TypedQuery<PuntPacket> q = entityManager.createQuery("select o from PuntPacket o where o.getUserno != null and o.packetId = ? order by o.id desc", PuntPacket.class)

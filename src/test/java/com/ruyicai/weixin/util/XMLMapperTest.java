@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import net.sf.json.JSONObject;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,19 @@ public class XMLMapperTest {
 		String s = "<xml> <ToUserName><![CDATA[toUser]]></ToUserName> <FromUserName><![CDATA[fromUser]]></FromUserName> <CreateTime>1348831860</CreateTime> <MsgType><![CDATA[text]]></MsgType> <Content><![CDATA[this is a test]]></Content> <MsgId>1234567890123456</MsgId> </xml>";
 		RequestMessage xml = JaxbMapper.fromXml(s, RequestMessage.class);
 		logger.info(xml.toString());
+//		System.out.println(xml.toString());
+	}
+	
+	@Test
+	public void xmlToBeanTest1() throws JAXBException {
+		String s = "<xml> <ToUserName><![CDATA[toUser]]></ToUserName> <FromUserName><![CDATA[fromUser]]></FromUserName> <CreateTime>1348831860</CreateTime> <MsgType><![CDATA[text]]></MsgType> <Content><![CDATA[this is a test]]></Content> <MsgId>1234567890123456</MsgId> </xml>";
+		 
+		RequestMessage xml = JaxbMapper.fromXml(s, RequestMessage.class);
+		logger.info(xml.toString());
+		
+		
+//		JSONObject array = JSONObject.fromObject(xml.toString());
+		System.out.println(JaxbMapper.toXml(xml,true));
 	}
 
 	@Test
