@@ -290,6 +290,7 @@ public class PacketActivityService {
 	public Map<Integer, Object> getPacketStatus(String award_userno, String packet_id)
 	{
 		Map<Integer, Object> status = new HashMap<Integer, Object>();
+		Map<String, Object> iMap = new HashMap<String, Object>();
 		Packet packet = Packet.findPacket(Integer.parseInt(packet_id));
 		if (null == packet)
 		{
@@ -299,6 +300,8 @@ public class PacketActivityService {
 		{
 			try
 			{
+				iMap.put("packet_userno", packet.getPacketUserno());
+				iMap.put("total_punts", packet.getTotalPunts());
 //				if (packet.getPacketUserno().equals(award_userno))
 //				{
 //					logger.info("不能抢自己送的红包 - packet_id:{} award_userno:{}", packet_id, award_userno);
@@ -338,12 +341,12 @@ public class PacketActivityService {
 						}
 					}
 					
-					Map<String, Object> iMap = new HashMap<String, Object>();
 					iMap.put("punts", String.valueOf(puntPacket.getRandomPunts()));
 					iMap.put("lottery_type", "双色球");
 					iMap.put("lottery_date", lottery_date == null ? "" : DateUtil.format("yyyy-MM-dd", lottery_date));
 					iMap.put("pund", pund);
 					iMap.put("puntlist", result);
+					iMap.put("ret_msg", "红包已抢过");
 					
 					status.put(2, iMap);
 					return status;
@@ -353,7 +356,9 @@ public class PacketActivityService {
 				if (null == puntPacket || puntPacket.size() == 0)
 				{
 					logger.info("红包已抢完 - packet_id:{} award_userno:{}", packet_id, award_userno);
-					status.put(1, "红包已抢完");
+					iMap.put("ret_msg", "红包已抢完");
+					
+					status.put(1, iMap);
 					return status;
 				}
 
@@ -364,7 +369,8 @@ public class PacketActivityService {
 				throw new WeixinException(ErrorCode.PACKET_STATUS_EXIST);
 			}
 		}
-		status.put(0, "红包可抢");
+		iMap.put("ret_msg", "红包可抢");
+		status.put(0, iMap);
 		return status; // 有剩下
 	}
 

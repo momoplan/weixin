@@ -119,6 +119,7 @@ public class PacketActivityController {
 		return JsonMapper.toJsonP(callback, rd);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/getPuntsFromPacket", method = RequestMethod.GET)
 	@ResponseBody
 	public String getpuntsfrompacket(
@@ -150,22 +151,28 @@ public class PacketActivityController {
 			
 			for (Entry<Integer, Object> entry : status.entrySet())
 			{
+				Map<String, Object> msg = new HashMap<String, Object>();
 				int k = entry.getKey();
-				Object v = entry.getValue();
+				Map<String, Object> v = (Map<String, Object>) entry.getValue();
 				if (k == 0)
 				{
 					Map<String, Object> imap = packetActivityService.getPunts(
 							award_userno, channel, packet_id.trim());
-
+					
+					for (Entry<String, Object> entryV : v.entrySet())
+					{
+						imap.put(entryV.getKey(), entryV.getValue());
+					}
+					
+					msg.put("status_info", imap);
 					rd.setErrorCode(ErrorCode.OK.value);
-					rd.setValue(imap);
-					break;
 				} else
 				{
+					msg.put("status_info", v);
 					rd.setErrorCode(String.valueOf(k));
-					rd.setValue(v);
-					break;
 				}
+				rd.setValue(msg);
+				break;
 			}
 		} catch (WeixinException e) {
 			if (e.getErrorCode().value.equals(ErrorCode.DATA_NOT_EXISTS.value))
