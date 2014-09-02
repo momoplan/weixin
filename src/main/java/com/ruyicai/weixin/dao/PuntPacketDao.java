@@ -28,6 +28,7 @@ public class PuntPacketDao {
 		PuntPacket puntPacket = new PuntPacket();
 		puntPacket.setPacketId(packetId);
 		puntPacket.setRandomPunts(randomPunts);
+		puntPacket.setGetStatus((short) 0);
 		puntPacket.persist();
 		return puntPacket;
 	}
@@ -36,6 +37,16 @@ public class PuntPacketDao {
 	public void updatePuntPacket(PuntPacket puntPacket, String award_userno)
 	{
 		puntPacket.setGetUserno(award_userno);
+		puntPacket.setGetTime(Calendar.getInstance());
+		puntPacket.merge();
+		puntPacket.flush();
+	}
+	
+	@Transactional
+	public void updatePuntPacket(PuntPacket puntPacket, String award_userno,short get_status)
+	{
+		puntPacket.setGetUserno(award_userno);
+		puntPacket.setGetStatus(get_status);	 
 		puntPacket.setGetTime(Calendar.getInstance());
 		puntPacket.merge();
 		puntPacket.flush();

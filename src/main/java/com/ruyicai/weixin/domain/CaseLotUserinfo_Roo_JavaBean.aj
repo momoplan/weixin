@@ -74,4 +74,12 @@ privileged aspect CaseLotUserinfo_Roo_JavaBean {
     public void CaseLotUserinfo.setSettingImgurl(String settingImgurl) {
         this.settingImgurl = settingImgurl;
     }
+    
+    public String CaseLotUserinfo.getOpenid() {
+        return this.openid;
+    }
+    
+    public void CaseLotUserinfo.setOpenid(String openid) {
+        this.openid = openid;
+    }
 }

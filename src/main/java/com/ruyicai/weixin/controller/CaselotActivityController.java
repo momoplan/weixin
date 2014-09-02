@@ -183,7 +183,7 @@ public class CaselotActivityController {
 				return JsonMapper.toJsonP(callback, rd);
 			}
 			CaseLotUserinfo caselotuserinfo = caseLotActivityService.findOrCreateCaseLotUserinfo(userno, orderid,
-					nickname, headimgurl);
+					nickname, headimgurl,"");
 			logger.info("创建活动用户信息表：" + caselotuserinfo);
 			if (caselotuserinfo != null) {
 				caselotuserinfo = caseLotActivityService.joinActivity(userno, orderid, linkUserno);
@@ -304,7 +304,7 @@ public class CaselotActivityController {
 				return JsonMapper.toJsonP(callback, rd);
 			}
 			CaseLotUserinfo caseLotUserinfo = caseLotActivityService.findOrCreateCaseLotUserinfo(userno, orderid,
-					nickname, headimgurl);
+					nickname, headimgurl,"");
 			rd.setErrorCode("0");
 			rd.setValue(caseLotUserinfo);
 		} catch (WeixinException e) {

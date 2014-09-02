@@ -35,7 +35,7 @@ public class CaseLotActivityService {
 
 	@Transactional
 	public CaseLotUserinfo findOrCreateCaseLotUserinfo(String userno,
-			String orderid, String nickname, String headimgurl) {
+			String orderid, String nickname, String headimgurl,String openid) {
 		logger.info(
 				"createCaseLotUserinfo userno:{} orderid:{} nickname:{} headimgurl:{}",
 				userno, orderid, nickname, headimgurl);
@@ -53,11 +53,15 @@ public class CaseLotActivityService {
 		if (caseLotUserinfo == null) {
 			findActivityByOrderid(orderid);
 			caseLotUserinfo = CaseLotUserinfo.createCaseLotUserinfo(userno,
-					orderid, nickname, headimgurl);
+					orderid, nickname, headimgurl,openid);
 		} else {
 			if (!headimgurl.equals("") || !nickname.equals("")) {
 				caseLotUserinfo.setHeadimgurl(headimgurl);
 				caseLotUserinfo.setNickname(nickname);
+				caseLotUserinfo.merge();
+			}else if(caseLotUserinfo.getOpenid().equals(""))
+			{
+				caseLotUserinfo.setOpenid(openid);
 				caseLotUserinfo.merge();
 			}
 		}
@@ -204,7 +208,7 @@ public class CaseLotActivityService {
 			String userno = lotteryService.findOrCreateBigUser(openid,
 					nickname, Const.DEFAULT_BIGUSER_TYPE);
 			caseLotUserinfo = this.findOrCreateCaseLotUserinfo(userno, orderid,
-					nickname, headimgurl);
+					nickname, headimgurl,openid);
 
 		} catch (Exception e) {
 			logger.error("关注时同步执行 增加 HM00001的活动账户失败:", e.getMessage());

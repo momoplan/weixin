@@ -46,6 +46,9 @@ public class CaseLotUserinfo {
 	
 	@Column(name = "settingImgurl")
 	private String settingImgurl;
+	
+	@Column(name = "openid")
+	private String openid;
 
 	public static CaseLotUserinfo findCaseLotUserinfo(CaseLotUserinfoPK id, boolean lock) {
 		CaseLotUserinfo caseLotUserinfo = entityManager().find(CaseLotUserinfo.class, id,
@@ -55,7 +58,7 @@ public class CaseLotUserinfo {
 
 	@Transactional
 	public static CaseLotUserinfo createCaseLotUserinfo(String userno, String orderid, String nickname,
-			String headimgurl) {
+			String headimgurl,String openid) {
 		CaseLotUserinfo caseLotUserinfo = new CaseLotUserinfo();
 		caseLotUserinfo.setId(new CaseLotUserinfoPK(userno, orderid));
 		caseLotUserinfo.setNickname(nickname);
@@ -64,6 +67,7 @@ public class CaseLotUserinfo {
 		caseLotUserinfo.setJoinTimes(0);
 		caseLotUserinfo.setCreateTime(new Date());
 		caseLotUserinfo.setLinkTimes(0);
+		caseLotUserinfo.setOpenid(openid);
 		caseLotUserinfo.persist();
 		return caseLotUserinfo;
 	}

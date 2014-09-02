@@ -139,7 +139,7 @@ public class PacketActivityController {
 			}
 
 			// 判断用户是否存在
-			CaseLotUserinfo caseLotUserinfo = caseLotActivityService.caseLotchances(award_userno,
+			caseLotActivityService.caseLotchances(award_userno,
 					Const.WX_PACKET_ACTIVITY);
 			
 			packet_id = ToolsAesCrypt.Decrypt(packet_id, Const.PACKET_KEY); // 解密
@@ -150,24 +150,24 @@ public class PacketActivityController {
 			
 			for (Entry<Integer, Object> entry : status.entrySet())
 			{
+				Map<String, Object> msg = new HashMap<String, Object>();
 				int k = entry.getKey();
 				Object v = entry.getValue();
 				if (k == 0)
 				{
 					Map<String, Object> imap = packetActivityService.getPunts(
 							award_userno, channel, packet_id.trim());
-
-					imap.put("packet_userno", caseLotUserinfo.getId().getUserno());
 					
+					imap.put("status_info", v);
 					rd.setErrorCode(ErrorCode.OK.value);
 					rd.setValue(imap);
-					break;
 				} else
 				{
+					msg.put("status_info", v);
 					rd.setErrorCode(String.valueOf(k));
-					rd.setValue(v);
-					break;
+					rd.setValue(msg);
 				}
+				break;
 			}
 		} catch (WeixinException e) {
 			if (e.getErrorCode().value.equals(ErrorCode.DATA_NOT_EXISTS.value))
@@ -480,7 +480,7 @@ public class PacketActivityController {
 			logger.info("GenerateImage done");
 			try {
 				CaseLotUserinfo clUserInfo = caseLotActivityService
-						.findOrCreateCaseLotUserinfo(userno, "HM00002", "", "");
+						.findOrCreateCaseLotUserinfo(userno, "HM00002", "", "","");
 				clUserInfo.setSettingImgurl("http://www.ruyicai.com/settingimg/"+name + "." + format);
 				clUserInfo.merge();
 				logger.info("setting img done" );
@@ -575,6 +575,29 @@ public class PacketActivityController {
 		// return
 		// "<script>parent.callback('http://"+request.getLocalAddr()+":"+request.getLocalPort()+"/weixin/"+
 		// name+"."+format +"')</script>";
+	}
+	@RequestMapping(value = "/sendTemplateMsg", method = RequestMethod.GET)
+	@ResponseBody
+	public String sendTemplateMsg(@RequestParam(value = "openid", required = true) String openid,
+			@RequestParam(value = "callBackMethod", required = true) String callback) {
+
+		ResponseData rd = new ResponseData();
+		try {
+
+			int returnPunts = packetActivityService.sendTemplateMsg(openid);
+			rd.setErrorCode(ErrorCode.OK.value);
+			rd.setValue(returnPunts);
+
+		} catch (WeixinException e) {
+			logger.error("findReturnPacketList error", e);
+			rd.setErrorCode(e.getErrorCode().value);
+			rd.setValue(e.getMessage());
+		} catch (Exception e) {
+			logger.error("findReturnPacketList error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(e.getMessage());
+		}
+		return JsonMapper.toJsonP(callback, rd);
 	}
 
 }

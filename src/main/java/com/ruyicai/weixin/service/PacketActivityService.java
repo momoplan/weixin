@@ -18,6 +18,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ruyicai.advert.util.HttpUtil;
 import com.ruyicai.weixin.consts.Const;
 import com.ruyicai.weixin.dao.PacketDao;
 import com.ruyicai.weixin.dao.PuntListDao;
@@ -53,6 +54,9 @@ public class PacketActivityService {
 
 	@Autowired
 	private CommonService commonService;
+	
+	@Autowired
+	private WeixinService weixinService;
 
 	@Autowired
 	CaseLotActivityService caseLotActivityService;
@@ -72,7 +76,7 @@ public class PacketActivityService {
 	public Packet doCreatePacket(String packetUserno, int parts, int punts,
 			String greetings) {
 		// 判断用户是否存在
-		caseLotActivityService.caseLotchances(packetUserno,
+		CaseLotUserinfo caseLotUserinfo = caseLotActivityService.caseLotchances(packetUserno,
 				Const.WX_PACKET_ACTIVITY);
 
 		// 扣款
@@ -89,6 +93,8 @@ public class PacketActivityService {
 			if (randomPunts > 0)
 				addPuntPacket(packetId, randomPunts);
 		}
+		
+		sendBuyInfo(caseLotUserinfo.getOpenid(),String.valueOf(parts),String.valueOf(punts),String.valueOf(packetId));
 		return packet;
 	}
 
@@ -202,6 +208,25 @@ public class PacketActivityService {
 		puntPacketDao.updatePuntPacket(puntPacket, award_userno);
 	}
 	
+	
+	/**
+	 * 更新获取的红包
+	 * 
+	 * @param puntPacket
+	 * @param award_userno
+	 * @param channel
+	 */
+	public void processPuntPacket(PuntPacket puntPacket, String award_userno, String channel,int get_status)
+	{
+		int punts = puntPacket.getRandomPunts();
+
+		// 送彩金接口
+		commonService.presentDividend(award_userno, String.valueOf(200 * punts), channel, "微信号服务号抢红包奖励");
+
+		// 更新每份红包
+		puntPacketDao.updatePuntPacket(puntPacket, award_userno);
+	}
+	
 	/**
 	 * 抢红包状态判断
 	 * 
@@ -264,6 +289,7 @@ public class PacketActivityService {
 	public Map<Integer, Object> getPacketStatus(String award_userno, String packet_id)
 	{
 		Map<Integer, Object> status = new HashMap<Integer, Object>();
+		Map<String, Object> iMap = new HashMap<String, Object>();
 		Packet packet = Packet.findPacket(Integer.parseInt(packet_id));
 		if (null == packet)
 		{
@@ -273,13 +299,14 @@ public class PacketActivityService {
 		{
 			try
 			{
-				Map<String, Object> iMap = new HashMap<String, Object>();
-				if (packet.getPacketUserno().equals(award_userno))
-				{
-					logger.info("不能抢自己送的红包 - packet_id:{} award_userno:{}", packet_id, award_userno);
-					status.put(3, "不能抢自己发的红包");
-					return status;
-				}
+				iMap.put("packet_userno", packet.getPacketUserno());
+				iMap.put("total_punts", packet.getTotalPunts());
+//				if (packet.getPacketUserno().equals(award_userno))
+//				{
+//					logger.info("不能抢自己送的红包 - packet_id:{} award_userno:{}", packet_id, award_userno);
+//					status.put(3, "不能抢自己发的红包");
+//					return status;
+//				}
 
 				List<PuntPacket> lstPuntPacket = puntPacketDao.findByGetUserno(award_userno, packet_id);
 				if (lstPuntPacket != null && lstPuntPacket.size() > 0)
@@ -318,6 +345,7 @@ public class PacketActivityService {
 					iMap.put("lottery_date", lottery_date == null ? "" : DateUtil.format("yyyy-MM-dd", lottery_date));
 					iMap.put("pund", pund);
 					iMap.put("puntlist", result);
+					iMap.put("ret_msg", "红包已抢过");
 					
 					status.put(2, iMap);
 					return status;
@@ -327,7 +355,9 @@ public class PacketActivityService {
 				if (null == puntPacket || puntPacket.size() == 0)
 				{
 					logger.info("红包已抢完 - packet_id:{} award_userno:{}", packet_id, award_userno);
-					status.put(1, "红包已抢完");
+					iMap.put("ret_msg", "红包已抢完");
+					
+					status.put(1, iMap);
 					return status;
 				}
 
@@ -338,7 +368,8 @@ public class PacketActivityService {
 				throw new WeixinException(ErrorCode.PACKET_STATUS_EXIST);
 			}
 		}
-		status.put(0, "红包可抢");
+		iMap.put("ret_msg", "红包可抢");
+		status.put(0, iMap);
 		return status; // 有剩下
 	}
 
@@ -466,7 +497,7 @@ public class PacketActivityService {
 				for (PuntPacket puntPacket : grabList) {
 					get_punts += puntPacket.getRandomPunts();
 					
-					if(puntPacket.getGetUserno().equals(packetUserno))
+					if(puntPacket.getGetUserno().equals(packetUserno) && puntPacket.getGetStatus() == 1)
 					{
 						totalPunts += puntPacket.getRandomPunts();		
 						
@@ -638,7 +669,7 @@ public class PacketActivityService {
 					map.put("get_time", DateUtil.format("yyyy-MM-dd",
 							puntPacket.getGetTime().getTime())); // 领取红包时间
 					
-					if(fromUserno.equals(awardUserno))
+					if(fromUserno.equals(awardUserno) && puntPacket.getGetStatus() == 1)
 						map.put("isreturn", 1);
 					else
 						map.put("isreturn", 0);
@@ -768,7 +799,8 @@ public class PacketActivityService {
 					{
 						for(PuntPacket puntPacket : lstPuntPacket)
 						{
-							processPuntPacket(puntPacket, packet_userno, Const.WX_PACKET_CHANNEL);
+							//processPuntPacket(puntPacket, packet_userno, Const.WX_PACKET_CHANNEL);
+							processPuntPacket(puntPacket, packet_userno, Const.WX_PACKET_CHANNEL,1);
 							generatePunts(packet_userno, Const.WX_PACKET_CHANNEL, puntPacket);
 							totalReturnPunts += puntPacket.getRandomPunts();
 						}
@@ -786,6 +818,134 @@ public class PacketActivityService {
 			throw new WeixinException(ErrorCode.ERROR);
 		}
 		//根据红包id给送红包userno抢红包
+		return ret;
+	}
+	
+	/**
+	 * 中奖信息模板
+	 * 
+	 * @return
+	 */
+	@Async
+	public void sendBetInfo(String openid,String totalPacketpunt,String total_punts)
+	{
+		String json = "{\"touser\":\"\",\"template_id\":\"\","
+				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}}";
+		
+		String jsoBuy = "{\"title\": {\"value\":\"\",\"color\":\"\"},\"headinfo\": {\"value\":\"\",\"color\":\"\"},\"program\": {\"value\":\"\",\"color\":\"\"},\"result\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"},}";
+		 
+		String templateid = "HZt4Rp3WoeeEXqJ8SMO-W3Je_7yy7qUjdOIvZAvfYCw";
+		String url = "http://www.baidu.com";
+		String topcolor = "#FF0000";
+		String color = "#00FF00";
+		String betInfo = "共500注中奖 中奖金额共50000元";
+		
+		JSONObject jsono = JSONObject.fromObject(jsoBuy);
+		
+		JSONObject jsonoSub = JSONObject.fromObject(jsono.get("title"));
+		jsonoSub.element("value", "如意彩彩票中奖通知：");
+		jsonoSub.element("color", color);		
+		jsono.element("title", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("headinfo"));
+		jsonoSub.element("value", "恭喜你领取的如意彩票中奖啦！");
+		jsonoSub.element("color", color);
+		jsono.element("headinfo", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("program"));
+		jsonoSub.element("value", "双色球");
+		jsonoSub.element("color", color);
+		jsono.element("program", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("result"));
+		jsonoSub.element("value", betInfo);
+		jsonoSub.element("color", color);
+		jsono.element("result", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
+		jsonoSub.element("value", "");
+		jsonoSub.element("color", color);
+		jsono.element("remark", jsonoSub);
+		 	 
+		JSONObject jsonoMain = JSONObject.fromObject(json);		 
+		jsonoMain.element("touser", openid);		
+		jsonoMain.element("template_id", templateid);
+		jsonoMain.element("url", url);
+		jsonoMain.element("topcolor", topcolor);
+		jsonoMain.element("data", jsono);
+		 
+		System.out.println(jsonoMain);
+		sendTemplateMsg(jsonoMain.toString());
+		 
+	}
+	
+	/**
+	 * 送红包信息模板
+	 * 
+	 * @return
+	 */
+	@Async
+	public void sendBuyInfo(String openid,String totalPacketpunt,String total_punts,String packet_id)
+	{
+		String json = "{\"touser\":\"\",\"template_id\":\"\","
+				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}}";
+		
+		String jsoBuy = "{\"productType\": {\"value\":\"\",\"color\":\"\"},\"name\": {\"value\":\"\",\"color\":\"\"},\"number\": {\"value\":\"\",\"color\":\"\"},\"expDate\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"},}";
+		 
+		String templateid = "xYBPYEur-WrpGvUjMsLj2Iz_Kpsc4B_CvlB6OlGVI_w";
+		String url = "http://wx.ruyicai.com/wxpay/html/sendRedbag/baginfo.html?packet_id="+ToolsAesCrypt.Encrypt(packet_id, Const.PACKET_KEY);
+		String topcolor = "#FF0000";
+		String color = "#00FF00";
+		
+		JSONObject jsono = JSONObject.fromObject(jsoBuy);
+		
+		JSONObject jsonoSub = JSONObject.fromObject(jsono.get("productType"));
+		jsonoSub.element("value", "彩票名称");
+		jsonoSub.element("color", "#FFFFFF");		
+		jsono.element("productType", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("name"));
+		jsonoSub.element("value", "双色球");
+		jsonoSub.element("color", color);
+		jsono.element("name", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("number"));
+		jsonoSub.element("value", "共"+totalPacketpunt+"个红包,共"+total_punts+"注");
+		jsonoSub.element("color", color);
+		jsono.element("number", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("expDate"));
+		jsonoSub.element("value", "24小时后未领取的彩票将返还到送红包账户");
+		jsonoSub.element("color", color);
+		jsono.element("expDate", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
+		jsonoSub.element("value", "点击此消息进入送彩详情界面");
+		jsonoSub.element("color", color);
+		jsono.element("remark", jsonoSub);
+		 	 
+		JSONObject jsonoMain = JSONObject.fromObject(json);		 
+		jsonoMain.element("touser", openid);		
+		jsonoMain.element("template_id", templateid);
+		jsonoMain.element("url", url);
+		jsonoMain.element("topcolor", topcolor);
+		jsonoMain.element("data", jsono);
+		 
+		System.out.println(jsonoMain);
+		sendTemplateMsg(jsonoMain.toString());
+		 
+	}
+	
+	public int sendTemplateMsg(String strContent)
+	{
+		int ret = 0;			
+		String accessToken = weixinService.getAccessToken();
+		String sendUrl = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+accessToken;
+		logger.info("sendUrl:"+sendUrl);
+		String sendData = strContent.toString();
+		String ret1 = HttpUtil.sendRequestByPost(sendUrl, sendData, true);
+		logger.info("result:"+ret1);
+		
 		return ret;
 	}
 
