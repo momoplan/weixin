@@ -94,7 +94,7 @@ public class PacketActivityService {
 				addPuntPacket(packetId, randomPunts);
 		}
 		
-		sendBuyInfo(caseLotUserinfo.getOpenid(),String.valueOf(parts),String.valueOf(punts));
+		sendBuyInfo(caseLotUserinfo.getOpenid(),String.valueOf(parts),String.valueOf(punts),String.valueOf(packetId));
 		return packet;
 	}
 
@@ -878,7 +878,7 @@ public class PacketActivityService {
 	 * @return
 	 */
 	@Async
-	public void sendBuyInfo(String openid,String totalPacketpunt,String total_punts)
+	public void sendBuyInfo(String openid,String totalPacketpunt,String total_punts,String packet_id)
 	{
 		String json = "{\"touser\":\"\",\"template_id\":\"\","
 				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}}";
@@ -886,7 +886,7 @@ public class PacketActivityService {
 		String jsoBuy = "{\"productType\": {\"value\":\"\",\"color\":\"\"},\"name\": {\"value\":\"\",\"color\":\"\"},\"number\": {\"value\":\"\",\"color\":\"\"},\"expDate\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"},}";
 		 
 		String templateid = "xYBPYEur-WrpGvUjMsLj2Iz_Kpsc4B_CvlB6OlGVI_w";
-		String url = "http://www.baidu.com";
+		String url = "http://wx.ruyicai.com/wxpay/html/sendRedbag/baginfo.html?packet_id="+ToolsAesCrypt.Encrypt(packet_id, Const.PACKET_KEY);
 		String topcolor = "#FF0000";
 		String color = "#00FF00";
 		
