@@ -894,14 +894,14 @@ public class PacketActivityService {
 		 
 		String templateid = "xYBPYEur-WrpGvUjMsLj2Iz_Kpsc4B_CvlB6OlGVI_w";
 		String url = "http://wx.ruyicai.com/wxpay/html/sendRedbag/baginfo.html?packet_id="+ToolsAesCrypt.Encrypt(packet_id, Const.PACKET_KEY);
-		String topcolor = "#FF0000";
-		String color = "#00FF00";
+		String topcolor = "#DA2828";
+		String color = "#DA2828";
 		
 		JSONObject jsono = JSONObject.fromObject(jsoBuy);
 		
 		JSONObject jsonoSub = JSONObject.fromObject(jsono.get("productType"));
 		jsonoSub.element("value", "彩票名称");
-		jsonoSub.element("color", "#FFFFFF");		
+		jsonoSub.element("color", "#000000");		
 		jsono.element("productType", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("name"));
@@ -920,7 +920,7 @@ public class PacketActivityService {
 		jsono.element("expDate", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
-		jsonoSub.element("value", "点击此消息进入送彩详情界面");
+		jsonoSub.element("value", "\r\n点击此消息进入送彩详情界面");
 		jsonoSub.element("color", color);
 		jsono.element("remark", jsonoSub);
 		 	 
