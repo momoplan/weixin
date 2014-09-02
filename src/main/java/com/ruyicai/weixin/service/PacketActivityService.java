@@ -889,7 +889,7 @@ public class PacketActivityService {
 		String templateid = "xYBPYEur-WrpGvUjMsLj2Iz_Kpsc4B_CvlB6OlGVI_w";
 		String url = "http://wx.ruyicai.com/wxpay/html/sendRedbag/baginfo.html?packet_id="+ToolsAesCrypt.Encrypt(packet_id, Const.PACKET_KEY);
 		String topcolor = "#FF0000";
-		String color = "#00FF00";
+		String color = "#FF0000";
 		
 		JSONObject jsono = JSONObject.fromObject(jsoBuy);
 		
