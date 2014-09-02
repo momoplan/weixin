@@ -832,6 +832,7 @@ public class PacketActivityService {
 		String url = "http://www.baidu.com";
 		String topcolor = "#FF0000";
 		String color = "#00FF00";
+		String betInfo = "共500注中奖 中奖金额共50000元";
 		
 		JSONObject jsono = JSONObject.fromObject(jsoBuy);
 		
@@ -851,7 +852,7 @@ public class PacketActivityService {
 		jsono.element("program", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("result"));
-		jsonoSub.element("value", "24小时后未领取的彩票将返还到送红包账户");
+		jsonoSub.element("value", betInfo);
 		jsonoSub.element("color", color);
 		jsono.element("result", jsonoSub);
 		
