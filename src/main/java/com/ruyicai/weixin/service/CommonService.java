@@ -56,11 +56,12 @@ public class CommonService {
 	 * @param amount
 	 * @param channel
 	 * @param bet_code
+	 * @param batchcode
 	 * @return
 	 */
-	public JSONObject getDoubleDallBet(String userNo, String amount, String channel, String bet_code)
+	public JSONObject getDoubleDallBet(String userNo, String amount, String channel, String bet_code, String batchcode)
 	{
-		String result = lotserverService.DoubleDallBet( userNo,  amount,  channel,  bet_code);
+		String result = lotserverService.DoubleDallBet( userNo,  amount,  channel,  bet_code, batchcode);
 		if (StringUtil.isEmpty(result)) {
 			return null;
 		}

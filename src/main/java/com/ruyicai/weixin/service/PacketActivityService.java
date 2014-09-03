@@ -757,15 +757,28 @@ public class PacketActivityService {
 			throw new WeixinException(ErrorCode.ERROR);
 		}
 		
-		ret = commonService.getDoubleDallBet(award_userno, "200",
-				channel, "0001" + betcode + "^_1_200_200");
-		
-		if (ret != null)
+		int count = 0;
+		for(;;)
 		{
-			if (ret.containsKey("orderId"))
+			++ count;
+			if (count > 5)
+				break;
+			
+			ret = commonService.getDoubleDallBet(award_userno, "200",
+					channel, "0001" + betcode + "^_1_200_200", batchcode);
+
+			if (ret != null)
 			{
-				String orderId = ret.getString("orderId");
-				puntListDao.createPuntList(batchcode, cal_open, betcode, puntId, orderId);
+				String errorCode = ret.get("error_code").toString();
+				if ("0000".equals(errorCode)) // 投注成功
+				{
+					String orderId = ret.getString("orderId");
+					puntListDao.createPuntList(batchcode, cal_open, betcode, puntId, orderId);
+					break;
+				} else if ("1001".equals(errorCode)) // 该期已过期
+				{
+					batchcode = ret.getString("batchcode"); // 重新获得下一期期号
+				}
 			}
 		}
 	}
