@@ -957,7 +957,8 @@ public class PacketActivityService {
 		jsonoMain.element("topcolor", topcolor);
 		jsonoMain.element("data", jsono);
 		 
-		System.out.println(jsonoMain);
+		logger.info("jsonoMain:"+jsonoMain);
+		
 		sendTemplateMsg(jsonoMain.toString());
 		 
 	}

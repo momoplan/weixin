@@ -194,6 +194,7 @@ public class StaticController {
 	 
 	 
 	 String accessToken = weixinService.getAccessToken(true);
+	 //String accessToken = weixinService.getAccessToken();
 	 WeixinUserDTO weixinUserDTO =
 	 weixinService.findUserinfoByOpenid(accessToken, openid);
 	 rd.setErrorCode(ErrorCode.OK.value);

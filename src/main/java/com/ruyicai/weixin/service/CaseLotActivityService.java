@@ -187,7 +187,7 @@ public class CaseLotActivityService {
 			String headimgurl = "";
 			try {
 				dto = weixinService.findUserinfoByOpenid(accessToken, openid);
-
+	
 				if (dto != null) {
 					nickname = StringUtils.isNotEmpty(dto.getNickname()) ? dto
 							.getNickname() : "";
@@ -197,29 +197,29 @@ public class CaseLotActivityService {
 					
 					Subscribe = String.valueOf(dto.getSubscribe());
 					logger.info("Subscribe:"+Subscribe);
-
+	
 				}
-
+	
 			} catch (Exception ex) {
 				logger.error("findUserinfoByOpenid", ex.getMessage());
 			}
-
+	
 			logger.info("查找或创建联合用户 openid:{} nickname:{}", openid, nickname);
 			String userno = lotteryService.findOrCreateBigUser(openid,
 					nickname, Const.DEFAULT_BIGUSER_TYPE);
 			caseLotUserinfo = this.findOrCreateCaseLotUserinfo(userno, orderid,
-					nickname, headimgurl,openid);
-
+					nickname, headimgurl,orderid);
+	
 		} catch (Exception e) {
 			logger.error("关注时同步执行 增加 HM00001的活动账户失败:", e.getMessage());
 		}
-
+	
 		map.put("subscribe", Subscribe);
 		logger.info("Subscribe:"+Subscribe);
-
+	
 		map.put("caseLotUserinfo", caseLotUserinfo);
 		logger.info("caseLotUserinfo:"+caseLotUserinfo);
-
+	
 		return map;
 	}
 
