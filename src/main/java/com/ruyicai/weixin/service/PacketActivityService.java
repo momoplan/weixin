@@ -877,7 +877,7 @@ public class PacketActivityService {
 		String url = "http://www.baidu.com";
 		String topcolor = "#DA2828";
 		String color = "#DA2828";
-		String betInfo = "共500注中奖 中奖金额共50000元";
+		String betInfo = "共"+total_punts+"注中奖 中奖金额共"+total_money+"元";
 		
 		JSONObject jsono = JSONObject.fromObject(jsoBuy);
 		

@@ -54,4 +54,14 @@ public class PuntListDao {
 		pList.persist();
 		return pList;
 	}
+	
+	@Transactional
+	public PuntList getBetMoeny(String opentime)
+	{
+		String sql = "SELECT b.get_userno,sum(a.orderprizeamt) total_money FROM `punt_list` a inner join punt_packet b on a.punt_id = b.id WHERE .a.orderprizeamt is not null and a.orderprizeamt > 0 and a.opentime = '"+opentime+"' group by b.get_userno";
+		PuntList pList = new PuntList();
+		List<?> lst = entityManager.createNativeQuery(sql).getResultList();
+		System.out.println(lst.get(0));
+		return pList;
+	}
 }
