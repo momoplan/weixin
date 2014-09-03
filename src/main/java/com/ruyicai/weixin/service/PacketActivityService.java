@@ -1,6 +1,7 @@
 package com.ruyicai.weixin.service;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -797,10 +798,13 @@ public class PacketActivityService {
 	public int returnAllLeftPunts()
 	{
 		int ret = 0;
+		 
 		//在packet表中查找超过指定时间范围的红包，取红包id,userno
 		//List<PuntPacket> lstPuntPacket = puntPacketDao.findExpiredDatePuntPacket();
 		try
 		{
+			ArrayList arr = new ArrayList();
+			
 			int totalReturnPunts = 0;
 			List<Packet> lstPacket = packetDao.findReturnPacketList();
 			if (lstPacket != null && lstPacket.size() > 0)
@@ -809,11 +813,17 @@ public class PacketActivityService {
 				{
 					Packet packet = lstPacket.get(i);
 					String packet_userno = packet.getPacketUserno();
+					
 					String packet_id = String.valueOf(packet.getId());	
 					List<PuntPacket> lstPuntPacket = puntPacketDao.findLeftParts(packet_id);
 
 					if (lstPuntPacket != null && lstPuntPacket.size() > 0)
 					{
+						if(!arr.contains(packet_userno))
+						{
+							arr.add(packet_userno);
+						}
+						
 						for(PuntPacket puntPacket : lstPuntPacket)
 						{
 							//processPuntPacket(puntPacket, packet_userno, Const.WX_PACKET_CHANNEL);
@@ -828,6 +838,16 @@ public class PacketActivityService {
 					totalReturnPunts = 0;
 				}
 			}
+			
+			
+			if(arr.size() > 0)
+			{
+				String userno = "";
+				for(int i = 0;i< arr.size();i++)
+				{
+					userno = String.valueOf(arr.get(i));
+				}
+			}
 		}
 		catch(Exception ex)
 		{			
@@ -837,6 +857,8 @@ public class PacketActivityService {
 		//根据红包id给送红包userno抢红包
 		return ret;
 	}
+	
+	
 	
 	/**
 	 * 中奖信息模板
