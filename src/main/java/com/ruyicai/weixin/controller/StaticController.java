@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ruyicai.weixin.consts.Const;
 import com.ruyicai.weixin.domain.CaseLotUserinfo;
-import com.ruyicai.weixin.domain.Subscriber;
 import com.ruyicai.weixin.dto.WeixinUserDTO;
 import com.ruyicai.weixin.dto.lottery.ResponseData;
 import com.ruyicai.weixin.exception.ErrorCode;
@@ -192,9 +190,7 @@ public class StaticController {
 	 JSONObject js = new JSONObject(rejson);
 	 String openid = (String) js.get("openid");
 	 
-	 
-	 String accessToken = weixinService.getAccessToken(true);
-	 //String accessToken = weixinService.getAccessToken();
+	 String accessToken = weixinService.getAccessToken();
 	 WeixinUserDTO weixinUserDTO =
 	 weixinService.findUserinfoByOpenid(accessToken, openid);
 	 rd.setErrorCode(ErrorCode.OK.value);

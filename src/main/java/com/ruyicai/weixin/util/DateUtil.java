@@ -85,4 +85,17 @@ public class DateUtil {
 		calendar.set(Calendar.MILLISECOND, 0);
 		return calendar.getTime();
 	}
+
+	/**
+	 * 获取unix时间，从1970-01-01 00:00:00开始的秒数
+	 * @param date
+	 * @return long
+	 */
+	public static long getUnixTime(Date date) {
+		if( null == date ) {
+			return 0;
+		}
+		
+		return date.getTime()/1000;
+	}
 }

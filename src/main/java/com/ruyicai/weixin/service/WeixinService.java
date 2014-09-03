@@ -1,5 +1,6 @@
 package com.ruyicai.weixin.service;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.commons.collections4.map.PassiveExpiringMap;
@@ -8,13 +9,17 @@ import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ruyicai.charge.wxpay.WxToken;
 import com.ruyicai.weixin.dto.WeixinUserDTO;
 import com.ruyicai.weixin.dto.menu.Menu;
 import com.ruyicai.weixin.exception.WeixinException;
+import com.ruyicai.weixin.util.DateUtil;
 import com.ruyicai.weixin.util.JsonMapper;
 import com.ruyicai.weixin.util.MyFluentResponseHandler;
+import com.ruyicai.weixin.util.StringUtil;
 
 @Service
 public class WeixinService {
@@ -48,59 +53,69 @@ public class WeixinService {
 	 * 微信认证appSecret,在InitAppUserService初始化
 	 */
 	private String appSecret;
+	
+	@Autowired
+	MemcachedService<WxToken> memcachedService;
+	
+	private static String CACHE_TOKEN_KEY = "wx_pub_access_token";
 
-	@SuppressWarnings("unchecked")
 	public String getAccessToken() {
 		if (StringUtils.isBlank(appId) || StringUtils.isBlank(appSecret)) {
 			throw new IllegalArgumentException("The argument appId or appSecret is required");
 		}
-		String token = ACCESS_TOKEN_MAP.get(ACCESS_TOKEN_KEY);
-		if (StringUtils.isNotEmpty(token)) {
-			logger.info("缓存中获得 token:{}", token);
-			return token;
-		}
+		return getAccessToken(CACHE_TOKEN_KEY);
+	}
+	
+	public String getAccessToken(String key)
+	{
+		String token = null;
+		WxToken wt = memcachedService.get(key);
+		Date now = new Date();
+		if (wt == null)
+			token = getRealTimeToken(key, now);
+
+		Date preDate = wt.getAccessDate();
+		if ((DateUtil.getUnixTime(now) - DateUtil.getUnixTime(preDate)) > wt.getExpireTime())
+			token = getRealTimeToken(key, now);
+
+		if (StringUtil.isEmpty(token))
+			token = wt.getAccessToken();
+		
+		logger.info("token = " + token);
+		return token;
+	}
+
+	@SuppressWarnings("unchecked")
+	public String getRealTimeToken(String key, Date now)
+	{
+		String token = null;
 		String url = AccessToken_URL.replace("APPID", appId).replace("APPSECRET", appSecret);
-		try {
+		try
+		{
 			String json = Request.Get(url).connectTimeout(2000).socketTimeout(1000).execute().returnContent()
 					.asString();
-			logger.info("Http Response:" + json);
+			logger.info("实时获取token Response:" + json);
 			HashMap<String, Object> map = JsonMapper.fromJson(json, HashMap.class);
-			if (map.containsKey("access_token")) {
+			if (map.containsKey("access_token"))
+			{
 				token = (String) map.get("access_token");
+
 				logger.info("缓存中添加 token:{}", token);
-				ACCESS_TOKEN_MAP.put(ACCESS_TOKEN_KEY, token);
-				 
+				String expires_in =  map.containsKey("expires_in") ? map.get("expires_in").toString() : "";
+				WxToken wt = new WxToken();
+				wt.setAccessDate(now);
+				wt.setAccessToken(token);
+				wt.setExpireTime(Long.valueOf(expires_in));
+				memcachedService.set(key, wt);
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			logger.error("请求微信异常url=" + url, e);
 		}
 		return token;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public String getAccessToken(boolean refresh) {
-		if (StringUtils.isBlank(appId) || StringUtils.isBlank(appSecret)) {
-			throw new IllegalArgumentException("The argument appId or appSecret is required");
-		}
-		String token = "";
-		String url = AccessToken_URL.replace("APPID", appId).replace("APPSECRET", appSecret);
-		try {
-			String json = Request.Get(url).connectTimeout(2000).socketTimeout(1000).execute().returnContent()
-					.asString();
-			logger.info("Http Response:" + json);
-			HashMap<String, Object> map = JsonMapper.fromJson(json, HashMap.class);
-			if (map.containsKey("access_token")) {
-				token = (String) map.get("access_token");
-				logger.info("缓存中添加 token:{}", token);
-				ACCESS_TOKEN_MAP.put(ACCESS_TOKEN_KEY, token);
-				 
-			}
-		} catch (Exception e) {
-			logger.error("请求微信异常url=" + url, e);
-		}
-		return token;
-	}
-
 	/**
 	 * 创建菜单
 	 * 
@@ -239,4 +254,5 @@ public class WeixinService {
 	public void setAppSecret(String appSecret) {
 		this.appSecret = appSecret;
 	}
+	
 }

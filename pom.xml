@@ -392,6 +392,11 @@
 			<artifactId>camel-spring-javaconfig</artifactId>
 			<version>${camel.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.googlecode.xmemcached</groupId>
+			<artifactId>xmemcached</artifactId>
+			<version>1.3.5</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>weixin</finalName>
@@ -568,6 +573,7 @@
 				<lotteryurl>http://202.43.152.173:8080/lottery</lotteryurl>
 				<lotterycoreurl>http://202.43.152.173:8080/lottery</lotterycoreurl>
 				<lotserverurl>http://202.43.152.173:9088/lotserver</lotserverurl>
+				<memcache.client.ip>202.43.152.164:12000</memcache.client.ip>
 				<jms.new-issue.brokerURL>tcp://192.168.0.92:61616</jms.new-issue.brokerURL>
 				<imageMagickPath>C:\Tools\ImageMagick-6.8.7-Q8</imageMagickPath>
 				<imageLocation>C:\image</imageLocation>
@@ -586,6 +592,7 @@
 				<lotteryurl>http://202.43.152.173:8080/lottery</lotteryurl>
 				<lotterycoreurl>http://202.43.152.173:8080/lottery</lotterycoreurl>
 				<lotserverurl>http://202.43.152.173:9088/lotserver</lotserverurl>
+				<memcache.client.ip>192.168.0.92:12000</memcache.client.ip>
 				<jms.new-issue.brokerURL>tcp://192.168.0.92:61616</jms.new-issue.brokerURL>
 				<imageMagickPath>E:\ImageMagick-6.8.7-Q8</imageMagickPath>
 				<imageLocation>E:\image</imageLocation>
@@ -604,6 +611,7 @@
 				<lotteryurl>http://192.168.99.6/lotteryprize</lotteryurl>
 				<lotterycoreurl>http://192.168.99.6/lottery</lotterycoreurl>
 				<lotserverurl>http://192.168.99.122/lotserver</lotserverurl>
+				<memcache.client.ip>192.168.99.30:12000,192.168.99.31:12000</memcache.client.ip>
 				<jms.new-issue.brokerURL>failover://(tcp://192.168.99.30:61616,tcp://192.168.99.31:61616)?randomize=false</jms.new-issue.brokerURL>
 				<imageMagickPath></imageMagickPath>
 				<imageLocation>/home/appusr/images_weixin</imageLocation>
