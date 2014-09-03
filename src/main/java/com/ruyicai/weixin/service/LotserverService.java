@@ -27,12 +27,13 @@ public class LotserverService {
 	 * @param amount
 	 * @param channel
 	 * @param bet_code
+	 * @param batchcode
 	 * @return
 	 */
-	public String DoubleDallBet(String userNo, String amount, String channel, String bet_code) {
+	public String DoubleDallBet(String userNo, String amount, String channel, String bet_code, String batchcode) {
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("amount", amount);
-		map.put("batchcode", "");
+		map.put("batchcode", batchcode);
 		map.put("batchnum", "1");
 		map.put("bet_code", bet_code);
 		map.put("bettype", "bet");
