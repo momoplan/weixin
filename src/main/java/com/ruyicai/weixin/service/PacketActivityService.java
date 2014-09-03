@@ -472,6 +472,7 @@ public class PacketActivityService {
 			map.put("nickname", nickName);
 			map.put("headimg", headimg);
 			String is_self = "0"; // 非本人
+			String can_thank = "0"; // 是否可答谢,0-不可答谢;1-可答谢
 			if (userno.equals(packetUserno)) {
 				is_self = "1";
 			}
@@ -500,7 +501,7 @@ public class PacketActivityService {
 					
 					if(puntPacket.getGetUserno().equals(packetUserno) && puntPacket.getGetStatus() == 1)
 					{
-						totalPunts += puntPacket.getRandomPunts();		
+						totalPunts += puntPacket.getRandomPunts();
 						
 						List<PuntList> puntList = puntListDao
 								.findPuntListGrabedList(puntPacket.getId());
@@ -540,6 +541,9 @@ public class PacketActivityService {
 						if (!StringUtil.isEmpty(puntPacket.getThankWords())) {
 							thank_words = puntPacket.getThankWords();
 							is_thanks = "1";
+						} else
+						{
+							can_thank = "1";
 						}
 					}
 
@@ -608,11 +612,11 @@ public class PacketActivityService {
 
 			map.put("packet_user_punts", packet_user_Map);
 			map.put("punt_list", arry.toString());
-			
 			map.put("get_punts", get_punts);
 			map.put("userno_punts", userno_punts);
 			map.put("is_thanks", is_thanks);
 			map.put("thank_words", thank_words);
+			map.put("can_thank", can_thank);
 
 			return map;
 		} else {
