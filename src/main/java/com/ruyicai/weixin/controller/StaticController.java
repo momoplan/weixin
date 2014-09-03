@@ -191,8 +191,7 @@ public class StaticController {
 	 String openid = (String) js.get("openid");
 	 
 	 String accessToken = weixinService.getAccessToken();
-	 WeixinUserDTO weixinUserDTO =
-	 weixinService.findUserinfoByOpenid(accessToken, openid);
+	 WeixinUserDTO weixinUserDTO = weixinService.findUserinfoByOpenid(accessToken, openid);
 	 rd.setErrorCode(ErrorCode.OK.value);
 	 rd.setValue(weixinUserDTO);
 	 }
