@@ -33,7 +33,7 @@ privileged aspect PuntPacket_Roo_DbManaged {
     private String PuntPacket.thankWords;
     
     @Column(name = "get_status")
-    private Short PuntPacket.getStatus;
+    private int PuntPacket.getStatus;
     
     public Integer PuntPacket.getPacketId() {
         return packetId;
@@ -83,11 +83,11 @@ privileged aspect PuntPacket_Roo_DbManaged {
         this.thankWords = thankWords;
     }
     
-    public Short PuntPacket.getGetStatus() {
+    public int PuntPacket.getGetStatus() {
         return getStatus;
     }
     
-    public void PuntPacket.setGetStatus(Short getStatus) {
+    public void PuntPacket.setGetStatus(int getStatus) {
         this.getStatus = getStatus;
     }
     

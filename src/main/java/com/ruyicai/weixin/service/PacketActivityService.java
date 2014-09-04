@@ -184,7 +184,7 @@ public class PacketActivityService {
 				throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
 			}
 			PuntPacket puntPacket = puntPacketList.get(0);
-			processPuntPacket(puntPacket, award_userno, channel);
+			processPuntPacket(puntPacket, award_userno, channel, 0);
 			return puntPacket;
 		} else {
 			throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
@@ -197,25 +197,7 @@ public class PacketActivityService {
 	 * @param puntPacket
 	 * @param award_userno
 	 * @param channel
-	 */
-	public void processPuntPacket(PuntPacket puntPacket, String award_userno, String channel)
-	{
-		int punts = puntPacket.getRandomPunts();
-
-		// 送彩金接口
-		commonService.presentDividend(award_userno, String.valueOf(200 * punts), channel, "微信号服务号抢红包奖励");
-
-		// 更新每份红包
-		puntPacketDao.updatePuntPacket(puntPacket, award_userno);
-	}
-	
-	
-	/**
-	 * 更新获取的红包
-	 * 
-	 * @param puntPacket
-	 * @param award_userno
-	 * @param channel
+	 * @param get_status 红包状态 0-抢;1-返还
 	 */
 	public void processPuntPacket(PuntPacket puntPacket, String award_userno, String channel,int get_status)
 	{
@@ -225,7 +207,7 @@ public class PacketActivityService {
 		commonService.presentDividend(award_userno, String.valueOf(200 * punts), channel, "微信号服务号抢红包奖励");
 
 		// 更新每份红包
-		puntPacketDao.updatePuntPacket(puntPacket, award_userno);
+		puntPacketDao.updatePuntPacket(puntPacket, award_userno, get_status);
 	}
 	
 	/**
