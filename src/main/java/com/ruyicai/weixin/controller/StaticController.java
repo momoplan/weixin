@@ -102,25 +102,26 @@ public class StaticController {
 			logger.info(
 					"/static/createBigUserAndCaseLotUserinfo openid:{} orderid:{}",
 					openid, orderid);
-			Map<String,Object> map1 = caseLotActivityService
+			Map<String,Object> cuiMap = caseLotActivityService
 					.createBigUserAndCaseLotUserinfo(openid, orderid);
 			
-			String subscriber = String.valueOf(map1.get("subscribe"));
-			logger.info("subscriber："+subscriber);
-			CaseLotUserinfo caselotuserinfo = (CaseLotUserinfo)map1.get("caseLotUserinfo");
-			logger.info("caselotuserinfo："+caselotuserinfo.getNickname());
-//			CaseLotUserinfo caselotuserinfo = caseLotActivityService
-//					.createBigUserAndCaseLotUserinfo(openid, orderid);
-			rd.setErrorCode(ErrorCode.OK.value);
-			Map<String, Object> map = new HashMap<String, Object>();
-
-			//Subscriber subscriber = subscriberService.findSubscriber(openid, Const.WEIXIN_NO);
-			map.put("openid", openid);
+			String subscriber = String.valueOf(cuiMap.get("subscribe"));
+			CaseLotUserinfo caselotuserinfo = (CaseLotUserinfo)cuiMap.get("caseLotUserinfo");
+			String nickName = "";
+			if (caselotuserinfo != null)
+				nickName = caselotuserinfo.getNickname();
+			logger.info("subscriber: {} caselotuserinfo:{}", subscriber, nickName);
+			
 			int SubscribeState = subscriber.equals("1") ? 1 : 0;
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("openid", openid);
 			map.put("subscribe", SubscribeState);
-			logger.info(caselotuserinfo.getNickname()+"订阅状态为："+SubscribeState);
 			map.put("caselotuserinfo", caselotuserinfo);
+			map.put("name", cuiMap.get("name"));
+			map.put("certid", cuiMap.get("certid"));
+			map.put("mobileid", cuiMap.get("mobileid"));
 			rd.setValue(map);
+			rd.setErrorCode(ErrorCode.OK.value);
 		} catch (Exception e) {
 			logger.error("createBigUserAndCaseLotUserinfo error", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
@@ -169,37 +170,37 @@ public class StaticController {
 	 * @param callback
 	 * @return
 	 */
-	 @RequestMapping(value = "/findUserinfoByCode")
-	 @ResponseBody
-	 public String findUserinfoByCode(@RequestParam(value = "code", required =
-	 false) String code,
-	 @RequestParam(value = "callBackMethod") String callback) {
-	 logger.info("/static/findUserinfoByCode code:{}", code);
-	 ResponseData rd = new ResponseData();
-	 try {
-	 if (StringUtils.isEmpty(code)) {
-	 rd.setErrorCode("10001");
-	 rd.setValue("参数错误the argument code is require.");
-	 return JsonMapper.toJsonP(callback, rd);
-	 }
-	 String rejson = weixinService.getOauth(code);
-	 if (rejson.contains("errcode")) {
-	 rd.setErrorCode(ErrorCode.ERROR.value);
-	 rd.setValue(rejson);
-	 } else {
-	 JSONObject js = new JSONObject(rejson);
-	 String openid = (String) js.get("openid");
-	 
-	 String accessToken = weixinService.getAccessToken();
-	 WeixinUserDTO weixinUserDTO = weixinService.findUserinfoByOpenid(accessToken, openid);
-	 rd.setErrorCode(ErrorCode.OK.value);
-	 rd.setValue(weixinUserDTO);
-	 }
-	 } catch (Exception e) {
-	 logger.error("findUserinfoByCode error", e);
-	 rd.setErrorCode(ErrorCode.ERROR.value);
-	 rd.setValue(e.getMessage());
-	 }
-	 return JsonMapper.toJsonP(callback, rd);
-	 }
+	@RequestMapping(value = "/findUserinfoByCode")
+	@ResponseBody
+	public String findUserinfoByCode(@RequestParam(value = "code", required =
+	false) String code,
+	@RequestParam(value = "callBackMethod") String callback) {
+		logger.info("/static/findUserinfoByCode code:{}", code);
+		ResponseData rd = new ResponseData();
+		try {
+			if (StringUtils.isEmpty(code)) {
+				rd.setErrorCode("10001");
+				rd.setValue("参数错误the argument code is require.");
+				return JsonMapper.toJsonP(callback, rd);
+			}
+			String rejson = weixinService.getOauth(code);
+			if (rejson.contains("errcode")) {
+				rd.setErrorCode(ErrorCode.ERROR.value);
+				rd.setValue(rejson);
+			} else {
+				JSONObject js = new JSONObject(rejson);
+				String openid = (String) js.get("openid");
+
+				String accessToken = weixinService.getAccessToken();
+				WeixinUserDTO weixinUserDTO = weixinService.findUserinfoByOpenid(accessToken, openid);
+				rd.setErrorCode(ErrorCode.OK.value);
+				rd.setValue(weixinUserDTO);
+			}
+		} catch (Exception e) {
+			logger.error("findUserinfoByCode error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(e.getMessage());
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
 }
