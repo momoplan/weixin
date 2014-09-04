@@ -55,14 +55,22 @@ public class CaseLotActivityService {
 			caseLotUserinfo = CaseLotUserinfo.createCaseLotUserinfo(userno,
 					orderid, nickname, headimgurl,openid);
 		} else {
-			if (!headimgurl.equals("") || !nickname.equals("")) {
-				caseLotUserinfo.setHeadimgurl(headimgurl);
-				caseLotUserinfo.setNickname(nickname);
-				caseLotUserinfo.merge();
-			}else if(caseLotUserinfo.getOpenid().equals(""))
+			try
 			{
-				caseLotUserinfo.setOpenid(openid);
-				caseLotUserinfo.merge();
+				if (!headimgurl.equals("") || !nickname.equals("")) {
+					caseLotUserinfo.setHeadimgurl(headimgurl);
+					caseLotUserinfo.setNickname(nickname);
+					caseLotUserinfo.merge();
+				}else if(caseLotUserinfo.getOpenid().equals(""))
+				{
+					caseLotUserinfo.setOpenid(openid);
+					caseLotUserinfo.merge();
+				}
+			}
+			catch(Exception ex)
+			{
+				logger.info("nickname error:" + nickname);
+				logger.info("nickname error:" + ex.getMessage());
 			}
 		}
 		return caseLotUserinfo;
