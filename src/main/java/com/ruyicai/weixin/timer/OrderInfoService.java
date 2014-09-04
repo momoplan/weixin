@@ -17,6 +17,7 @@ import com.ruyicai.weixin.domain.PuntList;
 import com.ruyicai.weixin.exception.ErrorCode;
 import com.ruyicai.weixin.exception.WeixinException;
 import com.ruyicai.weixin.service.CommonService;
+import com.ruyicai.weixin.service.PacketActivityService;
 import com.ruyicai.weixin.util.DateUtil;
 import com.ruyicai.weixin.util.StringUtil;
 
@@ -28,6 +29,10 @@ public class OrderInfoService {
 	@Autowired
 	private CommonService commonService;
 
+
+	@Autowired
+	PacketActivityService packetActivityService;
+	
 	@Autowired
 	PuntListDao puntListDao;
 
@@ -49,6 +54,8 @@ public class OrderInfoService {
 				}
 			} else
 			{
+//				List<?> lst = puntListDao.getBetMoeny(opentime);
+//				System.out.println(lst);
 				logger.info("无投注订单可更新");
 			}
 			logger.info("===========定时更新投注订单中奖金额结束===========");
@@ -61,6 +68,10 @@ public class OrderInfoService {
 		try
 		{
 			int orderprizeamt = getPrizeAmt(punt.getOrderid());
+			if(orderprizeamt > 0)
+			{
+				packetActivityService.sendBetInfo(punt.getOrderid(),String.valueOf(orderprizeamt));
+			}
 			// 更新中奖金额
 			puntListDao.merge(punt, orderprizeamt);
 		} catch (WeixinException we)
