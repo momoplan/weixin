@@ -48,7 +48,7 @@ public class EventHandler implements IMsgHandler {
 			rnm.setToUserName(requestMessage.getFromUserName());
 			rnm.setCreateTime(new Date().getTime());
 			rnm.setMsgType(ResponseMsgType.TEXT);
-			rnm.setContent("主人，我已在您微信通讯录;搜“如意彩”随时找我！");			
+			rnm.setContent("主人，我已在您微信通讯录；搜 “如意彩” 随时找我！\r\n送彩票，买彩票，看账户 —— 方便安全");			
 //			ResponseNewsMessage rnm = new ResponseNewsMessage();
 //			rnm.setFromUserName(requestMessage.getToUserName());
 //			rnm.setToUserName(requestMessage.getFromUserName());
@@ -56,9 +56,9 @@ public class EventHandler implements IMsgHandler {
 //			rnm.setCreateTime(new Date().getTime());
 //			List<Article> list = new ArrayList<Article>();
 //			Article a = new Article();
-//			a.setTitle("欢迎关注如意彩官方微信");
-//			a.setDescription("“如意彩”是经过我国福利彩票、体育彩票发行机构官方授权的正规合法的手机投注平台。");
-//			a.setPicUrl("http://www.ruyicai.com/weixin/images/login.png");
+//			//a.setTitle("欢迎关注如意彩官方微信");
+//			a.setDescription("主人，我已在您微信通讯录；搜  “如意彩” 随时找我！\r\n中秋送彩票“财”是送运气");
+//			//a.setPicUrl("http://www.ruyicai.com/weixin/images/login.png");
 //			a.setUrl("http://iphone.ruyicai.com/index.html");
 //			list.add(a);
 //			rnm.setArticles(list);
@@ -71,6 +71,7 @@ public class EventHandler implements IMsgHandler {
 		if (StringUtils.isBlank(eventKey)) {
 			return null;
 		}
+		
 		if (eventKey.equalsIgnoreCase("KJHM-F47104")) {
 			ResponseNewsMessage rnm = new ResponseNewsMessage();
 			rnm.setFromUserName(requestMessage.getToUserName());
