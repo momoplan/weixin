@@ -883,7 +883,7 @@ public class PacketActivityService {
 		jsono.element("keyword1", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("keyword2"));
-		jsonoSub.element("value", opentime);
+		jsonoSub.element("value", opentime+"开奖");
 		jsonoSub.element("color", color);
 		jsono.element("keyword2", jsonoSub);		 
 		
