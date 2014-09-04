@@ -23,7 +23,6 @@ privileged aspect PuntList_Roo_Jpa_ActiveRecord {
     }
     
     public static long PuntList.countPuntLists() {
-    	 
         return entityManager().createQuery("SELECT COUNT(o) FROM PuntList o", Long.class).getSingleResult();
     }
     

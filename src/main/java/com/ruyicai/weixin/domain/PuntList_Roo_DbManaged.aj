@@ -37,6 +37,9 @@ privileged aspect PuntList_Roo_DbManaged {
     @Column(name = "orderprizeamt")
     private Integer PuntList.orderprizeamt;
     
+    @Column(name = "status")
+    private Integer PuntList.status;
+    
     public Integer PuntList.getPuntId() {
         return puntId;
     }
@@ -91,6 +94,14 @@ privileged aspect PuntList_Roo_DbManaged {
     
     public void PuntList.setOrderprizeamt(Integer orderprizeamt) {
         this.orderprizeamt = orderprizeamt;
+    }
+    
+    public Integer PuntList.getStatus() {
+        return status;
+    }
+    
+    public void PuntList.setStatus(Integer status) {
+        this.status = status;
     }
     
 }
