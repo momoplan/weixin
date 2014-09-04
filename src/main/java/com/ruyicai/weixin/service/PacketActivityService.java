@@ -143,7 +143,7 @@ public class PacketActivityService {
 		iMap.put("pund", pund);
 		iMap.put("puntlist", result);
 		
-		sendGrabInfo(award_userno,pund,format1.format(cal_open.getTime()),packet_id);
+		sendGrabInfo(award_userno,String.valueOf(puntPacket.getRandomPunts()),format1.format(cal_open.getTime()),packet_id);
 		
 		return iMap;
 	}
@@ -222,6 +222,8 @@ public class PacketActivityService {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	public Map doGetPacketStus(String award_userno, String packet_id) {
+//		List<?> lst = puntListDao.getBetMoeny("2014-08-26");
+//		System.out.println(lst);
 		String packetEncrypt = packet_id;
 		packet_id = ToolsAesCrypt.Decrypt(packet_id, Const.PACKET_KEY); // 解密
 		if (StringUtil.isEmpty(packet_id))
@@ -273,6 +275,7 @@ public class PacketActivityService {
 	 */
 	public Map<Integer, Object> getPacketStatus(String award_userno, String packet_id)
 	{
+		
 		Map<Integer, Object> status = new HashMap<Integer, Object>();
 		Map<String, Object> iMap = new HashMap<String, Object>();
 		Packet packet = Packet.findPacket(Integer.parseInt(packet_id));
@@ -873,7 +876,7 @@ public class PacketActivityService {
 		jsono.element("keyword1", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("keyword2"));
-		jsonoSub.element("value", opentime);
+		jsonoSub.element("value", opentime+"开奖");
 		jsonoSub.element("color", color);
 		jsono.element("keyword2", jsonoSub);		 
 		
@@ -901,7 +904,7 @@ public class PacketActivityService {
 	 * @return
 	 */
 	@Async
-	public void sendBetInfo(String openid,String total_punts,String total_money,String packet_id)
+	public void sendBetInfo(String openid,String total_money)
 	{
 		String json = "{\"touser\":\"\",\"template_id\":\"\","
 				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}}";
@@ -909,10 +912,10 @@ public class PacketActivityService {
 		String jsoBuy = "{\"title\": {\"value\":\"\",\"color\":\"\"},\"headinfo\": {\"value\":\"\",\"color\":\"\"},\"program\": {\"value\":\"\",\"color\":\"\"},\"result\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"},}";
 		 
 		String templateid = "HZt4Rp3WoeeEXqJ8SMO-W3Je_7yy7qUjdOIvZAvfYCw";
-		String url = "http://wx.ruyicai.com/wxpay/html/sendRedbag/baginfo.html?packet_id="+ToolsAesCrypt.Encrypt(packet_id, Const.PACKET_KEY);
+		String url = "http://wx.ruyicai.com/wxpay/html/sendRedbag/account.html?info=get";
 		String topcolor = "#DA2828";
 		String color = "#DA2828";
-		String betInfo = "共"+total_punts+"注中奖 中奖金额共"+total_money+"元";
+		String betInfo = "共1注中奖 中奖金额共"+total_money+"元";
 		
 		JSONObject jsono = JSONObject.fromObject(jsoBuy);
 		

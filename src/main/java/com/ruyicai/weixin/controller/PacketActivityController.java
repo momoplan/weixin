@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -236,6 +237,9 @@ public class PacketActivityController {
 			@RequestParam(value = "packet_userno", required = true) String packet_userno,
 			@RequestParam(value = "callBackMethod", required = true) String callback) {
 		logger.info("getPacketList packet_userno:{}", packet_userno);
+		
+	
+		
 		ResponseData rd = new ResponseData();
 		if (StringUtil.isEmpty(packet_userno)) {
 			rd.setErrorCode("10001");
