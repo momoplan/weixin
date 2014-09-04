@@ -782,35 +782,25 @@ public class PacketActivityService {
 	public int returnAllLeftPunts()
 	{
 		int ret = 0;
-		 
 		//在packet表中查找超过指定时间范围的红包，取红包id,userno
 		//List<PuntPacket> lstPuntPacket = puntPacketDao.findExpiredDatePuntPacket();
 		try
 		{
-			ArrayList arr = new ArrayList();
-			
-			int totalReturnPunts = 0;
 			List<Packet> lstPacket = packetDao.findReturnPacketList();
 			if (lstPacket != null && lstPacket.size() > 0)
 			{
 				for(int i = 0;i <lstPacket.size();i++)
 				{
+					int totalReturnPunts = 0;
 					Packet packet = lstPacket.get(i);
 					String packet_userno = packet.getPacketUserno();
-					
 					String packet_id = String.valueOf(packet.getId());	
 					List<PuntPacket> lstPuntPacket = puntPacketDao.findLeftParts(packet_id);
 
 					if (lstPuntPacket != null && lstPuntPacket.size() > 0)
 					{
-						if(!arr.contains(packet_userno))
+						for (PuntPacket puntPacket : lstPuntPacket)
 						{
-							arr.add(packet_userno);
-						}
-						
-						for(PuntPacket puntPacket : lstPuntPacket)
-						{
-							//processPuntPacket(puntPacket, packet_userno, Const.WX_PACKET_CHANNEL);
 							processPuntPacket(puntPacket, packet_userno, Const.WX_PACKET_CHANNEL,1);
 							generatePunts(packet_userno, Const.WX_PACKET_CHANNEL, puntPacket);
 							totalReturnPunts += puntPacket.getRandomPunts();
@@ -819,17 +809,17 @@ public class PacketActivityService {
 
 					packet.setReturnPunts(totalReturnPunts);
 					packet.merge();
-					totalReturnPunts = 0;
-				}
-			}
-			
-			
-			if(arr.size() > 0)
-			{
-				String userno = "";
-				for(int i = 0;i< arr.size();i++)
-				{
-					userno = String.valueOf(arr.get(i));
+					
+					if (totalReturnPunts != 0)
+					{
+						CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(packet_userno, Const.WX_PACKET_ACTIVITY);
+						if (userInfo != null)
+						{
+							String openid = userInfo.getOpenid();
+							if (!StringUtil.isEmpty(openid))
+								sendReturnPacket(openid, "如意彩彩票返还通知：", "如意彩双色球彩票", DateUtil.format("yy年MM月dd日", new Date()), "返还原因：超过24小时未被领取。");
+						}
+					}
 				}
 			}
 		}
@@ -1019,6 +1009,61 @@ public class PacketActivityService {
 		
 		sendTemplateMsg(jsonoMain.toString());
 		 
+	}
+	
+	/**
+	 * 24小时返还红包信息模板
+	 * 
+	 * @param openid
+	 * @param notifyStr 如意彩彩票返还通知：
+	 * @param lotName 如意彩双色球彩票
+	 * @param expDate xx年xx月xx日
+	 * @param remark 返还原因：超过24小时未被领取。
+	 */
+	@Async
+	public void sendReturnPacket(String openid, String notifyStr, String lotName, String expDate, String remark)
+	{
+		String json = "{\"touser\":\"\",\"template_id\":\"\","
+				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}}";
+		
+		String jsoBuy = "{\"first\": {\"value\":\"\",\"color\":\"\"},\"name\": {\"value\":\"\",\"color\":\"\"},\"expDate\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"},}";
+		 
+		String templateid = "XkyKVvp4XHWhttII1s38Y_CW8C1c6_-U_y_hEOyASjQ";
+		String url = "http://wx.ruyicai.com/wxpay/html/sendRedbag/account.html?info=get";
+		String topcolor = "#DA2828";
+		String color = "#DA2828";
+		
+		JSONObject jsono = JSONObject.fromObject(jsoBuy);
+		
+		JSONObject jsonoSub = JSONObject.fromObject(jsono.get("first"));
+		jsonoSub.element("value", notifyStr);
+		jsonoSub.element("color", "#000000");		
+		jsono.element("first", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("name"));
+		jsonoSub.element("value", lotName);
+		jsonoSub.element("color", color);
+		jsono.element("name", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("expDate"));
+		jsonoSub.element("value", expDate);
+		jsonoSub.element("color", color);
+		jsono.element("expDate", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
+		jsonoSub.element("value", remark);
+		jsonoSub.element("color", color);
+		jsono.element("remark", jsonoSub);
+		 	 
+		JSONObject jsonoMain = JSONObject.fromObject(json);		 
+		jsonoMain.element("touser", openid);		
+		jsonoMain.element("template_id", templateid);
+		jsonoMain.element("url", url);
+		jsonoMain.element("topcolor", topcolor);
+		jsonoMain.element("data", jsono);
+		
+		logger.info("24小时返还 - >jsonoMain:"+jsonoMain);
+		sendTemplateMsg(jsonoMain.toString());
 	}
 	
 	public int sendTemplateMsg(String strContent)
