@@ -143,7 +143,7 @@ public class PacketActivityService {
 		iMap.put("pund", pund);
 		iMap.put("puntlist", result);
 		
-		sendGrabInfo(award_userno,pund,format1.format(cal_open.getTime()),packet_id);
+		sendGrabInfo(award_userno,String.valueOf(puntPacket.getRandomPunts()),format1.format(cal_open.getTime()),packet_id);
 		
 		return iMap;
 	}
