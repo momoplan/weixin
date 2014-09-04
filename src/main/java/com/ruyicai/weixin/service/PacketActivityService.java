@@ -1077,7 +1077,7 @@ public class PacketActivityService {
 		logger.info("sendUrl:"+sendUrl);
 		String sendData = strContent.toString();
 		String ret1 = HttpUtil.sendRequestByPost(sendUrl, sendData, true);
-		logger.info("result:"+ret1);
+		logger.info("accessToken:"+accessToken+","+"result:"+ret1);
 		
 		return ret;
 	}
