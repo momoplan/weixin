@@ -851,7 +851,7 @@ public class PacketActivityService {
 		String openid = "";
 		openid = caseLotUserinfo.getOpenid();
 		String json = "{\"touser\":\"\",\"template_id\":\"\","
-				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}}";
+				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}";
 		
 		String jsoBuy = "{\"first\": {\"value\":\"\",\"color\":\"\"},\"keyword1\": {\"value\":\"\",\"color\":\"\"},\"keyword2\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"}}";
 		 
@@ -907,7 +907,7 @@ public class PacketActivityService {
 	public void sendBetInfo(String openid,String total_money)
 	{
 		String json = "{\"touser\":\"\",\"template_id\":\"\","
-				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}}";
+				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}";
 		
 		String jsoBuy = "{\"title\": {\"value\":\"\",\"color\":\"\"},\"headinfo\": {\"value\":\"\",\"color\":\"\"},\"program\": {\"value\":\"\",\"color\":\"\"},\"result\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"}}";
 		 
@@ -965,7 +965,7 @@ public class PacketActivityService {
 	public void sendBuyInfo(String openid,String totalPacketpunt,String total_punts,String packet_id)
 	{
 		String json = "{\"touser\":\"\",\"template_id\":\"\","
-				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}}";
+				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}";
 		
 		String jsoBuy = "{\"productType\": {\"value\":\"\",\"color\":\"\"},\"name\": {\"value\":\"\",\"color\":\"\"},\"number\": {\"value\":\"\",\"color\":\"\"},\"expDate\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"}}";
 		 
@@ -1029,7 +1029,7 @@ public class PacketActivityService {
 		String json = "{\"touser\":\"\",\"template_id\":\"\","
 				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}}";
 		
-		String jsoBuy = "{\"first\": {\"value\":\"\",\"color\":\"\"},\"name\": {\"value\":\"\",\"color\":\"\"},\"expDate\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"},}";
+		String jsoBuy = "{\"first\": {\"value\":\"\",\"color\":\"\"},\"name\": {\"value\":\"\",\"color\":\"\"},\"expDate\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"}}";
 		 
 		String templateid = "XkyKVvp4XHWhttII1s38Y_CW8C1c6_-U_y_hEOyASjQ";
 		String url = "http://wx.ruyicai.com/wxpay/html/sendRedbag/account.html?info=get";
