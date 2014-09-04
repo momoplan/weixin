@@ -903,7 +903,7 @@ public class PacketActivityService {
 	 * 
 	 * @return
 	 */
-//	@Async
+	@Async
 	public void sendBetInfo(String openid,String total_money)
 	{
 		String json = "{\"touser\":\"\",\"template_id\":\"\","

@@ -356,7 +356,7 @@ public class PacketActivityController {
 	public String getActivityEnv(
 			@RequestParam(value = "callBackMethod", required = true) String callback) {
 		
-		packetActivityService.sendBetInfo("oFYzzjtSt5esrX6ai4gAKH4SKqxo",String.valueOf(7));
+//		packetActivityService.sendBetInfo("oFYzzjtSt5esrX6ai4gAKH4SKqxo",String.valueOf(7));
 		ResponseData rd = new ResponseData();
 		try {
 			rd.setValue(packetActivityService.doGetActivityEnv());
