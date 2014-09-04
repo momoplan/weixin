@@ -28,7 +28,7 @@ public class PuntPacketDao {
 		PuntPacket puntPacket = new PuntPacket();
 		puntPacket.setPacketId(packetId);
 		puntPacket.setRandomPunts(randomPunts);
-		puntPacket.setGetStatus((short) 0);
+		puntPacket.setGetStatus(0);
 		puntPacket.persist();
 		return puntPacket;
 	}
@@ -43,7 +43,7 @@ public class PuntPacketDao {
 	}
 	
 	@Transactional
-	public void updatePuntPacket(PuntPacket puntPacket, String award_userno,short get_status)
+	public void updatePuntPacket(PuntPacket puntPacket, String award_userno,int get_status) 
 	{
 		puntPacket.setGetUserno(award_userno);
 		puntPacket.setGetStatus(get_status);	 

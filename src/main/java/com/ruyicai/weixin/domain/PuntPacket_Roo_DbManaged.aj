@@ -8,6 +8,7 @@ import java.util.Calendar;
 import javax.persistence.Column;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 privileged aspect PuntPacket_Roo_DbManaged {
@@ -33,7 +34,8 @@ privileged aspect PuntPacket_Roo_DbManaged {
     private String PuntPacket.thankWords;
     
     @Column(name = "get_status")
-    private Short PuntPacket.getStatus;
+    @NotNull
+    private Integer PuntPacket.getStatus;
     
     public Integer PuntPacket.getPacketId() {
         return packetId;
@@ -83,11 +85,11 @@ privileged aspect PuntPacket_Roo_DbManaged {
         this.thankWords = thankWords;
     }
     
-    public Short PuntPacket.getGetStatus() {
+    public Integer PuntPacket.getGetStatus() {
         return getStatus;
     }
     
-    public void PuntPacket.setGetStatus(Short getStatus) {
+    public void PuntPacket.setGetStatus(Integer getStatus) {
         this.getStatus = getStatus;
     }
     
