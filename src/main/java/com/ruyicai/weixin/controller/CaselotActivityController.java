@@ -1,5 +1,7 @@
 package com.ruyicai.weixin.controller;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -140,7 +142,12 @@ public class CaselotActivityController {
 				rd.setValue("参数错误the argument openid is require.");
 				return JsonMapper.toJsonP(callback, rd);
 			}
-			rd.setValue(lotteryService.findOrCreateBigUser(openid, nickname, Const.DEFAULT_BIGUSER_TYPE));
+			Map<String, Object> tbiguserinfo = lotteryService.findOrCreateBigUser(openid, nickname, Const.DEFAULT_BIGUSER_TYPE);
+			String userno = null;
+			if (tbiguserinfo != null)
+				userno = tbiguserinfo.containsKey("userno") ? (String) tbiguserinfo.get("userno") : "";
+				
+			rd.setValue(userno);
 			rd.setErrorCode(ErrorCode.OK.value);
 		} catch (WeixinException e) {
 			logger.error("findOrCreateBigUser error", e);

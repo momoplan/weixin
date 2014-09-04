@@ -85,15 +85,6 @@ public class LotteryService {
 	@Value("${lotterycoreurl}")
 	private String lotterycoreurl;
 
-//	@Value("${testlotteryurl}")
-//	private String testlotteryurl;
-//
-//	@Value("${testlotterycoreurl}")
-//	private String testlotterycoreurl;
-//
-//	@Value("${testusernolist}")
-//	private String testusernolist;
-
 	@SuppressWarnings("unchecked")
 	public String selectTwininfoBylotno(String lotno, String issuenum) {
 		StringBuilder result = new StringBuilder();
@@ -131,33 +122,28 @@ public class LotteryService {
 		return result.toString();
 	}
 
-	public String findOrCreateBigUser(String openid, String nickname,
+	public Map<String, Object> findOrCreateBigUser(String openid, String nickname,
 			String type) {
-		String userno = this.findBigUser(openid, type);
-		if (StringUtils.isEmpty(userno)) {
+		Map<String, Object> tbiguserinfo = this.findBigUser(openid, type);
+		if (tbiguserinfo == null) {
 			logger.info("创建联合用户 openid:{},nickname:{},type:{}", openid,
 					nickname, type);
-			userno = this.createBigUser(openid, nickname, type);
+			tbiguserinfo = this.createBigUser(openid, nickname, type);
 		}
-		return userno;
+		return tbiguserinfo;
 	}
 
 	@SuppressWarnings("unchecked")
-	public String findBigUser(String openid, String type) {
-		String userno = null;
-		String url = "";
-		url = lotteryurl + "/tbiguserinfoes?json&find=BigUser&outuserno="
+	public Map<String, Object> findBigUser(String openid, String type) {
+		String url = lotteryurl + "/tbiguserinfoes?json&find=BigUser&outuserno="
 				+ openid + "&type=" + type;
 		try {
 			String json = Request.Get(url).execute().returnContent().asString();
 			Map<String, Object> map = JsonMapper.fromJson(json, HashMap.class);
 			String errorCode = (String) map.get("errorCode");
-			if (errorCode.equals("0")) {
-				Map<String, Object> tbiguserinfo = (Map<String, Object>) map
-						.get("value");
-				if (tbiguserinfo.containsKey("userno")) {
-					userno = (String) tbiguserinfo.get("userno");
-				}
+			if ("0".equals(errorCode)) {
+				Map<String, Object> tbiguserinfo = (Map<String, Object>) map.get("value");
+				return tbiguserinfo;
 			} else {
 				logger.error("查询大客户异常 openid:" + openid + " type:" + type
 						+ " errorCode:" + errorCode);
@@ -165,7 +151,7 @@ public class LotteryService {
 		} catch (Exception e) {
 			logger.error("查询大客户异常 openid:" + openid + " type:" + type, e);
 		}
-		return userno;
+		return null;
 	}
 
 	/**
@@ -177,8 +163,7 @@ public class LotteryService {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public String createBigUser(String openid, String nickname, String type) {
-		String userno = null;
+	public Map<String, Object> createBigUser(String openid, String nickname, String type) {
 		try {
 			Form form = Form.form().add("userName", openid)
 					.add("password", randomPwd(8)).add("channel", "2")
@@ -192,12 +177,9 @@ public class LotteryService {
 					.returnContent().asString();
 			Map<String, Object> map = JsonMapper.fromJson(json, HashMap.class);
 			String errorCode = (String) map.get("errorCode");
-			if (errorCode.equals("0")) {
-				Map<String, Object> tbiguserinfo = (Map<String, Object>) map
-						.get("value");
-				if (tbiguserinfo.containsKey("userno")) {
-					userno = (String) tbiguserinfo.get("userno");
-				}
+			if ("0".equals(errorCode)) {
+				Map<String, Object> tbiguserinfo = (Map<String, Object>) map.get("value");
+				return tbiguserinfo;
 			} else {
 				logger.error("创建大客户失败 openid:" + openid + " nickname:"
 						+ nickname + " type:" + type + " errorCode:"
@@ -207,7 +189,7 @@ public class LotteryService {
 			logger.error("创建大客户失败 openid:" + openid + " nickname:" + nickname
 					+ " type:" + type, e);
 		}
-		return userno;
+		return null;
 	}
 
 	/**

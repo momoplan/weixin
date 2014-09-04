@@ -20,10 +20,10 @@ public class LotteryServiceTest extends AbstractJUnit4SpringContextTests {
 		System.out.println(string);
 	}
 
-	@Test
-	public void testFindOrCreateBigUser() {
-		String userno = lotteryService.findOrCreateBigUser("123123123123", null, Const.DEFAULT_BIGUSER_TYPE);
-		System.out.println(userno);
-	}
+//	@Test
+//	public void testFindOrCreateBigUser() {
+//		String userno = lotteryService.findOrCreateBigUser("123123123123", null, Const.DEFAULT_BIGUSER_TYPE);
+//		System.out.println(userno);
+//	}
 
 }

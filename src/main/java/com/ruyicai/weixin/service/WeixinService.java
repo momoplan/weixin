@@ -75,7 +75,7 @@ public class WeixinService {
 			token = getRealTimeToken(key, now);
 
 		Date preDate = wt.getAccessDate();
-		if ((DateUtil.getUnixTime(now) - DateUtil.getUnixTime(preDate)) > wt.getExpireTime())
+		if ((DateUtil.getUnixTime(now) - DateUtil.getUnixTime(preDate)) > 6000)
 			token = getRealTimeToken(key, now);
 
 		if (StringUtil.isEmpty(token))
