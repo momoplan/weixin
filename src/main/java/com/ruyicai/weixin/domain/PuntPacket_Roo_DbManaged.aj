@@ -34,7 +34,6 @@ privileged aspect PuntPacket_Roo_DbManaged {
     private String PuntPacket.thankWords;
     
     @Column(name = "get_status")
-    @NotNull
     private Integer PuntPacket.getStatus;
     
     public Integer PuntPacket.getPacketId() {

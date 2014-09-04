@@ -33,14 +33,6 @@ public class PuntPacketDao {
 		return puntPacket;
 	}
 	
-	@Transactional
-	public void updatePuntPacket(PuntPacket puntPacket, String award_userno)
-	{
-		puntPacket.setGetUserno(award_userno);
-		puntPacket.setGetTime(Calendar.getInstance());
-		puntPacket.merge();
-		puntPacket.flush();
-	}
 	
 	@Transactional
 	public void updatePuntPacket(PuntPacket puntPacket, String award_userno,int get_status) 
