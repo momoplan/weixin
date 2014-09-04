@@ -841,6 +841,64 @@ public class PacketActivityService {
 	}
 	
 	
+	/**
+	 * 抢红包信息模板
+	 * 
+	 * @return
+	 */
+	@Async
+	public void sendGrabInfo(String openid,String packet_user_nickname,String opentime)
+	{
+		String json = "{\"touser\":\"\",\"template_id\":\"\","
+				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}}";
+		
+		String jsoBuy = "{\"title\": {\"value\":\"\",\"color\":\"\"},\"headinfo\": {\"value\":\"\",\"color\":\"\"},\"program\": {\"value\":\"\",\"color\":\"\"},\"result\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"},}";
+		 
+		String templateid = "HZt4Rp3WoeeEXqJ8SMO-W3Je_7yy7qUjdOIvZAvfYCw";
+		String url = "http://www.baidu.com";
+		String topcolor = "#DA2828";
+		String color = "#DA2828";
+		String betInfo = "您已抢到"+packet_user_nickname+"的红包，"+opentime+"开奖";
+		
+		JSONObject jsono = JSONObject.fromObject(jsoBuy);
+		
+		JSONObject jsonoSub = JSONObject.fromObject(jsono.get("title"));
+		jsonoSub.element("value", "如意彩彩票中奖通知：");
+		jsonoSub.element("color", color);		
+		jsono.element("title", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("headinfo"));
+		jsonoSub.element("value", "恭喜你领取的如意彩票中奖啦！");
+		jsonoSub.element("color", color);
+		jsono.element("headinfo", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("program"));
+		jsonoSub.element("value", "双色球");
+		jsonoSub.element("color", color);
+		jsono.element("program", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("result"));
+		jsonoSub.element("value", betInfo);
+		jsonoSub.element("color", color);
+		jsono.element("result", jsonoSub);
+		
+		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
+		jsonoSub.element("value", "");
+		jsonoSub.element("color", color);
+		jsono.element("remark", jsonoSub);
+		 	 
+		JSONObject jsonoMain = JSONObject.fromObject(json);		 
+		jsonoMain.element("touser", openid);		
+		jsonoMain.element("template_id", templateid);
+		jsonoMain.element("url", url);
+		jsonoMain.element("topcolor", topcolor);
+		jsonoMain.element("data", jsono);
+		 
+		System.out.println(jsonoMain);
+		sendTemplateMsg(jsonoMain.toString());
+		 
+	}
+	
 	
 	/**
 	 * 中奖信息模板
