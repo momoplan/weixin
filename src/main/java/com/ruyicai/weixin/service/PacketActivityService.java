@@ -913,13 +913,13 @@ public class PacketActivityService {
 	 * 
 	 * @return
 	 */
-	@Async
+//	@Async
 	public void sendBetInfo(String openid,String total_money)
 	{
 		String json = "{\"touser\":\"\",\"template_id\":\"\","
 				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}}";
 		
-		String jsoBuy = "{\"title\": {\"value\":\"\",\"color\":\"\"},\"headinfo\": {\"value\":\"\",\"color\":\"\"},\"program\": {\"value\":\"\",\"color\":\"\"},\"result\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"},}";
+		String jsoBuy = "{\"title\": {\"value\":\"\",\"color\":\"\"},\"headinfo\": {\"value\":\"\",\"color\":\"\"},\"program\": {\"value\":\"\",\"color\":\"\"},\"result\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"}}";
 		 
 		String templateid = "HZt4Rp3WoeeEXqJ8SMO-W3Je_7yy7qUjdOIvZAvfYCw";
 		String url = "http://wx.ruyicai.com/wxpay/html/sendRedbag/account.html?info=get";
@@ -977,7 +977,7 @@ public class PacketActivityService {
 		String json = "{\"touser\":\"\",\"template_id\":\"\","
 				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}}";
 		
-		String jsoBuy = "{\"productType\": {\"value\":\"\",\"color\":\"\"},\"name\": {\"value\":\"\",\"color\":\"\"},\"number\": {\"value\":\"\",\"color\":\"\"},\"expDate\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"},}";
+		String jsoBuy = "{\"productType\": {\"value\":\"\",\"color\":\"\"},\"name\": {\"value\":\"\",\"color\":\"\"},\"number\": {\"value\":\"\",\"color\":\"\"},\"expDate\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"}}";
 		 
 		String templateid = "xYBPYEur-WrpGvUjMsLj2Iz_Kpsc4B_CvlB6OlGVI_w";
 		String url = "http://wx.ruyicai.com/wxpay/html/sendRedbag/baginfo.html?packet_id="+ToolsAesCrypt.Encrypt(packet_id, Const.PACKET_KEY);
