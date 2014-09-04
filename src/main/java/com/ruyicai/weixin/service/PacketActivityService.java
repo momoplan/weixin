@@ -860,6 +860,11 @@ public class PacketActivityService {
 		String topcolor = "#DA2828";
 		String color = "#DA2828";
 //		String betInfo = "您已抢到"+packet_user_nickname+"的红包，"+opentime+"开奖";
+		Date dt = new Date();
+		 
+		java.text.DateFormat format1 = new java.text.SimpleDateFormat(
+				"yyyy-MM-dd");
+	    String getTime = format1.format(dt);
 		
 		String betInfo = "共"+punts+"注，"+(Integer.parseInt(punts) * 2)+"元";
 		
@@ -876,7 +881,7 @@ public class PacketActivityService {
 		jsono.element("keyword1", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("keyword2"));
-		jsonoSub.element("value", opentime+"开奖");
+		jsonoSub.element("value", getTime+";"+opentime+"开奖");
 		jsonoSub.element("color", color);
 		jsono.element("keyword2", jsonoSub);		 
 		
