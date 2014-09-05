@@ -881,7 +881,7 @@ public class PacketActivityService {
 		jsono.element("keyword1", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("keyword2"));
-		jsonoSub.element("value", getTime+";"+opentime+"开奖");
+		jsonoSub.element("value", getTime+"； 开奖时间："+opentime);
 		jsonoSub.element("color", color);
 		jsono.element("keyword2", jsonoSub);		 
 		
