@@ -114,6 +114,9 @@ public class PacketActivityService {
 	public Map<String, Object> getPunts(String award_userno, String channel, String packet_id) {
 		// 获取红包
 		PuntPacket puntPacket = getPuntPacket(award_userno, channel, packet_id);
+		 
+//		if(puntPacket.getGetTime().add(Calendar.HOUR, 24) == Calendar.getInstance())
+//		{}
 		
 		// 生成注码
 		String[] result = generatePunts(award_userno, channel, puntPacket);
@@ -959,7 +962,7 @@ public class PacketActivityService {
 		jsono.element("result", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
-		jsonoSub.element("value", "");
+		jsonoSub.element("value", "\r\n中秋送\"如意彩\"，才是送真\"运气\"——微信通讯录搜\"如意彩\"，购彩送彩更方便!");
 		jsonoSub.element("color", color);
 		jsono.element("remark", jsonoSub);
 		 	 
@@ -1016,7 +1019,7 @@ public class PacketActivityService {
 		jsono.element("expDate", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
-		jsonoSub.element("value", "");
+		jsonoSub.element("value", "\r\n中秋送\"如意彩\"，才是送真\"运气\"——微信通讯录搜\"如意彩\"，购彩送彩更方便!");
 		jsonoSub.element("color", color);
 		jsono.element("remark", jsonoSub);
 		 	 
@@ -1073,7 +1076,7 @@ public class PacketActivityService {
 		jsono.element("expDate", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
-		jsonoSub.element("value", remark);
+		jsonoSub.element("value", remark+"\r\n中秋送\"如意彩\"，才是送真\"运气\"——微信通讯录搜\"如意彩\"，购彩送彩更方便!");
 		jsonoSub.element("color", color);
 		jsono.element("remark", jsonoSub);
 		 	 
