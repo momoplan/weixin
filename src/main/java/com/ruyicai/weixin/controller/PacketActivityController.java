@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -176,10 +175,23 @@ public class PacketActivityController {
 				break;
 			}
 		} catch (WeixinException e) {
-			if (e.getErrorCode().value.equals(ErrorCode.DATA_NOT_EXISTS.value))
+			if (ErrorCode.DATA_NOT_EXISTS.value.equals(e.getErrorCode().value))
 			{
 				rd.setValue(1);
 				rd.setErrorCode(String.valueOf(1));
+			} else if (ErrorCode.PACKET_STATUS_GETED.value.equals(e.getErrorCode().value))
+			{
+				Map<Integer, Object> status = packetActivityService.getPacketStatus(award_userno, packet_id.trim());
+				for (Entry<Integer, Object> entry : status.entrySet())
+				{
+					Map<String, Object> msg = new HashMap<String, Object>();
+					int k = entry.getKey();
+					Map<String, Object> v = (Map<String, Object>) entry.getValue();
+					msg.put("status_info", v);
+					rd.setErrorCode(String.valueOf(k));
+					rd.setValue(msg);
+					break;
+				}
 			} else
 			{
 				rd.setErrorCode(e.getErrorCode().value);

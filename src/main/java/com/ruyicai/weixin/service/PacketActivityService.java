@@ -1,7 +1,6 @@
 package com.ruyicai.weixin.service;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -179,16 +178,28 @@ public class PacketActivityService {
 	public PuntPacket getPuntPacket(String award_userno, String channel, String packet_id)
 	{
 		List<Packet> packetList = puntPacketDao.findOneNotAawardPart(packet_id);
-		if (packetList != null && packetList.size() > 0) {
+		if (packetList != null && packetList.size() > 0)
+		{
+			List<PuntPacket> lstPuntPacket = puntPacketDao.findByGetUserno(award_userno, packet_id);
+			if (lstPuntPacket != null && lstPuntPacket.size() > 0)
+			{
+				logger.info("红包已抢过 - award_userno:{} packet_id:{}", award_userno, packet_id);
+				throw new WeixinException(ErrorCode.PACKET_STATUS_GETED);
+			}
+			
 			List<PuntPacket> puntPacketList = puntPacketDao.findSinglePuntPart(packet_id);
 			if (puntPacketList == null || puntPacketList.size() == 0)
 			{
+				logger.info("红包不存在1 award_userno:{} packet_id:{}", award_userno, packet_id);
 				throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
 			}
+			
 			PuntPacket puntPacket = puntPacketList.get(0);
 			processPuntPacket(puntPacket, award_userno, channel, 0);
 			return puntPacket;
-		} else {
+		} else
+		{
+			logger.info("红包不存在2 award_userno:{} packet_id:{}", award_userno, packet_id);
 			throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
 		}
 	}
@@ -222,8 +233,6 @@ public class PacketActivityService {
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	public Map doGetPacketStus(String award_userno, String packet_id) {
-//		List<?> lst = puntListDao.getBetMoeny("2014-08-26");
-//		System.out.println(lst);
 		String packetEncrypt = packet_id;
 		packet_id = ToolsAesCrypt.Decrypt(packet_id, Const.PACKET_KEY); // 解密
 		if (StringUtil.isEmpty(packet_id))
@@ -353,7 +362,7 @@ public class PacketActivityService {
 			{
 				logger.info("packet.getPacketUserno-award_userno:{}",
 						award_userno);
-				throw new WeixinException(ErrorCode.PACKET_STATUS_EXIST);
+				throw new WeixinException(ErrorCode.PACKET_NOT_EXIST);
 			}
 		}
 		iMap.put("ret_msg", "红包可抢");
@@ -730,26 +739,31 @@ public class PacketActivityService {
 	@Async
 	public void doCreatePuntList(String betcode, String award_userno, String channel, int puntId)
 	{
-		JSONObject ret = commonService.getBatchInfo();
 		String batchcode = "";
 		Calendar cal_open = Calendar.getInstance();
-		
 		java.text.DateFormat format1 = new java.text.SimpleDateFormat(
 				"yyyy-MM-dd");
-		try {
-			Date dt = format1.parse("20" + ret.getString("endtime"));
-			cal_open.setTime(dt);
-			batchcode = ret.getString("batchcode");
-		} catch (ParseException e) {
-			throw new WeixinException(ErrorCode.ERROR);
-		}
 		
-		int count = 0;
+		int count = -1;
 		for(;;)
 		{
 			++ count;
 			if (count > 5)
 				break;
+			
+			JSONObject ret = commonService.getBatchInfo();
+			try
+			{
+				Date dt = format1.parse("20" + ret.getString("endtime"));
+				cal_open.setTime(dt);
+				if (count == 0)
+					batchcode = ret.getString("batchcode");
+			}
+			catch (ParseException e)
+			{
+				logger.error("解析开奖日期异常", e);
+				throw new WeixinException(ErrorCode.ERROR);
+			}
 			
 			ret = commonService.getDoubleDallBet(award_userno, "200",
 					channel, "0001" + betcode + "^_1_200_200", batchcode);
