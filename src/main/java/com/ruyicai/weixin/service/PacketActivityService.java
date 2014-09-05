@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,8 +41,13 @@ public class PacketActivityService {
 
 	private Logger logger = LoggerFactory.getLogger(PacketActivityService.class);
 
+	@Value("${companyuser}")
+	private String companyuser;
+	
 	@Autowired
 	PacketDao packetDao;
+	
+
 
 	@Autowired
 	private PuntPacketDao puntPacketDao;
@@ -60,6 +66,7 @@ public class PacketActivityService {
 
 	@Autowired
 	CaseLotActivityService caseLotActivityService;
+	
 
 	/**
 	 * 创建红包
@@ -814,15 +821,25 @@ public class PacketActivityService {
 					int totalReturnPunts = 0;
 					Packet packet = lstPacket.get(i);
 					String packet_userno = packet.getPacketUserno();
+					
 					String packet_id = String.valueOf(packet.getId());	
 					List<PuntPacket> lstPuntPacket = puntPacketDao.findLeftParts(packet_id);
 
 					if (lstPuntPacket != null && lstPuntPacket.size() > 0)
 					{
+						
 						for (PuntPacket puntPacket : lstPuntPacket)
 						{
 							processPuntPacket(puntPacket, packet_userno, Const.WX_PACKET_CHANNEL,1);
-							generatePunts(packet_userno, Const.WX_PACKET_CHANNEL, puntPacket);
+							if(companyuser.indexOf(packet_userno) ==-1)	
+							{
+								generatePunts(packet_userno, Const.WX_PACKET_CHANNEL, puntPacket);
+							}
+							else
+							{
+								logger.info("内部账号"+packet_userno+"未执行投注购买");
+							}
+								 
 							totalReturnPunts += puntPacket.getRandomPunts();
 						}
 					}

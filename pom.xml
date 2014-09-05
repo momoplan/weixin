@@ -577,6 +577,7 @@
 				<jms.new-issue.brokerURL>tcp://192.168.0.92:61616</jms.new-issue.brokerURL>
 				<imageMagickPath>C:\Tools\ImageMagick-6.8.7-Q8</imageMagickPath>
 				<imageLocation>C:\image</imageLocation>
+				<companyuser>00001838,00001837</companyuser>
 			</properties>
 		</profile>
 		<profile>
@@ -596,6 +597,7 @@
 				<jms.new-issue.brokerURL>tcp://192.168.0.92:61616</jms.new-issue.brokerURL>
 				<imageMagickPath>E:\ImageMagick-6.8.7-Q8</imageMagickPath>
 				<imageLocation>E:\image</imageLocation>
+				<companyuser>00001838</companyuser>
 			</properties>
 		</profile>
 		<profile>
@@ -615,6 +617,7 @@
 				<jms.new-issue.brokerURL>failover://(tcp://192.168.99.30:61616,tcp://192.168.99.31:61616)?randomize=false</jms.new-issue.brokerURL>
 				<imageMagickPath></imageMagickPath>
 				<imageLocation>/home/appusr/images_weixin</imageLocation>
+				<companyuser>03134453</companyuser>
 			</properties>
 		</profile>
 	</profiles>
