@@ -185,13 +185,7 @@ public class PacketActivityService {
 			{
 				throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
 			}
-			else
-			{
-				List<PuntPacket> puntPacketList_get = puntPacketDao.findByGetUserno(award_userno, packet_id);
-				if (puntPacketList_get != null && puntPacketList_get.size() > 0) {
-					throw new WeixinException(ErrorCode.GET_PACKET_ALREADEY);
-				}
-			}
+			
 			PuntPacket puntPacket = puntPacketList.get(0);
 			processPuntPacket(puntPacket, award_userno, channel, 0);
 			return puntPacket;
