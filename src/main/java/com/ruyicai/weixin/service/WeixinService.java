@@ -238,6 +238,7 @@ public class WeixinService {
 			logger.info("findUserinfoByOpenid result json:{}" + json);
 			if (json.contains("errcode")) {
 				logger.error("获取用户信息失败 openid:{} error:{}", openid, json);
+				memcachedService.delete(CACHE_TOKEN_KEY);
 				throw new WeixinException(json);
 			}
 			dto = WeixinUserDTO.fromJsonToWeixinUserDTO(json);
