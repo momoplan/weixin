@@ -727,7 +727,7 @@ public class PacketActivityService {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<Packet> packetList = Packet.findAllPackets();
 		
-		int beanchmark = 10000;
+		int beanchmark = 80000; // 送红包人数基数
 		if (packetList != null)
 			beanchmark += packetList.size() * 10;
 		
