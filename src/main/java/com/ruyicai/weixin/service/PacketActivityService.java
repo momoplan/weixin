@@ -895,14 +895,14 @@ public class PacketActivityService {
 		jsono.element("keyword1", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("keyword2"));
-		jsonoSub.element("value", getTime+";"+opentime+"开奖");
+		jsonoSub.element("value", getTime+"； 开奖时间："+opentime);
 		jsonoSub.element("color", color);
 		jsono.element("keyword2", jsonoSub);		 
 		
-//		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
-//		jsonoSub.element("value", opentime+"开奖");
-//		jsonoSub.element("color", color);
-//		jsono.element("remark", jsonoSub);
+		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
+		jsonoSub.element("value", "\r\n中秋送\"如意彩\"，才是送真\"运气\"——微信通讯录搜\"如意彩\"，购彩送彩更方便!");
+		jsonoSub.element("color", color);
+		jsono.element("remark", jsonoSub);
 		 	 
 		JSONObject jsonoMain = JSONObject.fromObject(json);		 
 		jsonoMain.element("touser", openid);		
