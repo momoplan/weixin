@@ -78,11 +78,12 @@ public class PacketActivityController {
 		}
 
 		int puntsInt = Integer.valueOf(punts);
-		if (puntsInt > 1000) {
-			rd.setErrorCode("10002");
-			rd.setValue("创建红包注数不能大于1000注");
-			return JsonMapper.toJsonP(callback, rd);
-		} else if (puntsInt < 1) {
+//		if (puntsInt > 1000) {
+//			rd.setErrorCode("10002");
+//			rd.setValue("创建红包注数不能大于1000注");
+//			return JsonMapper.toJsonP(callback, rd);
+//		}
+		if (puntsInt < 1) {
 			rd.setErrorCode("10003");
 			rd.setValue("创建红包注数不能小于1注");
 			return JsonMapper.toJsonP(callback, rd);
