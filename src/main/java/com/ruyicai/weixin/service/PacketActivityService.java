@@ -185,6 +185,13 @@ public class PacketActivityService {
 			{
 				throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
 			}
+			else
+			{
+				List<PuntPacket> puntPacketList_get = puntPacketDao.findByGetUserno(award_userno, packet_id);
+				if (puntPacketList_get != null && puntPacketList_get.size() > 0) {
+					throw new WeixinException(ErrorCode.GET_PACKET_ALREADEY);
+				}
+			}
 			PuntPacket puntPacket = puntPacketList.get(0);
 			processPuntPacket(puntPacket, award_userno, channel, 0);
 			return puntPacket;
@@ -885,10 +892,10 @@ public class PacketActivityService {
 		jsonoSub.element("color", color);
 		jsono.element("keyword2", jsonoSub);		 
 		
-//		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
-//		jsonoSub.element("value", opentime+"开奖");
-//		jsonoSub.element("color", color);
-//		jsono.element("remark", jsonoSub);
+		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
+		jsonoSub.element("value", "\r\n中秋送\"如意彩\"，才是送真\"运气\"——微信通讯录搜\"如意彩\"，购彩送彩更方便!");
+		jsonoSub.element("color", color);
+		jsono.element("remark", jsonoSub);
 		 	 
 		JSONObject jsonoMain = JSONObject.fromObject(json);		 
 		jsonoMain.element("touser", openid);		
