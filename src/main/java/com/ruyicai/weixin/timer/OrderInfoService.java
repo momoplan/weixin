@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import com.ruyicai.weixin.dao.PuntListDao;
 import com.ruyicai.weixin.domain.PuntList;
+import com.ruyicai.weixin.domain.PuntPacket;
 import com.ruyicai.weixin.exception.ErrorCode;
 import com.ruyicai.weixin.exception.WeixinException;
 import com.ruyicai.weixin.service.CommonService;
@@ -70,7 +71,8 @@ public class OrderInfoService {
 			int orderprizeamt = getPrizeAmt(punt.getOrderid());
 			if(orderprizeamt > 0)
 			{
-				packetActivityService.sendBetInfo(punt.getOrderid(),String.valueOf(orderprizeamt));
+				PuntPacket puntPacket = PuntPacket.findPuntPacket(punt.getPuntId());
+				packetActivityService.sendBetInfo(puntPacket.getGetUserno(),String.valueOf(orderprizeamt));
 			}
 			// 更新中奖金额
 			puntListDao.merge(punt, orderprizeamt);

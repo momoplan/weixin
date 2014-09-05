@@ -943,8 +943,11 @@ public class PacketActivityService {
 	 * @return
 	 */
 	@Async
-	public void sendBetInfo(String openid,String total_money)
+	public void sendBetInfo(String userno,String total_money)
 	{
+		CaseLotUserinfo caseLotUserinfo = caseLotActivityService.caseLotchances(userno,
+				Const.WX_PACKET_ACTIVITY);
+		String openid = caseLotUserinfo.getOpenid();
 		String json = "{\"touser\":\"\",\"template_id\":\"\","
 				+"\"url\":\"\",\"topcolor\":\"#FF0000\",\"data\":\"\"}";
 		
