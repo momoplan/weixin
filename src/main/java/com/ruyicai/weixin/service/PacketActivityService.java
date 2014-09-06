@@ -931,7 +931,7 @@ public class PacketActivityService {
 		jsonoMain.element("topcolor", topcolor);
 		jsonoMain.element("data", jsono);
 		 
-		System.out.println(jsonoMain);
+		logger.info("抢红包信息 - >jsonoMain:"+jsonoMain);
 		sendTemplateMsg(jsonoMain.toString());
 		 
 	}
@@ -993,7 +993,7 @@ public class PacketActivityService {
 		jsonoMain.element("topcolor", topcolor);
 		jsonoMain.element("data", jsono);
 		 
-		System.out.println(jsonoMain);
+		logger.info("中奖信息 - >jsonoMain:"+jsonoMain);
 		sendTemplateMsg(jsonoMain.toString());
 		 
 	}
@@ -1050,7 +1050,7 @@ public class PacketActivityService {
 		jsonoMain.element("topcolor", topcolor);
 		jsonoMain.element("data", jsono);
 		 
-		logger.info("jsonoMain:"+jsonoMain);
+		logger.info("送红包信息->jsonoMain:"+jsonoMain);
 		
 		sendTemplateMsg(jsonoMain.toString());
 		 
@@ -1116,10 +1116,11 @@ public class PacketActivityService {
 		int ret = 0;			
 		String accessToken = weixinService.getAccessToken();
 		String sendUrl = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+accessToken;
-		logger.info("sendUrl:"+sendUrl);
+		
 		String sendData = strContent.toString();
 		String ret1 = HttpUtil.sendRequestByPost(sendUrl, sendData, true);
-		logger.info("accessToken:"+accessToken+","+"result:"+ret1);
+		logger.info("sendUrl:"+sendUrl+","+"result:"+ret1);
+	 
 		
 		return ret;
 	}

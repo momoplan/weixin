@@ -37,8 +37,8 @@ public class CaseLotActivityService {
 	public CaseLotUserinfo findOrCreateCaseLotUserinfo(String userno,
 			String orderid, String nickname, String headimgurl,String openid) {
 		logger.info(
-				"createCaseLotUserinfo userno:{} orderid:{} nickname:{} headimgurl:{}",
-				userno, orderid, nickname, headimgurl);
+				"createCaseLotUserinfo userno:{} orderid:{} nickname:{} headimgurl:{} openid:{}",
+				userno, orderid, nickname, headimgurl,openid);
 		if (StringUtils.isEmpty(userno)) {
 			throw new IllegalArgumentException(
 					"the argument userno is require.");
@@ -226,7 +226,7 @@ public class CaseLotActivityService {
 			}
 			
 			caseLotUserinfo = this.findOrCreateCaseLotUserinfo(userno, orderid,
-					nickname, headimgurl,orderid);
+					nickname, headimgurl,openid);
 		} catch (Exception e) {
 			logger.error("关注时同步执行 增加 HM00001的活动账户失败:", e.getMessage());
 		}
