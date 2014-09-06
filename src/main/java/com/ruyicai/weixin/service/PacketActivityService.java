@@ -920,7 +920,7 @@ public class PacketActivityService {
 		jsono.element("keyword2", jsonoSub);		 
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
-		jsonoSub.element("value", "\r\n中秋送\"如意彩\"，才是送真\"运气\"——微信通讯录搜\"如意彩\"，购彩送彩更方便!");
+		jsonoSub.element("value", "\r\n微信通讯录搜\"如意彩\"，就能找到我");
 		jsonoSub.element("color", color);
 		jsono.element("remark", jsonoSub);
 		 	 
@@ -982,7 +982,7 @@ public class PacketActivityService {
 		jsono.element("result", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
-		jsonoSub.element("value", "\r\n中秋送\"如意彩\"，才是送真\"运气\"——微信通讯录搜\"如意彩\"，购彩送彩更方便!");
+		jsonoSub.element("value", "\r\n微信通讯录搜\"如意彩\"，就能找到我");
 		jsonoSub.element("color", color);
 		jsono.element("remark", jsonoSub);
 		 	 
@@ -1039,7 +1039,7 @@ public class PacketActivityService {
 		jsono.element("expDate", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
-		jsonoSub.element("value", "\r\n中秋送\"如意彩\"，才是送真\"运气\"——微信通讯录搜\"如意彩\"，购彩送彩更方便!");
+		jsonoSub.element("value", "\r\n微信通讯录搜\"如意彩\"，就能找到我");
 		jsonoSub.element("color", color);
 		jsono.element("remark", jsonoSub);
 		 	 
@@ -1096,7 +1096,7 @@ public class PacketActivityService {
 		jsono.element("expDate", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
-		jsonoSub.element("value", remark+"\r\n中秋送\"如意彩\"，才是送真\"运气\"——微信通讯录搜\"如意彩\"，购彩送彩更方便!");
+		jsonoSub.element("value", remark+"\r\n微信通讯录搜\"如意彩\"，就能找到我");
 		jsonoSub.element("color", color);
 		jsono.element("remark", jsonoSub);
 		 	 
