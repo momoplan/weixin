@@ -48,7 +48,8 @@ public class EventHandler implements IMsgHandler {
 			rnm.setToUserName(requestMessage.getFromUserName());
 			rnm.setCreateTime(new Date().getTime());
 			rnm.setMsgType(ResponseMsgType.TEXT);
-			rnm.setContent("主人，我已在您微信通讯录；搜 “如意彩” 随时找我\r\n\r\n送彩票，买彩票，看账户 —— 方便安全");			
+//			rnm.setContent("主人，我已在您微信通讯录；搜 “如意彩” 随时找我\r\n\r\n送彩票，买彩票，看账户 —— 方便安全");	
+			rnm.setContent("主人，我已在您微信通讯录；搜 “如意彩” 随时找我\r\n\r\n几块钱红包送不出手，不如送几个彩票。点击屏幕下方功能键");	
 //			ResponseNewsMessage rnm = new ResponseNewsMessage();
 //			rnm.setFromUserName(requestMessage.getToUserName());
 //			rnm.setToUserName(requestMessage.getFromUserName());

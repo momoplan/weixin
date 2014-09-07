@@ -729,7 +729,7 @@ public class PacketActivityService {
 		
 		int beanchmark = 80000; // 送红包人数基数
 		if (packetList != null)
-			beanchmark += packetList.size() * 10;
+			beanchmark += packetList.size() * 50;
 		
 		map.put("total_packet_person", beanchmark);
 		map.put("total_get_person", 1000);
@@ -1096,7 +1096,7 @@ public class PacketActivityService {
 		jsono.element("expDate", jsonoSub);
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
-		jsonoSub.element("value", remark+"\r\n微信通讯录搜\"如意彩\"，就能找到我");
+		jsonoSub.element("value", remark+"\r\n\r\n微信通讯录搜\"如意彩\"，就能找到我");
 		jsonoSub.element("color", color);
 		jsono.element("remark", jsonoSub);
 		 	 
