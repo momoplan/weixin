@@ -1157,8 +1157,8 @@ public class PacketActivityService {
 			{
 				iMap.put("userno", getUserno);
 				iMap.put("status", "1");
-				iMap.put("total_packets", "0");
-				iMap.put("packet_punts", "0");
+				iMap.put("total_packets", "3");
+				iMap.put("packet_punts", "3");
 			}
 			else
 			{
@@ -1192,8 +1192,8 @@ public class PacketActivityService {
 				{
 					iMap.put("userno", getUserno);
 					iMap.put("status", "2");
-					iMap.put("total_packets", "0");
-					iMap.put("packet_punts", "0");
+					iMap.put("total_packets", "3");
+					iMap.put("packet_punts", "3");
 				}
 			}
 		}
@@ -1203,8 +1203,8 @@ public class PacketActivityService {
 			{
 				iMap.put("userno", getUserno);
 				iMap.put("status", "4");
-				iMap.put("total_packets", "0");
-				iMap.put("packet_punts", "0");
+				iMap.put("total_packets", "3");
+				iMap.put("packet_punts", "3");
 				return iMap;
 			}
 		}
@@ -1212,8 +1212,8 @@ public class PacketActivityService {
 		{
 			iMap.put("userno", getUserno);
 			iMap.put("status", "3");
-			iMap.put("total_packets", "0");
-			iMap.put("packet_punts", "0");
+			iMap.put("total_packets", "3");
+			iMap.put("packet_punts", "3");
 			iMap.put("errMsg", ex.getMessage());
 			logger.info("微信号服务号送彩金奖励异常：{}",ex);
 		}

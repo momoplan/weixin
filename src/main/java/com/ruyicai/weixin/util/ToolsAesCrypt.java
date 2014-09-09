@@ -166,7 +166,7 @@ public class ToolsAesCrypt {
 	}
 
 	public static void main(String[] args) {
-		String miwen = "1821";
+		String miwen = "1846";
 		try {
 			System.out.println("加密：" + Encrypt(miwen, Const.PACKET_KEY));
 //			System.out.println("解密：" + Decrypt(miwen, Const.PACKET_KEY));
