@@ -308,17 +308,18 @@ public class PacketActivityController {
 	@ResponseBody
 	public String getMoneyUser(
 			@RequestParam(value = "userno", required = true) String userno,
+			@RequestParam(value = "channel", required = true) String channel,
 			@RequestParam(value = "callBackMethod", required = true) String callback) {
-		logger.info("getPacketInfo userno:{}, packet_id:{}", userno);
+		logger.info("getPacketInfo userno:{}, channel:{}", userno,channel);
 		ResponseData rd = new ResponseData();
-		if (StringUtil.isEmpty(userno) ) {
+		if (StringUtil.isEmpty(userno) ||StringUtil.isEmpty(channel) ) {
 			rd.setErrorCode("10001");
 			rd.setValue("参数不能为空");
 			return JsonMapper.toJsonP(callback, rd);
 		}
 
 		try {
-			Map<String,String> map = packetActivityService.getMoneyUser(userno, "119110112");
+			Map<String,String> map = packetActivityService.getMoneyUser(userno, channel);
 			rd.setValue(map);
 			rd.setErrorCode(ErrorCode.OK.value);
 		} catch (WeixinException e) {

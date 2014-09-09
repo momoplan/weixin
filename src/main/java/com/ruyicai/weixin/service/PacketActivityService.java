@@ -1149,6 +1149,9 @@ public class PacketActivityService {
 		Map<String,String> iMap = new HashMap<String,String>();
 		try
 		{
+			caseLotActivityService.caseLotchances(getUserno, "HM00002");
+			
+			packet_id = ToolsAesCrypt.Decrypt(packet_id, Const.PACKET_KEY);
 			List<PuntPacket> lstPuntPacket = puntPacketDao.findByGetUserno(getUserno, packet_id);
 			if(null != lstPuntPacket && lstPuntPacket.size() > 0)
 			{
@@ -1193,7 +1196,19 @@ public class PacketActivityService {
 					iMap.put("packet_punts", "0");
 				}
 			}
-		}catch(Exception ex)
+		}
+		catch (WeixinException we)
+		{
+			if (ErrorCode.CASELOTUSERINFO_NOT_EXISTS.value.equals(we.getErrorCode().value))
+			{
+				iMap.put("userno", getUserno);
+				iMap.put("status", "4");
+				iMap.put("total_packets", "0");
+				iMap.put("packet_punts", "0");
+				return iMap;
+			}
+		}
+		catch (Exception ex)
 		{
 			iMap.put("userno", getUserno);
 			iMap.put("status", "3");

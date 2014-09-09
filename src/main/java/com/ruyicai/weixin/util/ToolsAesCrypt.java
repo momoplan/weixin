@@ -166,10 +166,10 @@ public class ToolsAesCrypt {
 	}
 
 	public static void main(String[] args) {
-		String miwen = "abc062506210b249d33bf3a4d1bcb6c6";
+		String miwen = "1821";
 		try {
-//			System.out.println("加密：" + Encrypt(miwen, Const.PACKET_KEY));
-			System.out.println("解密：" + Decrypt(miwen, Const.PACKET_KEY));
+			System.out.println("加密：" + Encrypt(miwen, Const.PACKET_KEY));
+//			System.out.println("解密：" + Decrypt(miwen, Const.PACKET_KEY));
 		} catch (Exception e) {
 			logger.error("error", e);
 		}
