@@ -1140,6 +1140,8 @@ public class PacketActivityService {
 	public Map<String,String> getMoneyUser(String getUserno,String packet_id)
 	{
 		Map<String,String> iMap = new HashMap<String,String>();
+		try
+		{
 		List<PuntPacket> lstPuntPacket = puntPacketDao.findByGetUserno(getUserno, packet_id);
 		if(null != lstPuntPacket && lstPuntPacket.size() > 0)
 		{
@@ -1159,7 +1161,7 @@ public class PacketActivityService {
 		    	total_money = packet.getTotalPersons();
 		    }
 		    
-		    if(total_money > 6)
+		    if(total_money >= 6)
 		    {			
 			iMap.put("userno", getUserno);
 			iMap.put("status", "0");
@@ -1171,6 +1173,8 @@ public class PacketActivityService {
 			puntPacket.persist();
 			packet.setTotalPersons(total_money - 6);
 			packet.merge();
+			String ret = commonService.presentDividend(getUserno, "600", "1101", "微信号服务号送彩金奖励");
+			logger.info("微信号服务号送彩金奖励：{}",ret);
 		    }
 		    else
 		    {
@@ -1181,6 +1185,15 @@ public class PacketActivityService {
 		    }
 		    
 			
+		}
+		}catch(Exception ex)
+		{
+			iMap.put("userno", getUserno);
+			iMap.put("status", "3");
+			iMap.put("total_packets", "0");
+			iMap.put("packet_punts", "0");
+			iMap.put("errMsg", ex.getMessage());
+			logger.info("微信号服务号送彩金奖励异常：{}",ex);
 		}
 		return iMap;
 	}
