@@ -83,6 +83,7 @@ public class PacketActivityController {
 //			rd.setValue("创建红包注数不能大于1000注");
 //			return JsonMapper.toJsonP(callback, rd);
 //		}
+		
 		if (puntsInt < 1) {
 			rd.setErrorCode("10003");
 			rd.setValue("创建红包注数不能小于1注");
@@ -291,6 +292,34 @@ public class PacketActivityController {
 		try {
 			rd.setValue(packetActivityService
 					.doGetPacketInfo(userno, packet_id));
+			rd.setErrorCode(ErrorCode.OK.value);
+		} catch (WeixinException e) {
+			rd.setErrorCode(e.getErrorCode().value);
+			rd.setValue(e.getErrorCode().memo);
+		} catch (Exception e) {
+			logger.error("getPacketInfo error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(ErrorCode.ERROR.memo);
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
+	
+	@RequestMapping(value = "/getMoneyUser", method = RequestMethod.GET)
+	@ResponseBody
+	public String getMoneyUser(
+			@RequestParam(value = "userno", required = true) String userno,
+			@RequestParam(value = "callBackMethod", required = true) String callback) {
+		logger.info("getPacketInfo userno:{}, packet_id:{}", userno);
+		ResponseData rd = new ResponseData();
+		if (StringUtil.isEmpty(userno) ) {
+			rd.setErrorCode("10001");
+			rd.setValue("参数不能为空");
+			return JsonMapper.toJsonP(callback, rd);
+		}
+
+		try {
+			Map<String,String> map = packetActivityService.getMoneyUser(userno, "119110112");
+			rd.setValue(map);
 			rd.setErrorCode(ErrorCode.OK.value);
 		} catch (WeixinException e) {
 			rd.setErrorCode(e.getErrorCode().value);
