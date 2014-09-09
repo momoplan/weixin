@@ -325,7 +325,7 @@ public class PacketActivityController {
 			rd.setErrorCode(e.getErrorCode().value);
 			rd.setValue(e.getErrorCode().memo);
 		} catch (Exception e) {
-			logger.error("getPacketInfo error", e);
+			logger.error("getMoneyUser error", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
 			rd.setValue(ErrorCode.ERROR.memo);
 		}
