@@ -1136,5 +1136,53 @@ public class PacketActivityService {
 		
 		return ret;
 	}
+	
+	public Map<String,String> getMoneyUser(String getUserno,String packet_id)
+	{
+		Map<String,String> iMap = new HashMap<String,String>();
+		List<PuntPacket> lstPuntPacket = puntPacketDao.findByGetUserno(getUserno, packet_id);
+		if(null != lstPuntPacket && lstPuntPacket.size() > 0)
+		{
+			iMap.put("userno", getUserno);
+			iMap.put("status", "1");
+			iMap.put("total_packets", "0");
+			iMap.put("packet_punts", "0");
+		}
+		else
+		{
+			List<Packet> lstpacket = packetDao.findPacketListByUserno("119110112");
+			Packet packet = null;
+			int total_money = 0;
+		    if(null != lstpacket &&  lstpacket.size() >0)
+		    {
+		    	packet = lstpacket.get(0);
+		    	total_money = packet.getTotalPersons();
+		    }
+		    
+		    if(total_money > 6)
+		    {			
+			iMap.put("userno", getUserno);
+			iMap.put("status", "0");
+			iMap.put("total_packets", "3");
+			iMap.put("packet_punts", "3");
+			PuntPacket puntPacket = puntPacketDao.createPuntPacket(Integer.parseInt(packet_id), Integer.parseInt(packet_id));
+			puntPacket.setGetUserno(getUserno);
+			puntPacket.flush();
+			puntPacket.persist();
+			packet.setTotalPersons(total_money - 6);
+			packet.merge();
+		    }
+		    else
+		    {
+		    	iMap.put("userno", getUserno);
+				iMap.put("status", "2");
+				iMap.put("total_packets", "0");
+				iMap.put("packet_punts", "0");
+		    }
+		    
+			
+		}
+		return iMap;
+	}
 
 }

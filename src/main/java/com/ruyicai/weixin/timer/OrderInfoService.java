@@ -42,11 +42,13 @@ public class OrderInfoService {
 		Calendar c = Calendar.getInstance();
 		int hourOfDay = c.get(Calendar.HOUR_OF_DAY);
 		int minute = c.get(Calendar.MINUTE);
-//		if ((hourOfDay == 21 && minute > 35) || hourOfDay > 21)
-		if ((hourOfDay == 21 && minute > 35) || hourOfDay == 10)
+		if ((hourOfDay == 21 && minute > 35) || hourOfDay > 21)
+//		if ((hourOfDay == 21 && minute > 35) || hourOfDay > 10)
 		{
 			logger.info("===========定时更新投注订单中奖金额开始===========");
 			String opentime = DateUtil.format("yyyy-MM-dd",new Date());
+			
+//			String opentime = "2014-09-07";
 			List<PuntList> puntList = puntListDao.findPuntListNotPrized(opentime);
 			if (puntList != null && puntList.size() > 0)
 			{
