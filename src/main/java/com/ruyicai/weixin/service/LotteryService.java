@@ -263,5 +263,19 @@ public class LotteryService {
 				+ amount);
 		return result;
 	}
+	
+	/**
+	 * 批量查询投注订单详情
+	 * 
+	 * @param orderids 逗号分隔
+	 * @return
+	 */
+	public String getTorderByIds(String orderids) {
+		StringBuilder paramStr = new StringBuilder();
+		paramStr.append("orderids=").append(orderids);
+		String url = lotterycoreurl + "/select/getTorderByIds";
+		String result = HttpUtil.sendRequestByPost(url, paramStr.toString(),true);
+		return result;
+	}
 
 }
