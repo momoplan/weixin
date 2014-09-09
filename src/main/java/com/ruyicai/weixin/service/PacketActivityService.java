@@ -899,7 +899,7 @@ public class PacketActivityService {
 		String jsoBuy = "{\"first\": {\"value\":\"\",\"color\":\"\"},\"keyword1\": {\"value\":\"\",\"color\":\"\"},\"keyword2\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"}}";
 		 
 		String templateid = "PZ5ca34hQ8T7l3ggNkbbTIM3xo1u0SCZjdnvnjy7UC4";
-		String url = "http://wx.ruyicai.com/wxpay/html/sendRedbag/baginfo.html?packet_id="+ToolsAesCrypt.Encrypt(packet_id, Const.PACKET_KEY);
+		String url = "http://wx.ruyicai.com/wxpay/v1/html/sendRedbag/baginfo.html?packet_id="+ToolsAesCrypt.Encrypt(packet_id, Const.PACKET_KEY);
 		String topcolor = "#DA2828";
 		String color = "#DA2828";
 //		String betInfo = "您已抢到"+packet_user_nickname+"的红包，"+opentime+"开奖";
@@ -963,7 +963,7 @@ public class PacketActivityService {
 		String jsoBuy = "{\"title\": {\"value\":\"\",\"color\":\"\"},\"headinfo\": {\"value\":\"\",\"color\":\"\"},\"program\": {\"value\":\"\",\"color\":\"\"},\"result\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"}}";
 		 
 		String templateid = "HZt4Rp3WoeeEXqJ8SMO-W3Je_7yy7qUjdOIvZAvfYCw";
-		String url = "http://wx.ruyicai.com/wxpay/html/sendRedbag/account.html?info=get";
+		String url = "http://wx.ruyicai.com/wxpay/v1/html/sendRedbag/account.html?info=get";
 		String topcolor = "#DA2828";
 		String color = "#DA2828";
 		String betInfo = "共1注中奖 中奖金额共"+total_money+"元";
@@ -1024,7 +1024,7 @@ public class PacketActivityService {
 		String jsoBuy = "{\"productType\": {\"value\":\"\",\"color\":\"\"},\"name\": {\"value\":\"\",\"color\":\"\"},\"number\": {\"value\":\"\",\"color\":\"\"},\"expDate\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"}}";
 		 
 		String templateid = "xYBPYEur-WrpGvUjMsLj2Iz_Kpsc4B_CvlB6OlGVI_w";
-		String url = "http://wx.ruyicai.com/wxpay/html/sendRedbag/baginfo.html?packet_id="+ToolsAesCrypt.Encrypt(packet_id, Const.PACKET_KEY);
+		String url = "http://wx.ruyicai.com/wxpay/v1/html/sendRedbag/baginfo.html?packet_id="+ToolsAesCrypt.Encrypt(packet_id, Const.PACKET_KEY);
 		String topcolor = "#DA2828";
 		String color = "#DA2828";
 		
@@ -1086,7 +1086,7 @@ public class PacketActivityService {
 		String jsoBuy = "{\"first\": {\"value\":\"\",\"color\":\"\"},\"name\": {\"value\":\"\",\"color\":\"\"},\"expDate\": {\"value\":\"\",\"color\":\"\"},\"remark\": {\"value\":\"\",\"color\":\"\"}}";
 		 
 		String templateid = "XkyKVvp4XHWhttII1s38Y_CW8C1c6_-U_y_hEOyASjQ";
-		String url = "http://wx.ruyicai.com/wxpay/html/sendRedbag/account.html?info=get";
+		String url = "http://wx.ruyicai.com/wxpay/v1/html/sendRedbag/account.html?info=get";
 		String topcolor = "#DA2828";
 		String color = "#DA2828";
 		

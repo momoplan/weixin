@@ -274,7 +274,9 @@ public class LotteryService {
 		StringBuilder paramStr = new StringBuilder();
 		paramStr.append("orderids=").append(orderids);
 		String url = lotterycoreurl + "/select/getTorderByIds";
+//		logger.info("url+paramStr:"+url+paramStr);
 		String result = HttpUtil.sendRequestByPost(url, paramStr.toString(),true);
+//		logger.info("result:"+result);
 		return result;
 	}
 
