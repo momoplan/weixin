@@ -1,5 +1,7 @@
 package com.ruyicai.weixin.service;
 
+import java.util.Map;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -109,6 +111,31 @@ public class CommonService {
 				if ("0000".equals(fromObject.get("error_code")))
 				{
 					json = JSONObject.fromObject(fromObject.get("result"));
+				}
+			}
+		}
+		return json;
+	}
+	
+	/**
+	 * 根据购彩订单号批量获取订单详情
+	 * 
+	 * @param orderids 逗号分隔
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public Map<String, JSONObject> doGetOrdersInfo(String orderids)
+	{
+		Map<String, JSONObject> json = null;
+		String result = lotteryService.getTorderByIds(orderids);
+		if (!StringUtil.isEmpty(result))
+		{
+			JSONObject fromObject = JSONObject.fromObject(result);
+			if (fromObject != null)
+			{
+				if ("0".equals(fromObject.get("errorCode")))
+				{
+					json = JSONObject.fromObject(fromObject.get("value"));
 				}
 			}
 		}

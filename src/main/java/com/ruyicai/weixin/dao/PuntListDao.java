@@ -64,4 +64,11 @@ public class PuntListDao {
 		System.out.println(lst.get(0));
 		return lst;
 	}
+	
+	public PuntList findPuntListByOrderid(String orderid)
+	{
+		TypedQuery<PuntList> q = entityManager.createQuery("select o from PuntList o where o.orderid = ? ", PuntList.class)
+				.setParameter(1, orderid);
+		return q.getSingleResult();
+	}
 }
