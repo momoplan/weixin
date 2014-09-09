@@ -50,10 +50,13 @@ public class CaseLotActivityService {
 
 		CaseLotUserinfo caseLotUserinfo = CaseLotUserinfo
 				.findCaseLotUserinfo(new CaseLotUserinfoPK(userno, orderid));
+//		logger.info(" CaseLotUserinfo.findCaseLotUserinfo{},{}",userno, orderid);
+		
 		if (caseLotUserinfo == null) {
 			findActivityByOrderid(orderid);
 			caseLotUserinfo = CaseLotUserinfo.createCaseLotUserinfo(userno,
 					orderid, nickname, headimgurl,openid);
+//			logger.info(" CaseLotUserinfo.createCaseLotUserinfo{},{}",userno, orderid);
 		} else {
 			try
 			{
@@ -61,10 +64,18 @@ public class CaseLotActivityService {
 					caseLotUserinfo.setHeadimgurl(headimgurl);
 					caseLotUserinfo.setNickname(nickname);
 					caseLotUserinfo.merge();
-				}else if(caseLotUserinfo.getOpenid().equals(""))
+				}
+				
+				String strOpenid = caseLotUserinfo.getOpenid();
+//				logger.info("getOpenid:"+strOpenid);
+//				logger.info("getOpenid:"+openid);
+				if(strOpenid.equals(""))
 				{
+				
 					caseLotUserinfo.setOpenid(openid);
 					caseLotUserinfo.merge();
+//					logger.info("getOpenid1:"+strOpenid);
+//					logger.info("getOpenid1:"+openid);
 				}
 			}
 			catch(Exception ex)
