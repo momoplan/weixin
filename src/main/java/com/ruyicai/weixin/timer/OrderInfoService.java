@@ -116,29 +116,29 @@ public class OrderInfoService {
 	 * 获取订单中奖详情
 	 * </p>prizestate 中奖状态, 3-不中奖; 4-中奖; 5-中奖
 	 * 
-	 * @param orderids 
+	 * @param orderids 逗号分隔
 	 * @return
 	 */
 	@Async
 	public void getOrdersInfo(String orderids)
 	{
 		Map<String, JSONObject> json = commonService.doGetOrdersInfo(orderids);
-		if (json != null)
-		{
-			for (Entry<String, JSONObject> orderEnt : json.entrySet())
-			{
-				JSONObject order = orderEnt.getValue();
-				BigDecimal prizestate = new BigDecimal(order.get("prizestate").toString()); // 开奖状态
-				if (new BigDecimal(3).compareTo(prizestate) <= 0)
-				{
-					String orderid = orderEnt.getKey();
-					BigDecimal prizeAmt = new BigDecimal(order.get("orderprizeamt").toString()); // 中奖金额
-					doUpdatePrizeAmt(orderid, prizeAmt);
-				}
-			}
-		} else
+		if (json == null)
 		{
 			logger.info("获取订单详情为空");
+			return;
+		}
+		
+		for (Entry<String, JSONObject> orderEnt : json.entrySet())
+		{
+			JSONObject order = orderEnt.getValue();
+			BigDecimal prizestate = new BigDecimal(order.get("prizestate").toString()); // 开奖状态
+			if (new BigDecimal(3).compareTo(prizestate) <= 0)
+			{
+				String orderid = orderEnt.getKey();
+				BigDecimal prizeAmt = new BigDecimal(order.get("orderprizeamt").toString()); // 中奖金额
+				doUpdatePrizeAmt(orderid, prizeAmt);
+			}
 		}
 	}
 
