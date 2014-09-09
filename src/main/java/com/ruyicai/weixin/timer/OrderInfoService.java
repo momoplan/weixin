@@ -72,7 +72,7 @@ public class OrderInfoService {
 			if(orderprizeamt > 0)
 			{
 				PuntPacket puntPacket = PuntPacket.findPuntPacket(punt.getPuntId());
-				packetActivityService.sendBetInfo(puntPacket.getGetUserno(),String.valueOf(orderprizeamt));
+				packetActivityService.sendBetInfo(puntPacket.getGetUserno(),String.valueOf(orderprizeamt/100));
 			}
 			// 更新中奖金额
 			puntListDao.merge(punt, orderprizeamt);

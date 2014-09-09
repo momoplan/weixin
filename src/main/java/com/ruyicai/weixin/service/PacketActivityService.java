@@ -390,9 +390,13 @@ public class PacketActivityService {
 	 */
 	public Object doGetPacketList(String packetUserno) throws Exception {
 		List<Packet> list = packetDao.findPacketListByUserno(packetUserno);
+		int showIndex = 0;
 		if (list != null && list.size() > 0) {
 			JSONArray arry = new JSONArray();
 			for (Packet packet : list) {
+				if(showIndex > 100)
+					continue;
+				showIndex++;
 				JSONObject map = new JSONObject();
 				// 红包详情
 				map.put("packet_id", ToolsAesCrypt.Encrypt(String.valueOf(packet.getId()), Const.PACKET_KEY)); //加密
@@ -661,14 +665,18 @@ public class PacketActivityService {
 	 */
 	public String doGetMyPunts(String awardUserno) {
 		List<PuntPacket> list = puntPacketDao.findPuntPacketByUserno(awardUserno);
+		int showIndex = 0;
 		if (list != null && list.size() > 0) {
 			JSONArray arry = new JSONArray();
 			for (PuntPacket puntPacket : list) {
+				if(showIndex>200)
+					continue;
 				Map<String, Object> map = new HashMap<String, Object>();
 				// 获取每份红包详情
 				List<PuntList> puntList = puntListDao
 						.findPuntListGrabedList(puntPacket.getId());
 				if (puntList != null && puntList.size() > 0) {
+					
 					// 获取送红包人信息
 					Packet packet = Packet.findPacket(puntPacket.getPacketId());
 					String fromUserno = packet.getPacketUserno();
@@ -687,6 +695,7 @@ public class PacketActivityService {
 
 					JSONArray puntArry = new JSONArray();
 					for (PuntList punt : puntList) {
+						showIndex++;
 						Map<String, Object> puntMap = new HashMap<String, Object>();
 						puntMap.put("betCode", punt.getBetcode());
 						
@@ -959,6 +968,8 @@ public class PacketActivityService {
 		String color = "#DA2828";
 		String betInfo = "共1注中奖 中奖金额共"+total_money+"元";
 		
+		 
+		
 		JSONObject jsono = JSONObject.fromObject(jsoBuy);
 		
 		JSONObject jsonoSub = JSONObject.fromObject(jsono.get("title"));
@@ -983,6 +994,7 @@ public class PacketActivityService {
 		
 		jsonoSub = JSONObject.fromObject(jsono.get("remark"));
 		jsonoSub.element("value", "\r\n微信通讯录搜\"如意彩\"，就能找到我");
+//		jsonoSub.element("value", "\r\n\"提示小助手\"刚去赏月了，临时工发送消息的中奖金额有误，您的实际中奖金额为xx。 详情请查看\"我的账户\"。");
 		jsonoSub.element("color", color);
 		jsono.element("remark", jsonoSub);
 		 	 
