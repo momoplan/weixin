@@ -15,5 +15,9 @@ public class Const {
 	public static final String WEIXIN_NO = "gh_894976f750e3";
 	
 	public static final String PACKET_KEY = "wx_@ruyicai#%&*^"; // 红包加密串
+	
+	public static int Env_Person = 0;
+	
+	public static int Env_BetMoeny = 0;
 
 }
