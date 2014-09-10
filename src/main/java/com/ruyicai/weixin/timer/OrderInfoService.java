@@ -31,6 +31,7 @@ public class OrderInfoService {
 	@Autowired
 	private CommonService commonService;
 
+
 	@Autowired
 	PacketActivityService packetActivityService;
 	
@@ -47,18 +48,34 @@ public class OrderInfoService {
 			logger.info("===========定时更新投注订单中奖金额开始===========");
 			String opentime = DateUtil.format("yyyy-MM-dd",new Date());
 			List<PuntList> puntList = puntListDao.findPuntListNotPrized(opentime);
-			if (puntList != null && puntList.size() > 0)
+			if (puntList == null || puntList.size() == 0){
+				logger.info("无投注订单可更新");
+				return;
+			}
+			
+			StringBuilder orderids = new StringBuilder();
+			int count = 0;
+			for (PuntList punt : puntList)
 			{
-				StringBuilder orderids = new StringBuilder();
-				for (PuntList punt : puntList)
-					orderids.append(punt.getOrderid()).append(",");
+				++ count;
+				orderids.append(punt.getOrderid()).append(",");
 				
+				if (count == 100)
+				{
+					orderids.delete(orderids.length() - 1, orderids.length());
+					getOrdersInfo(orderids.toString());
+					// 重新初始化
+					count = 0;
+					orderids = new StringBuilder();
+				}
+			}
+			
+			if (count != 0)
+			{
 				orderids.delete(orderids.length() - 1, orderids.length());
 				getOrdersInfo(orderids.toString());
-			} else
-			{
-				logger.info("无投注订单可更新");
 			}
+			
 			logger.info("===========定时更新投注订单中奖金额结束===========");
 		}
 	}
@@ -69,7 +86,6 @@ public class OrderInfoService {
 	 * @param orderid
 	 * @param prizeAmt
 	 */
-	@Async
 	public void doUpdatePrizeAmt(String orderid, BigDecimal prizeAmt)
 	{
 		try
@@ -100,28 +116,29 @@ public class OrderInfoService {
 	 * 获取订单中奖详情
 	 * </p>prizestate 中奖状态, 3-不中奖; 4-中奖; 5-中奖
 	 * 
-	 * @param orderids 
+	 * @param orderids 逗号分隔
 	 * @return
 	 */
+	@Async
 	public void getOrdersInfo(String orderids)
 	{
 		Map<String, JSONObject> json = commonService.doGetOrdersInfo(orderids);
-		if (json != null)
-		{
-			for (Entry<String, JSONObject> orderEnt : json.entrySet())
-			{
-				JSONObject order = orderEnt.getValue();
-				BigDecimal prizestate = new BigDecimal(order.get("prizestate").toString()); // 开奖状态
-				if (new BigDecimal(3).compareTo(prizestate) <= 0)
-				{
-					String orderid = orderEnt.getKey();
-					BigDecimal prizeAmt = new BigDecimal(order.get("orderprizeamt").toString()); // 中奖金额
-					doUpdatePrizeAmt(orderid, prizeAmt);
-				}
-			}
-		} else
+		if (json == null)
 		{
 			logger.info("获取订单详情为空");
+			return;
+		}
+		
+		for (Entry<String, JSONObject> orderEnt : json.entrySet())
+		{
+			JSONObject order = orderEnt.getValue();
+			BigDecimal prizestate = new BigDecimal(order.get("prizestate").toString()); // 开奖状态
+			if (new BigDecimal(3).compareTo(prizestate) <= 0)
+			{
+				String orderid = orderEnt.getKey();
+				BigDecimal prizeAmt = new BigDecimal(order.get("orderprizeamt").toString()); // 中奖金额
+				doUpdatePrizeAmt(orderid, prizeAmt);
+			}
 		}
 	}
 
