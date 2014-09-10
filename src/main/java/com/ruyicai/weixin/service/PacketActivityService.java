@@ -846,10 +846,10 @@ public class PacketActivityService {
 
 						for (PuntPacket puntPacket : lstPuntPacket) {
 							processPuntPacket(puntPacket, packet_userno,
-									Const.WX_PACKET_CHANNEL, 1);
+									Const.WX_CHANNEL, 1);
 							if (companyuser.indexOf(packet_userno) == -1) {
 								generatePunts(packet_userno,
-										Const.WX_PACKET_CHANNEL, puntPacket);
+										Const.WX_CHANNEL, puntPacket);
 							} else {
 								logger.info("内部账号" + packet_userno + "未执行投注购买");
 							}

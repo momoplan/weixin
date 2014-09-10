@@ -10,7 +10,7 @@ public class Const {
 	
 	public static String WX_PACKET_ACTIVITY = "HM00002";
 	
-	public static final String WX_PACKET_CHANNEL = "1101";
+	public static final String WX_CHANNEL = "1101";
 	
 	public static final String WEIXIN_NO = "gh_894976f750e3";
 	
