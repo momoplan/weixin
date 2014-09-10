@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.ruyicai.advert.consts.Constants;
 import com.ruyicai.advert.util.HttpUtil;
+import com.ruyicai.weixin.consts.Const;
 import com.ruyicai.weixin.dto.lottery.ResponseData;
 import com.ruyicai.weixin.exception.ErrorCode;
 import com.ruyicai.weixin.exception.WeixinException;
@@ -166,7 +167,7 @@ public class LotteryService {
 	public Map<String, Object> createBigUser(String openid, String nickname, String type) {
 		try {
 			Form form = Form.form().add("userName", openid)
-					.add("password", randomPwd(8)).add("channel", "2")
+					.add("password", randomPwd(8)).add("channel", Const.WX_CHANNEL)
 					.add("outuserno", openid).add("type", type);
 			if (StringUtils.isNotEmpty(nickname)) {
 				form.add("nickname", nickname);
