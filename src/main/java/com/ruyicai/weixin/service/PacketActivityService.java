@@ -1167,7 +1167,7 @@ public class PacketActivityService {
 				iMap.put("packet_punts", "3");
 			} else {
 				List<Packet> lstpacket = packetDao
-						.findPacketListByUserno("119110112");
+						.findPacketListByUsernoAndPacketID("119110112",packet_id);
 				Packet packet = null;
 				int total_money = 0;
 				if (null != lstpacket && lstpacket.size() > 0) {

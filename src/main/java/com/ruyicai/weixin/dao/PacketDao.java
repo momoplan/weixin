@@ -29,6 +29,7 @@ public class PacketDao {
 		packet.setRealParts(parts);
 		packet.setGreetings(greetings);
 		packet.setCreatetime(Calendar.getInstance());
+	 
 		 
 		packet.persist();
 		return packet;
@@ -39,6 +40,16 @@ public class PacketDao {
 		TypedQuery<Packet> q = entityManager.createQuery("select o from Packet o where o.packetUserno = ? order by o.id desc", Packet.class)
 				.setParameter(1, userno);
 		return q.getResultList();
+	}
+	
+	
+	public List<Packet> findPacketListByUsernoAndPacketID(String userno,String packet_id)
+	{
+		 
+		
+		@SuppressWarnings("unchecked")
+		List<Packet> q = entityManager.createNativeQuery("SELECT * FROM packet where packet_userno = '"+userno+"' and id = "+packet_id, Packet.class).getResultList();
+		return q;
 	}
 	
 	public List<Packet> findReturnPacketList()
