@@ -734,11 +734,13 @@ public class PacketActivityService {
 	 */
 	public Map<String, Object> doGetActivityEnv() {
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<Packet> packetList = Packet.findAllPackets();
+		
+		int total_punts = (int)Packet.countPackets();
+//		List<Packet> packetList = Packet.findAllPackets();
 		
 		int beanchmark = 80000; // 送红包人数基数
-		if (packetList != null)
-			beanchmark += packetList.size() * 50;
+//		if (packetList != null)
+			beanchmark += total_punts * 50;
 		
 		map.put("total_packet_person", beanchmark);
 		map.put("total_get_person", 1000);

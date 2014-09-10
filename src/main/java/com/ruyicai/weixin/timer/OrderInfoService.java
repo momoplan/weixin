@@ -79,12 +79,12 @@ public class OrderInfoService {
 			// 更新中奖金额
 			puntListDao.merge(puntList, prizeAmt.intValue());
 
-			if (BigDecimal.ZERO.compareTo(prizeAmt) < 0)
-			{
-				// 发送中奖信息
-				PuntPacket puntPacket = PuntPacket.findPuntPacket(puntList.getPuntId());
-				packetActivityService.sendBetInfo(puntPacket.getGetUserno(), String.valueOf(prizeAmt.intValue()/100));
-			}
+//			if (BigDecimal.ZERO.compareTo(prizeAmt) < 0)
+//			{
+//				// 发送中奖信息
+//				PuntPacket puntPacket = PuntPacket.findPuntPacket(puntList.getPuntId());
+//				packetActivityService.sendBetInfo(puntPacket.getGetUserno(), String.valueOf(prizeAmt.intValue()/100));
+//			}
 		}
 		catch (WeixinException we)
 		{
