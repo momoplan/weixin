@@ -395,7 +395,7 @@ public class PacketActivityController {
 		return JsonMapper.toJsonP(callback, rd);
 	}
 	
-	// 领取的列表
+	// 领取的红包注数列表
 	@RequestMapping(value = "/getMyPunts", method = RequestMethod.GET)
 	@ResponseBody
 	public String getMyPunts(
@@ -417,6 +417,40 @@ public class PacketActivityController {
 			rd.setValue(e.getErrorCode().memo);
 		} catch (Exception e) {
 			logger.error("getMyPunts error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(ErrorCode.ERROR.memo);
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
+	
+	/**
+	 * 收到的红包列表
+	 * 
+	 * @param award_userno
+	 * @param callback
+	 * @return
+	 */
+	@RequestMapping(value = "/getMyPuntPackets", method = RequestMethod.GET)
+	@ResponseBody
+	public String getMyPuntPackets(
+			@RequestParam(value = "award_userno", required = true) String award_userno,
+			@RequestParam(value = "callBackMethod", required = true) String callback) {
+		logger.info("getMyPuntPackets award_userno:{}", award_userno);
+		ResponseData rd = new ResponseData();
+		if (StringUtil.isEmpty(award_userno)) {
+			rd.setErrorCode("10001");
+			rd.setValue("参数不能为空");
+			return JsonMapper.toJsonP(callback, rd);
+		}
+
+		try {
+			rd.setValue(packetActivityService.doGetMyPuntPackets(award_userno));
+			rd.setErrorCode(ErrorCode.OK.value);
+		} catch (WeixinException e) {
+			rd.setErrorCode(e.getErrorCode().value);
+			rd.setValue(e.getErrorCode().memo);
+		} catch (Exception e) {
+			logger.error("getMyPuntPackets error", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
 			rd.setValue(ErrorCode.ERROR.memo);
 		}

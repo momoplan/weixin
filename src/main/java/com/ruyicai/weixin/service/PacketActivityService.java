@@ -672,7 +672,109 @@ public class PacketActivityService {
 	}
 
 	/**
-	 * 查询用户抢到红包列表
+	 * 查询用户收到的红包列表
+	 * 
+	 * @param awardUserno
+	 *            用户编号
+	 * @return
+	 */
+	public String doGetMyPuntPackets(String awardUserno)
+	{
+		List<PuntPacket> list = puntPacketDao.findPuntPacketByUserno(awardUserno);
+		if (list == null || list.size() == 0)
+			throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
+
+		JSONArray arry = new JSONArray();
+		for (PuntPacket puntPacket : list)
+		{
+			Map<String, Object> map = new HashMap<String, Object>();
+			// 获取送红包人信息
+			Packet packet = Packet.findPacket(puntPacket.getPacketId());
+			String fromUserno = packet.getPacketUserno();
+			CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(fromUserno,
+					Const.WX_PACKET_ACTIVITY);
+			
+			String nickname = "";
+			if (userInfo != null)
+				nickname = userInfo.getNickname() == null ? "" : userInfo.getNickname();
+			
+			map.put("nickname", nickname);
+			
+			String get_time = "";
+			try
+			{
+				Date get = puntPacket.getGetTime().getTime();
+				if (get != null)
+					get_time = DateUtil.format("yyyy-MM-dd",get);
+			}
+			catch (Exception e)
+			{
+				logger.error("获取抢红包时间异常", e);
+			}
+			
+			map.put("get_time", get_time); // 领取红包时间
+
+			if (fromUserno.equals(awardUserno) && puntPacket.getGetStatus() == 1)
+				map.put("isreturn", 1);
+			else
+				map.put("isreturn", 0);
+			
+			map.put("get_punts", puntPacket.getRandomPunts());
+			map.put("packet_id", ToolsAesCrypt.Encrypt(String.valueOf(packet.getId()), Const.PACKET_KEY)); // 加密
+
+			String isOpen = "0"; // 是否开奖,0-未开奖:1-已开奖
+			int prizeNum = 0; // 中奖注数
+			int prizeSumAmt = 0; // 中奖累计金额
+			String openTime = "";
+			Date openTimeDate = null;
+
+			// 获取每份红包详情
+			List<PuntList> puntList = puntListDao.findPuntListGrabedList(puntPacket.getId());
+			if (puntList != null && puntList.size() > 0)
+			{
+				for (PuntList punt : puntList)
+				{
+					if (punt.getOrderprizeamt() != null)
+					{
+						isOpen = "1";
+						if (punt.getOrderprizeamt() > 0)
+						{
+							++ prizeNum;
+							prizeSumAmt += punt.getOrderprizeamt();
+						}
+					}
+					else
+					{
+						Calendar cal = punt.getOpentime();
+						if (openTimeDate != null)
+						{
+							if (openTimeDate.after(cal.getTime()))
+								openTimeDate = cal.getTime();
+						}
+						else
+						{
+							openTimeDate = cal.getTime();
+						}
+					}
+				}
+			}
+
+			if (openTimeDate != null)
+				openTime = DateUtil.format("MM月dd日", openTimeDate);
+
+			map.put("isOpen", isOpen);
+			map.put("openTime", openTime);
+			map.put("prizeNum", prizeNum);
+			map.put("prizeSumAmt", prizeSumAmt);
+
+			arry.put(map);
+		}
+
+		return arry.toString();
+	}
+
+	/**
+	 * 查询用户抢到红包注数列表
 	 * 
 	 * @param awardUserno
 	 *            用户编号
@@ -748,7 +850,7 @@ public class PacketActivityService {
 	}
 
 	/**
-	 * 查询用户抢到红包列表
+	 * 查询用户抢到红包注数列表
 	 * 
 	 * @param awardUserno
 	 *            用户编号
