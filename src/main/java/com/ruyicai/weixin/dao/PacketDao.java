@@ -48,7 +48,7 @@ public class PacketDao {
 		 
 		
 		@SuppressWarnings("unchecked")
-		List<Packet> q = entityManager.createNativeQuery("SELECT * FROM packet where packet_userno = '"+userno+"' and id = "+packet_id, Packet.class).getResultList();
+		List<Packet> q = entityManager.createNativeQuery("SELECT * FROM packet where packet_userno = '"+userno+"' and id = "+packet_id + " FOR UPDATE", Packet.class).getResultList();
 		return q;
 	}
 	

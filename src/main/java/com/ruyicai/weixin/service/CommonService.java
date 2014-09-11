@@ -52,6 +52,31 @@ public class CommonService {
 	}
 	
 	/**
+	 * 赠送彩金
+	 * 
+	 * @param userNo
+	 * @param point
+	 * @param channel
+	 * @param memo
+	 * @return
+	 */
+	public String presentDividendReturnJson(String userNo, String point, String channel, String memo) {
+		String result = lotteryService.presentDividend(userNo, point, channel, memo);
+		if (StringUtils.isBlank(result)) {
+			throw new WeixinException (ErrorCode.DIRECT_CHARGE_FAIL);
+		}
+		JSONObject fromObject = JSONObject.fromObject(result);
+		if (fromObject == null) {
+			throw new WeixinException (ErrorCode.DIRECT_CHARGE_FAIL);
+		}
+		String errorCode = fromObject.getString("errorCode");
+		if (!"0".equals(errorCode))
+			throw new WeixinException (ErrorCode.DIRECT_CHARGE_FAIL);
+		
+		return fromObject.toString();
+	}
+	
+	/**
 	 * 投注
 	 * 
 	 * @param userNo

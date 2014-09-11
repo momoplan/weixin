@@ -83,6 +83,14 @@ public class PuntPacketDao {
 		return q.getResultList();
 	}
 	
+	public List<PuntPacket> findPuntPacketByUserno(String userno,int pageIndex)
+	{
+		String pageRange = (10 * (pageIndex-1)) + ",10";
+		TypedQuery<PuntPacket> q = entityManager.createQuery("select o from PuntPacket o where o.getUserno = ? order by o.getTime desc LIMIT "+ pageRange, PuntPacket.class)
+				.setParameter(1, userno);
+		return q.getResultList();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public List<Packet> findOneNotAawardPart(String packet_id) {
