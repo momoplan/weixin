@@ -1,7 +1,6 @@
 package com.ruyicai.weixin.timer;
 
 import java.math.BigDecimal;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -40,44 +39,38 @@ public class OrderInfoService {
 
 	public void process()
 	{
-		Calendar c = Calendar.getInstance();
-		int hourOfDay = c.get(Calendar.HOUR_OF_DAY);
-		int minute = c.get(Calendar.MINUTE);
-		if ((hourOfDay == 21 && minute > 35) || hourOfDay > 21)
+		logger.info("===========定时更新投注订单中奖金额开始===========");
+		String opentime = DateUtil.format("yyyy-MM-dd",new Date());
+		List<PuntList> puntList = puntListDao.findPuntListNotPrized(opentime);
+		if (puntList == null || puntList.size() == 0){
+			logger.info("无投注订单可更新");
+			return;
+		}
+
+		StringBuilder orderids = new StringBuilder();
+		int count = 0;
+		for (PuntList punt : puntList)
 		{
-			logger.info("===========定时更新投注订单中奖金额开始===========");
-			String opentime = DateUtil.format("yyyy-MM-dd",new Date());
-			List<PuntList> puntList = puntListDao.findPuntListNotPrized(opentime);
-			if (puntList == null || puntList.size() == 0){
-				logger.info("无投注订单可更新");
-				return;
-			}
-			
-			StringBuilder orderids = new StringBuilder();
-			int count = 0;
-			for (PuntList punt : puntList)
-			{
-				++ count;
-				orderids.append(punt.getOrderid()).append(",");
-				
-				if (count == 100)
-				{
-					orderids.delete(orderids.length() - 1, orderids.length());
-					getOrdersInfo(orderids.toString());
-					// 重新初始化
-					count = 0;
-					orderids = new StringBuilder();
-				}
-			}
-			
-			if (count != 0)
+			++ count;
+			orderids.append(punt.getOrderid()).append(",");
+
+			if (count == 100)
 			{
 				orderids.delete(orderids.length() - 1, orderids.length());
 				getOrdersInfo(orderids.toString());
+				// 重新初始化
+				count = 0;
+				orderids = new StringBuilder();
 			}
-			
-			logger.info("===========定时更新投注订单中奖金额结束===========");
 		}
+
+		if (count != 0)
+		{
+			orderids.delete(orderids.length() - 1, orderids.length());
+			getOrdersInfo(orderids.toString());
+		}
+
+		logger.info("===========定时更新投注订单中奖金额结束===========");
 	}
 
 	/**
@@ -95,12 +88,12 @@ public class OrderInfoService {
 			// 更新中奖金额
 			puntListDao.merge(puntList, prizeAmt.intValue());
 
-//			if (BigDecimal.ZERO.compareTo(prizeAmt) < 0)
-//			{
-//				// 发送中奖信息
-//				PuntPacket puntPacket = PuntPacket.findPuntPacket(puntList.getPuntId());
-//				packetActivityService.sendBetInfo(puntPacket.getGetUserno(), String.valueOf(prizeAmt.intValue()/100));
-//			}
+			if (BigDecimal.ZERO.compareTo(prizeAmt) < 0)
+			{
+				// 发送中奖信息
+				PuntPacket puntPacket = PuntPacket.findPuntPacket(puntList.getPuntId());
+				packetActivityService.sendBetInfo(puntPacket.getGetUserno(), String.valueOf(prizeAmt.intValue()/100));
+			}
 		}
 		catch (WeixinException we)
 		{
@@ -141,7 +134,5 @@ public class OrderInfoService {
 			}
 		}
 	}
-	
-	
 
 }

@@ -367,13 +367,13 @@ public class PacketActivityController {
 	}
 
 	// 领取的列表
-	@RequestMapping(value = "/getMyPunts", method = RequestMethod.GET)
+	@RequestMapping(value = "/getMyPuntsByIndex", method = RequestMethod.GET)
 	@ResponseBody
-	public String getMyPunts(
+	public String getMyPuntsByIndex(
 			@RequestParam(value = "award_userno", required = true) String award_userno,
 			@RequestParam(value = "page_index", required = true) String page_index,
 			@RequestParam(value = "callBackMethod", required = true) String callback) {
-		logger.info("getMyPunts award_userno:{}", award_userno);
+		logger.info("getMyPuntsByIndex award_userno:{}", award_userno);
 		ResponseData rd = new ResponseData();
 		if (StringUtil.isEmpty(award_userno)) {
 			rd.setErrorCode("10001");
@@ -388,7 +388,7 @@ public class PacketActivityController {
 			rd.setErrorCode(e.getErrorCode().value);
 			rd.setValue(e.getErrorCode().memo);
 		} catch (Exception e) {
-			logger.error("getMyPunts error", e);
+			logger.error("getMyPuntsByIndex error", e);
 			rd.setErrorCode(ErrorCode.ERROR.value);
 			rd.setValue(ErrorCode.ERROR.memo);
 		}
