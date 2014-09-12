@@ -696,11 +696,17 @@ public class PacketActivityService {
 			if (packet != null)
 			{
 				fromUserno = packet.getPacketUserno();
-				userInfo  = caseLotActivityService.caseLotchances(fromUserno,
-						Const.WX_PACKET_ACTIVITY);
-				
-				if (userInfo != null)
-					nickname = userInfo.getNickname() == null ? "" : userInfo.getNickname();
+				try
+				{
+					userInfo  = caseLotActivityService.caseLotchances(fromUserno,
+							Const.WX_PACKET_ACTIVITY);
+					
+					if (userInfo != null)
+						nickname = userInfo.getNickname() == null ? "" : userInfo.getNickname();
+				}
+				catch(Exception e)
+				{
+				}
 			}
 			
 			map.put("nickname", nickname);
@@ -807,11 +813,17 @@ public class PacketActivityService {
 		if (packet != null)
 		{
 			fromUserno = packet.getPacketUserno();
-			userInfo = caseLotActivityService.caseLotchances(fromUserno,
-					Const.WX_PACKET_ACTIVITY);
-			
-			if (userInfo != null)
-				nickname = userInfo.getNickname() == null ? "" : userInfo.getNickname();
+			try
+			{
+				userInfo = caseLotActivityService.caseLotchances(fromUserno,
+						Const.WX_PACKET_ACTIVITY);
+				
+				if (userInfo != null)
+					nickname = userInfo.getNickname() == null ? "" : userInfo.getNickname();
+			}
+			catch (Exception e)
+			{
+			}
 		}
 
 		map.put("nickname", nickname);
