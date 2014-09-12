@@ -71,9 +71,16 @@ public class PuntPacketDao {
 	
 	public PuntPacket findPuntPacketByUsernoAndPacketId(String awardUserno, int packetId)
 	{
-		TypedQuery<PuntPacket> q = entityManager.createQuery("select o from PuntPacket o where o.getUserno = ? and o.packetId = ? ", PuntPacket.class)
+		TypedQuery<PuntPacket> q = entityManager.createQuery("select o from PuntPacket o where and o.getStatus = 0 and o.getUserno = ? and o.packetId = ? ", PuntPacket.class)
 				.setParameter(1, awardUserno).setParameter(2, packetId);
 		return q.getSingleResult();
+	}
+	
+	public List<PuntPacket> findPuntPacketListByUsernoAndPacketId(String awardUserno, int packetId)
+	{
+		TypedQuery<PuntPacket> q = entityManager.createQuery("select o from PuntPacket o where o.getUserno = ? and o.packetId = ? ", PuntPacket.class)
+				.setParameter(1, awardUserno).setParameter(2, packetId);
+		return q.getResultList();
 	}
 	
 	public List<PuntPacket> findPuntPacketByUserno(String userno)
