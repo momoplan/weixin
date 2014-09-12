@@ -687,40 +687,38 @@ public class PacketActivityService {
 		JSONArray arry = new JSONArray();
 		for (PuntPacket puntPacket : list)
 		{
-			Map<String, Object> map = new HashMap<String, Object>();
+			JSONObject map = new JSONObject();
 			// 获取送红包人信息
 			Packet packet = Packet.findPacket(puntPacket.getPacketId());
-			String fromUserno = packet.getPacketUserno();
-			CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(fromUserno,
-					Const.WX_PACKET_ACTIVITY);
-			
+			String fromUserno = null;
+			CaseLotUserinfo userInfo = null;
 			String nickname = "";
-			if (userInfo != null)
-				nickname = userInfo.getNickname() == null ? "" : userInfo.getNickname();
+			if (packet != null)
+			{
+				fromUserno = packet.getPacketUserno();
+				userInfo  = caseLotActivityService.caseLotchances(fromUserno,
+						Const.WX_PACKET_ACTIVITY);
+				
+				if (userInfo != null)
+					nickname = userInfo.getNickname() == null ? "" : userInfo.getNickname();
+			}
 			
 			map.put("nickname", nickname);
 			
 			String get_time = "";
-			try
-			{
-				Date get = puntPacket.getGetTime().getTime();
-				if (get != null)
-					get_time = DateUtil.format("yyyy-MM-dd",get);
-			}
-			catch (Exception e)
-			{
-				logger.error("获取抢红包时间异常", e);
-			}
-			
+			Date get = puntPacket.getGetTime().getTime();
+			if (get != null)
+				get_time = DateUtil.format("yyyy-MM-dd",get);
+
 			map.put("get_time", get_time); // 领取红包时间
 
-			if (fromUserno.equals(awardUserno) && puntPacket.getGetStatus() == 1)
+			if (awardUserno.equals(fromUserno) && puntPacket.getGetStatus() == 1)
 				map.put("isreturn", 1);
 			else
 				map.put("isreturn", 0);
 			
 			map.put("get_punts", puntPacket.getRandomPunts());
-			map.put("packet_id", ToolsAesCrypt.Encrypt(String.valueOf(packet.getId()), Const.PACKET_KEY)); // 加密
+			map.put("packet_id", ToolsAesCrypt.Encrypt(String.valueOf(puntPacket.getPacketId()), Const.PACKET_KEY)); // 加密
 
 			String isOpen = "0"; // 是否开奖,0-未开奖:1-已开奖
 			int prizeNum = 0; // 中奖注数
@@ -771,6 +769,107 @@ public class PacketActivityService {
 		}
 
 		return arry.toString();
+	}
+	
+	/**
+	 * 收到的红包对应的注码列表
+	 * 
+	 * @param awardUserno
+	 *            用户编号
+	 * @param packet_id
+	 *            红包id
+	 * @return
+	 */
+	public String doGetMyPuntList(String awardUserno, String packet_id)
+	{
+		PuntPacket puntPacket = null;
+		try
+		{
+			puntPacket = puntPacketDao.findPuntPacketByUsernoAndPacketId(awardUserno, Integer.valueOf(packet_id));
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		if (puntPacket == null)
+			throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
+		
+		List<PuntList> puntList = puntListDao.findPuntListGrabedList(puntPacket.getId());
+		if (puntList == null || puntList.size() == 0)
+			throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
+		
+		JSONObject map = new JSONObject();
+		// 获取送红包人信息
+		Packet packet = Packet.findPacket(puntPacket.getPacketId());
+		String fromUserno = null;
+		CaseLotUserinfo userInfo = null;
+		String nickname = "";
+		if (packet != null)
+		{
+			fromUserno = packet.getPacketUserno();
+			userInfo = caseLotActivityService.caseLotchances(fromUserno,
+					Const.WX_PACKET_ACTIVITY);
+			
+			if (userInfo != null)
+				nickname = userInfo.getNickname() == null ? "" : userInfo.getNickname();
+		}
+
+		map.put("nickname", nickname);
+
+		String get_time = "";
+		Date get = puntPacket.getGetTime().getTime();
+		if (get != null)
+			get_time = DateUtil.format("yyyy-MM-dd",get);
+
+		map.put("get_time", get_time); // 领取红包时间
+
+		if (awardUserno.equals(fromUserno) && puntPacket.getGetStatus() == 1)
+			map.put("isreturn", 1);
+		else
+			map.put("isreturn", 0);
+		
+		map.put("get_punts", puntPacket.getRandomPunts());
+		
+		int prizeNum = 0; // 中奖注数
+		int prizeSumAmt = 0; // 中奖累计金额
+		
+		JSONArray arry = new JSONArray();
+		if (puntList != null && puntList.size() > 0)
+		{
+			for (PuntList punt : puntList)
+			{
+				Map<String, Object> puntMap = new HashMap<String, Object>();
+				puntMap.put("betCode", punt.getBetcode());
+				
+				String openTime = "";
+				Calendar cal = punt.getOpentime();
+				if (cal.getTime() != null)
+					openTime = DateUtil.format("MM月dd日", cal.getTime());
+
+				String isOpen = "0"; // 是否开奖,0-未开奖:1-已开奖
+				if (punt.getOrderprizeamt() != null)
+				{
+					isOpen = "1";
+					if (punt.getOrderprizeamt() > 0)
+					{
+						++ prizeNum;
+						prizeSumAmt += punt.getOrderprizeamt();
+					}
+				}
+
+				puntMap.put("orderprizeamt", punt.getOrderprizeamt() == null ? 0 : punt.getOrderprizeamt());
+				puntMap.put("openTime", openTime);
+				puntMap.put("isOpen", isOpen);
+
+				arry.put(puntMap);
+			}
+		}
+		
+		map.put("prizeNum", prizeNum);
+		map.put("prizeSumAmt", prizeSumAmt);
+		map.put("punt_list", arry.toString());
+
+		return map.toString();
 	}
 
 	/**

@@ -169,20 +169,20 @@ public class ToolsAesCrypt {
 	}
 
 	public static void main(String[] args) {
-		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6919f6fac2525c5f&redirect_uri=http://wx.ruyicai.com/wxpay/sendfriendv1.html?showwxpaytitle=1&response_type=code&scope=snsapi_base&state=1#wechat_redirect";
-		try {
-			System.out.println(java.net.URLEncoder.encode(url, "utf-8"));
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-//		String miwen = "1932";
+//		String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6919f6fac2525c5f&redirect_uri=http://wx.ruyicai.com/wxpay/sendfriendv1.html?showwxpaytitle=1&response_type=code&scope=snsapi_base&state=1#wechat_redirect";
 //		try {
-//			System.out.println("加密：" + Encrypt(miwen, Const.PACKET_KEY));
-////			System.out.println("解密：" + Decrypt(miwen, Const.PACKET_KEY));
-//		} catch (Exception e) {
-//			logger.error("error", e);
+//			System.out.println(java.net.URLEncoder.encode(url, "utf-8"));
+//		} catch (UnsupportedEncodingException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
 //		}
+		String miwen = "a6650978bcaba221f50c11d04ddb0a9d";
+		try {
+//			System.out.println("加密：" + Encrypt(miwen, Const.PACKET_KEY));
+			System.out.println("解密：" + Decrypt(miwen, Const.PACKET_KEY));
+		} catch (Exception e) {
+			logger.error("error", e);
+		}
 		 
 	}
 	
