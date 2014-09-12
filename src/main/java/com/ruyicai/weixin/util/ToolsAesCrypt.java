@@ -176,7 +176,7 @@ public class ToolsAesCrypt {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		String miwen = "8844736b0bc87544d93ccf6fd83b25a9";
+		String miwen = "44309cbda6976a3eb56c31895c92ed76";
 		try {
 //			System.out.println("加密：" + Encrypt(miwen, Const.PACKET_KEY));
 			System.out.println("解密：" + Decrypt(miwen, Const.PACKET_KEY));

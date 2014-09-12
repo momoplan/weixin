@@ -44,9 +44,7 @@ public class PacketDao {
 	
 	
 	public List<Packet> findPacketListByUsernoAndPacketID(String userno,String packet_id)
-	{
-		 
-		
+	{		
 		@SuppressWarnings("unchecked")
 		List<Packet> q = entityManager.createNativeQuery("SELECT * FROM packet where packet_userno = '"+userno+"' and id = "+packet_id + " FOR UPDATE", Packet.class).getResultList();
 		return q;
