@@ -274,6 +274,38 @@ public class PacketActivityController {
 		}
 		return JsonMapper.toJsonP(callback, rd);
 	}
+	
+	// 送到的红包列表
+		@RequestMapping(value = "/getPacketListByPage", method = RequestMethod.GET)
+		@ResponseBody
+		public String getPacketListByPage(
+				@RequestParam(value = "packet_userno", required = true) String packet_userno,
+				@RequestParam(value = "page_index", required = true) int page_index,
+				@RequestParam(value = "callBackMethod", required = true) String callback) {
+			logger.info("getPacketList packet_userno:{}", packet_userno);
+			
+		
+			
+			ResponseData rd = new ResponseData();
+			if (StringUtil.isEmpty(packet_userno)) {
+				rd.setErrorCode("10001");
+				rd.setValue("参数不能为空");
+				return JsonMapper.toJsonP(callback, rd);
+			}
+
+			try {
+				rd.setValue(packetActivityService.doGetPacketList(packet_userno,page_index));
+				rd.setErrorCode(ErrorCode.OK.value);
+			} catch (WeixinException e) {
+				rd.setErrorCode(e.getErrorCode().value);
+				rd.setValue(e.getErrorCode().memo);
+			} catch (Exception e) {
+				logger.error("getPacketList error", e);
+				rd.setErrorCode(ErrorCode.ERROR.value);
+				rd.setValue(ErrorCode.ERROR.memo);
+			}
+			return JsonMapper.toJsonP(callback, rd);
+		}
 
 	@RequestMapping(value = "/getPacketInfo", method = RequestMethod.GET)
 	@ResponseBody
@@ -367,7 +399,7 @@ public class PacketActivityController {
 	}
 
 	// 领取的列表
-	@RequestMapping(value = "/getMyPuntsByIndex", method = RequestMethod.GET)
+	@RequestMapping(value = "/getMyPuntsByPage", method = RequestMethod.GET)
 	@ResponseBody
 	public String getMyPuntsByIndex(
 			@RequestParam(value = "award_userno", required = true) String award_userno,
@@ -457,6 +489,59 @@ public class PacketActivityController {
 		return JsonMapper.toJsonP(callback, rd);
 	}
 	
+	
+	/**
+	 * 收到的红包列表
+	 * 
+	 * @param award_userno
+	 * @param callback
+	 * @return
+	 */
+	@RequestMapping(value = "/getMyPuntPacketsByPage", method = RequestMethod.GET)
+	@ResponseBody
+	public String getMyPuntPacketsByPage(
+			@RequestParam(value = "award_userno", required = true) String award_userno,
+			@RequestParam(value = "page_index", required = true) int page_index,
+			@RequestParam(value = "callBackMethod", required = true) String callback) {
+		
+		logger.info("getMyPuntPackets award_userno:{}", award_userno);
+		
+		ResponseData rd = new ResponseData();
+		if (StringUtil.isEmpty(award_userno)) {
+			
+			rd.setErrorCode("10001");
+			
+			rd.setValue("参数不能为空");
+			
+			return JsonMapper.toJsonP(callback, rd);
+		}
+
+		try {
+			
+			rd.setValue(packetActivityService.doGetMyPuntPacketsByPage(award_userno,page_index));
+			
+			rd.setErrorCode(ErrorCode.OK.value);
+			
+		} catch (WeixinException e) {
+			
+			rd.setErrorCode(e.getErrorCode().value);
+			
+			rd.setValue(e.getErrorCode().memo);
+			
+		} catch (Exception e) {
+			
+			logger.error("getMyPuntPackets error", e);
+			
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			
+			rd.setValue(ErrorCode.ERROR.memo);
+			
+		}
+		
+		return JsonMapper.toJsonP(callback, rd);
+	}
+	
+	
 	/**
 	 * 收到的红包对应的注码列表
 	 * 
@@ -482,6 +567,44 @@ public class PacketActivityController {
 		try {
 			packet_id = ToolsAesCrypt.Decrypt(packet_id, Const.PACKET_KEY); // 解密
 			rd.setValue(packetActivityService.doGetMyPuntList(award_userno, packet_id.trim()));
+			rd.setErrorCode(ErrorCode.OK.value);
+		} catch (WeixinException e) {
+			rd.setErrorCode(e.getErrorCode().value);
+			rd.setValue(e.getErrorCode().memo);
+		} catch (Exception e) {
+			logger.error("getMyPuntList error", e);
+			rd.setErrorCode(ErrorCode.ERROR.value);
+			rd.setValue(ErrorCode.ERROR.memo);
+		}
+		return JsonMapper.toJsonP(callback, rd);
+	}
+	
+	/**
+	 * 收到的红包对应的注码列表
+	 * 
+	 * @param award_userno
+	 * @param packet_id
+	 * @param callback
+	 * @return
+	 */
+	@RequestMapping(value = "/getMyPuntListByPage", method = RequestMethod.GET)
+	@ResponseBody
+	public String getMyPuntListByPage(
+			@RequestParam(value = "award_userno", required = true) String award_userno,
+			@RequestParam(value = "packet_id", required = true) String packet_id,
+			@RequestParam(value = "page_index", required = true) int page_index,
+			@RequestParam(value = "callBackMethod", required = true) String callback) {
+		logger.info("getMyPuntList award_userno:{} packet_id:{}", award_userno, packet_id);
+		ResponseData rd = new ResponseData();
+		if (StringUtil.isEmpty(award_userno) || StringUtil.isEmpty(packet_id)) {
+			rd.setErrorCode("10001");
+			rd.setValue("参数不能为空");
+			return JsonMapper.toJsonP(callback, rd);
+		}
+
+		try {
+			packet_id = ToolsAesCrypt.Decrypt(packet_id, Const.PACKET_KEY); // 解密
+			rd.setValue(packetActivityService.doGetMyPuntList(award_userno, packet_id.trim(),page_index));
 			rd.setErrorCode(ErrorCode.OK.value);
 		} catch (WeixinException e) {
 			rd.setErrorCode(e.getErrorCode().value);

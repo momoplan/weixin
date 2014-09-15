@@ -86,11 +86,42 @@ public class PuntPacketDao {
 		return q.getResultList();
 	}
 	
+	public List<PuntPacket> findPuntPacketListByUsernoAndPacketId(String awardUserno, int packetId,int pageIndex)
+	{	
+		pageIndex = (10 * (pageIndex-1));
+		
+		@SuppressWarnings("unchecked")
+		List<PuntPacket> q = entityManager.createNativeQuery("select * from punt_packet  where get_userno = '"+awardUserno+"' and packet_id = "+packetId+ " order by get_time desc LIMIT "+pageIndex+",10", PuntPacket.class).getResultList();
+		
+		return q;
+	}
+	
 	public List<PuntPacket> findPuntPacketByUserno(String userno)
 	{
 		TypedQuery<PuntPacket> q = entityManager.createQuery("select o from PuntPacket o where o.getUserno = ? order by o.getTime desc", PuntPacket.class)
 				.setParameter(1, userno);
 		return q.getResultList();
+	}
+	
+	/*
+	 * 分析查询我的红包列表
+	 * 
+	 * */
+	public List<PuntPacket> findPuntPacketByUsernoByPage(String userno,int pageIndex)
+	{
+		pageIndex = (10 * (pageIndex-1));
+		
+		@SuppressWarnings("unchecked")
+		List<PuntPacket> q = entityManager.createNativeQuery("select * from punt_packet  where get_userno = '"+userno+"' order by get_time desc LIMIT "+pageIndex+",10", PuntPacket.class).getResultList();
+		
+		return q;
+	}
+	
+	public List<Packet> findPacketListByUsernoAndPacketID(String userno,String packet_id)
+	{		
+		@SuppressWarnings("unchecked")
+		List<Packet> q = entityManager.createNativeQuery("SELECT * FROM packet where packet_userno = '"+userno+"' and id = "+packet_id + " FOR UPDATE", Packet.class).getResultList();
+		return q;
 	}
 	
 	public List<PuntPacket> findPuntPacketByUserno(String userno,int pageIndex)
