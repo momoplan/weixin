@@ -7,7 +7,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.ruyicai.weixin.domain.ChannelPacketUserInfo;
 import com.ruyicai.weixin.domain.PuntPacket;

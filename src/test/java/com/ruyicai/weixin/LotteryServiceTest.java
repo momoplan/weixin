@@ -4,8 +4,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
-import com.ruyicai.weixin.consts.Const;
 import com.ruyicai.weixin.service.LotteryService;
 
 @ContextConfiguration(locations = { "classpath*:/META-INF/spring/applicationContext.xml" })

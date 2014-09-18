@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ruyicai.weixin.domain.Packet;
-import com.ruyicai.weixin.domain.PuntPacket;
 
 @Component
 public class PacketDao {
@@ -42,6 +41,24 @@ public class PacketDao {
 				.setParameter(1, userno);
 		return q.getResultList();
 	}
+	
+    
+    public  Packet findPacket(Integer id,Integer pageIndex) {
+        
+        if (id == null) return null;
+        
+        pageIndex = (10 * (pageIndex-1));
+        
+        if(pageIndex != 0){
+            
+            
+        }
+        
+        String sql = "select * from packet  where id = "+id+" AN order by id desc LIMIT 10";
+        Packet q = (Packet)entityManager.createNativeQuery(sql, Packet.class).getSingleResult();
+        
+        return q;        
+    }
 	
 	public List<Packet> findPacketListByUserno(String userno,int pageIndex)
 	{		

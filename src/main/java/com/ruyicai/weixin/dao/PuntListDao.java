@@ -20,9 +20,13 @@ public class PuntListDao {
 	
 	public List<PuntList> findPuntListGrabedList(int puntId)
 	{
-		TypedQuery<PuntList> q = entityManager.createQuery("select o from PuntList o where o.puntId = ? ", PuntList.class)
-				.setParameter(1, puntId);
-		return q.getResultList();
+//		TypedQuery<PuntList> q = entityManager.createQuery("select o from PuntList o where o.puntId = ?  order by col_0_0 desc", PuntList.class)
+//				.setParameter(1, puntId);
+//			
+//		return q.getResultList();
+		@SuppressWarnings("unchecked")
+        List<PuntList> q = entityManager.createNativeQuery("SELECT * FROM punt_list WHERE punt_id = " +puntId+" ORDER BY id DESC", PuntList.class).getResultList();
+		return q;
 	}
 	
 	@Transactional

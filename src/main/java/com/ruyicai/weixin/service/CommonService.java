@@ -119,6 +119,22 @@ public class CommonService {
 	}
 	
 	/**
+	 * 根据期号查开奖日期
+	 * 
+	 * @return
+	 */
+	public String getBatchInfo(String batchCode)
+	{
+		String result = lotserverService.doGetBatchInfo(batchCode);
+		if (StringUtil.isEmpty(result)) {
+			return null;
+		}
+		 
+		
+		return result;
+	}
+	
+	/**
 	 * 根据购彩订单号获取订单详情
 	 * 
 	 * @param orderid

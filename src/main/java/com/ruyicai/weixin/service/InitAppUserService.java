@@ -1,7 +1,5 @@
 package com.ruyicai.weixin.service;
 
-import java.util.TimerTask;
-
 import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;

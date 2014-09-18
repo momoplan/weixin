@@ -3,7 +3,6 @@ package com.ruyicai.weixin.service;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.apache.commons.collections4.map.PassiveExpiringMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
@@ -40,10 +39,10 @@ public class WeixinService {
 
 	private static String USERINFO_URL = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
 
-	private static String ACCESS_TOKEN_KEY = "accesstoken";
-
-	private static PassiveExpiringMap<String, String> ACCESS_TOKEN_MAP = new PassiveExpiringMap<String, String>(3600000);
-
+//	private static String ACCESS_TOKEN_KEY = "accesstoken";
+//
+//	private static PassiveExpiringMap<String, String> ACCESS_TOKEN_MAP = new PassiveExpiringMap<String, String>(3600000);
+////
 	/**
 	 * 微信认证appId,在InitAppUserService初始化
 	 */

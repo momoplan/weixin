@@ -1,8 +1,5 @@
 package com.ruyicai.weixin.util;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
