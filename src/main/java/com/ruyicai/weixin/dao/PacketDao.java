@@ -35,6 +35,25 @@ public class PacketDao {
 		return packet;
 	}
 	
+	   @Transactional
+	    public Packet createPacket(String openid, String packetUserno, int parts, int punts, String greetings,int status,String Status_memo,String award_userno)
+	    {
+	        Packet packet = new Packet();
+	        packet.setOpenid(openid);
+	        packet.setPacketUserno(packetUserno);
+	        packet.setTotalPersons(parts);
+	        packet.setTotalPunts(punts);
+	        packet.setRealParts(parts);
+	        packet.setGreetings(greetings);
+	        packet.setCreatetime(Calendar.getInstance());
+	        packet.setStatus(status);
+	        packet.setStatusMemo(Status_memo);
+	        packet.setAwardUserno(award_userno);
+	    	         
+	        packet.persist();
+	        return packet;
+	    }
+	
 	public List<Packet> findPacketListByUserno(String userno)
 	{
 		TypedQuery<Packet> q = entityManager.createQuery("select o from Packet o where o.packetUserno = ? order by o.id desc", Packet.class)
@@ -42,19 +61,34 @@ public class PacketDao {
 		return q.getResultList();
 	}
 	
+	   public List<Packet> findPacketListByAwardUserno(String userno)
+	    {
+//	        TypedQuery<Packet> q = entityManager.createQuery("select o from Packet o where o.awardUserno = ? order by o.id desc", Packet.class)
+//	                .setParameter(1, userno);
+//	       
+//	        return q.getResultList();
+	        
+	        String sql = "select * from packet  where award_userno = '"+userno+"' AND status = 1000";
+	        @SuppressWarnings("unchecked")
+            List<Packet> q = entityManager.createNativeQuery(sql, Packet.class).getResultList();
+	        
+	        return q;        
+	    
+	    }
+	
     
     public  Packet findPacket(Integer id,Integer pageIndex) {
         
         if (id == null) return null;
         
-        pageIndex = (10 * (pageIndex-1));
+        pageIndex = (30 * (pageIndex-1));
         
         if(pageIndex != 0){
             
             
         }
         
-        String sql = "select * from packet  where id = "+id+" AN order by id desc LIMIT 10";
+        String sql = "select * from packet  where id = "+id+" AN order by id desc LIMIT 30";
         Packet q = (Packet)entityManager.createNativeQuery(sql, Packet.class).getSingleResult();
         
         return q;        
@@ -62,10 +96,10 @@ public class PacketDao {
 	
 	public List<Packet> findPacketListByUserno(String userno,int pageIndex)
 	{		
-		pageIndex = (10 * (pageIndex-1));
+		pageIndex = (30 * (pageIndex-1));
 		
 		@SuppressWarnings("unchecked")
-		List<Packet> q = entityManager.createNativeQuery("select * from packet  where packet_userno = '"+userno+"' order by id desc LIMIT "+pageIndex+",10", Packet.class).getResultList();
+		List<Packet> q = entityManager.createNativeQuery("select * from packet  where packet_userno = '"+userno+"' order by id desc LIMIT "+pageIndex+",30", Packet.class).getResultList();
 		
 		return q;
 	}

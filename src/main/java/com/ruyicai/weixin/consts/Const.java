@@ -19,5 +19,7 @@ public class Const {
 	public static int Env_Person = 0;
 	
 	public static int Env_BetMoeny = 0;
+	
+	public static String SYS_USERNO = "03134453";
 
 }

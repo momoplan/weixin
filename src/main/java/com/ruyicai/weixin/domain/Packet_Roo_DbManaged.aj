@@ -38,6 +38,15 @@ privileged aspect Packet_Roo_DbManaged {
     @Column(name = "return_punts")
     private Integer Packet.returnPunts;
     
+    @Column(name = "status")
+    private Integer Packet.status;
+    
+    @Column(name = "status_memo", length = 255)
+    private String Packet.statusMemo;
+    
+    @Column(name = "award_userno", length = 255)
+    private String Packet.awardUserno;
+    
     public String Packet.getOpenid() {
         return openid;
     }
@@ -100,6 +109,30 @@ privileged aspect Packet_Roo_DbManaged {
     
     public void Packet.setReturnPunts(Integer returnPunts) {
         this.returnPunts = returnPunts;
+    }
+    
+    public Integer Packet.getStatus() {
+        return status;
+    }
+    
+    public void Packet.setStatus(Integer status) {
+        this.status = status;
+    }
+    
+    public String Packet.getStatusMemo() {
+        return statusMemo;
+    }
+    
+    public void Packet.setStatusMemo(String statusMemo) {
+        this.statusMemo = statusMemo;
+    }
+    
+    public String Packet.getAwardUserno() {
+        return awardUserno;
+    }
+    
+    public void Packet.setAwardUserno(String awardUserno) {
+        this.awardUserno = awardUserno;
     }
     
 }

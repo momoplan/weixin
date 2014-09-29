@@ -100,12 +100,12 @@ public class PuntPacketDao {
     }
 
     public List<PuntPacket> findPuntPacketListByUsernoAndPacketId(String awardUserno, int packetId, int pageIndex) {
-        pageIndex = (10 * (pageIndex - 1));
+        pageIndex = (30 * (pageIndex - 1));
 
         @SuppressWarnings("unchecked")
         List<PuntPacket> q = entityManager.createNativeQuery(
                 "select * from punt_packet  where get_userno = '" + awardUserno + "' and packet_id = " + packetId
-                        + " order by get_time desc LIMIT " + pageIndex + ",10", PuntPacket.class).getResultList();
+                        + " order by get_time desc LIMIT " + pageIndex + ",30", PuntPacket.class).getResultList();
 
         return q;
     }
@@ -121,12 +121,12 @@ public class PuntPacketDao {
      * 分析查询我的红包列表
      */
     public List<PuntPacket> findPuntPacketByUsernoByPage(String userno, int pageIndex) {
-        pageIndex = (10 * (pageIndex - 1));
+        pageIndex = (30 * (pageIndex - 1));
 
         @SuppressWarnings("unchecked")
         List<PuntPacket> q = entityManager.createNativeQuery(
                 "select * from punt_packet  where get_userno = '" + userno + "' order by get_time desc LIMIT "
-                        + pageIndex + ",10", PuntPacket.class).getResultList();
+                        + pageIndex + ",30", PuntPacket.class).getResultList();
 
         return q;
     }
@@ -140,7 +140,7 @@ public class PuntPacketDao {
     }
 
     public List<PuntPacket> findPuntPacketByUserno(String userno, int pageIndex) {
-        String pageRange = (10 * (pageIndex - 1)) + ",10";
+        String pageRange = (30 * (pageIndex - 1)) + ",30";
         TypedQuery<PuntPacket> q = entityManager.createQuery(
                 "select o from PuntPacket o where o.getUserno = ? order by o.getTime desc LIMIT " + pageRange,
                 PuntPacket.class).setParameter(1, userno);
