@@ -3,12 +3,11 @@
 
 package com.ruyicai.weixin.domain;
 
+import com.ruyicai.weixin.domain.PuntPacket;
 import java.util.Calendar;
-
 import javax.persistence.Column;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.springframework.format.annotation.DateTimeFormat;
 
 privileged aspect PuntPacket_Roo_DbManaged {
@@ -35,6 +34,9 @@ privileged aspect PuntPacket_Roo_DbManaged {
     
     @Column(name = "get_status")
     private Integer PuntPacket.getStatus;
+    
+    @Column(name = "award_userno", length = 255)
+    private String PuntPacket.awardUserno;
     
     public Integer PuntPacket.getPacketId() {
         return packetId;
@@ -90,6 +92,14 @@ privileged aspect PuntPacket_Roo_DbManaged {
     
     public void PuntPacket.setGetStatus(Integer getStatus) {
         this.getStatus = getStatus;
+    }
+    
+    public String PuntPacket.getAwardUserno() {
+        return awardUserno;
+    }
+    
+    public void PuntPacket.setAwardUserno(String awardUserno) {
+        this.awardUserno = awardUserno;
     }
     
 }

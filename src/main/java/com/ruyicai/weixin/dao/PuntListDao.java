@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ruyicai.weixin.domain.PuntList;
+import com.ruyicai.weixin.domain.PuntPacket;
 
 @Component
 public class PuntListDao {
@@ -85,11 +86,24 @@ public class PuntListDao {
         return lst;
     }
     
+    public  Integer countList(String date) {
+        String sql = "select *  from punt_list where status = 1000 and createtime >= '"+date+"'";
+        // PuntList pList = new PuntList();      
+        @SuppressWarnings("unchecked")
+        List<PuntList> lst =   entityManager.createNativeQuery(sql,PuntList.class).getResultList();
+        if (null != lst)
+//        System.out.println(lst.get(0));
+        return lst.size();
+        else
+            return 0;
+    }
+    
+
+    
     @Transactional
     public List<PuntList> findPuntListByUserno(String userno) {
-        String sql = "SELECT  b.id,b.punt_id,b.betcode,b.orderid,b.batchcode,b.createtime,b.opentime,b.orderprizeamt,c.status from punt_list b INNER JOIN punt_packet a on b.punt_id = a.id INNER JOIN packet c on a.packet_id = c.id where a.get_userno = '"+userno+"' and b.status = 1000";
+        String sql = "SELECT  b.id,b.punt_id,b.betcode,b.orderid,b.batchcode,b.createtime,b.opentime,b.orderprizeamt,c.status from punt_list b INNER JOIN punt_packet a on b.punt_id = a.id INNER JOIN packet c on a.packet_id = c.id where (a.get_userno = '"+userno+"' or c.award_userno = '"+userno+"') and b.status = 1000";
 //        String sql = "SELECT  b.* from punt_list b INNER JOIN punt_packet a on b.punt_id = a.id INNER JOIN packet c on a.packet_id = c.id where a.get_userno = '"+userno+"' and b.status = 1000";
-
         // PuntList pList = new PuntList();
         @SuppressWarnings("unchecked")
         List<PuntList> lst = entityManager.createNativeQuery(sql, PuntList.class).getResultList();
@@ -101,5 +115,14 @@ public class PuntListDao {
         TypedQuery<PuntList> q = entityManager.createQuery("select o from PuntList o where o.orderid = ? ",
                 PuntList.class).setParameter(1, orderid);
         return q.getSingleResult();
+    }
+    
+    public List<PuntList> findPuntListByUsernoByPage() {
+        
+        String sql = "select b.* from punt_packet a inner join punt_list b on a.id = b.punt_id inner join packet c on a.packet_id = c.id where b.status = 1000 and b.orderprizeamt > 0 and c.award_userno is null";
+        @SuppressWarnings("unchecked")
+        List<PuntList> q = entityManager.createNativeQuery(sql, PuntList.class).getResultList();
+
+        return q;
     }
 }

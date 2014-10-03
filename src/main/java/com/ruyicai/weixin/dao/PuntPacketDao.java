@@ -47,6 +47,39 @@ public class PuntPacketDao {
                 PuntPacket.class).setParameter(1, packetId);
         return q.getResultList();
     }
+    
+//    public List<PuntPacket> findUsersByUsernoByPage(int  puntlist_id) {
+//  
+//        String sql = "select a.id,a.get_time,a.get_userno,a.openid,a.packet_id,a.random_punts,a.thank_words,a.createtime,a.get_status,c.award_userno from punt_packet a inner join punt_list b on a.id = b.punt_id inner join packet c on a.packet_id = c.id where b.id  = "+puntlist_id+" and c.status = 1000";
+//        @SuppressWarnings("unchecked")
+//        List<PuntPacket> q = entityManager.createNativeQuery(sql, PuntPacket.class).getResultList();
+//
+//        return q;
+//    }
+    
+    public List<PuntPacket> findUsersByUsernoByPage(int  puntlist_id) {
+        
+        String sql = "select a.id,a.get_time,a.get_userno,a.openid,a.packet_id,a.random_punts,a.thank_words,a.createtime,a.get_status,c.award_userno from punt_packet a inner join punt_list b on a.id = b.punt_id inner join packet c on a.packet_id = c.id where b.id  = "+puntlist_id;
+        @SuppressWarnings("unchecked")
+        List<PuntPacket> q = entityManager.createNativeQuery(sql, PuntPacket.class).getResultList();
+
+        return q;
+    }
+    
+    public List<PuntPacket> findUsersByUsernoByPage() {
+        
+        String sql = "select a.id,a.get_time,a.get_userno,a.openid,a.packet_id,a.random_punts,a.thank_words,a.createtime,a.get_status,c.award_userno from punt_packet a inner join punt_list b on a.id = b.punt_id inner join packet c on a.packet_id = c.id where b.status = 1000 and b.orderprizeamt > 0 and c.award_userno is null";
+        @SuppressWarnings("unchecked")
+        List<PuntPacket> q = entityManager.createNativeQuery(sql, PuntPacket.class).getResultList();
+
+        return q;
+    }
+    
+
+    
+    
+    
+    
 
     public List<PuntPacket> findPuntPacketGrabedList(int packetId, int page_index, int pageCount) {
 

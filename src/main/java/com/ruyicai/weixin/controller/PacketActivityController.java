@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -129,13 +130,13 @@ public class PacketActivityController {
 
         try {
             
-            lotteryService.addDrawableMoney(packet_userno, "1", "1101", "增加可提现余额测试（1分）");
+            String ret = lotteryService.addDrawableMoney(packet_userno, "1", "1101", "增加可提现余额测试（1分）");
           
-            Map<String, String> json = new HashMap<String, String>();
-            json.put("userno", packet_userno);
+//            Map<String, String> json = new HashMap<String, String>();
+//            json.put("userno", packet_userno);
             
             rd.setErrorCode(ErrorCode.OK.value);
-            rd.setValue(json);
+            rd.setValue(ret);
         } catch (WeixinException e) {
             rd.setErrorCode(e.getErrorCode().value);
             rd.setValue(e.getErrorCode().memo);
@@ -147,28 +148,27 @@ public class PacketActivityController {
 
         return JsonMapper.toJsonP(callback, rd);
     }
-
-    @RequestMapping(value = "/createSysTestPacket", method = RequestMethod.GET)
+    
+    @RequestMapping(value = "/addCash", method = RequestMethod.GET)
     @ResponseBody
-    public String createSysTestPacket(@RequestParam(value = "parts", required = true) String parts,
+    public String addCash(@RequestParam(value = "userno", required = true) String packet_userno,
+            @RequestParam(value = "point", required = true) String point,
             @RequestParam(value = "callBackMethod", required = true) String callback) {
-
+        logger.info("addCash：packet_userno:{}", packet_userno);
         ResponseData rd = new ResponseData();
-        if (StringUtil.isEmpty(parts)) {
+        if (StringUtil.isEmpty(packet_userno)) {
             rd.setErrorCode("10001");
             rd.setValue("参数不能为空");
             return JsonMapper.toJsonP(callback, rd);
         }
 
         try {
-            Packet packet = packetActivityService.doCreatePacket("", Integer.parseInt(parts), Integer.parseInt(parts),
-                    "", Integer.parseInt(ErrorCode.PACKET_STATUS.value), ErrorCode.PACKET_STATUS.memo);
-            Map<String, String> json = new HashMap<String, String>();
-            json.put("userno", packet.getPacketUserno());
-            json.put("packet_id", ToolsAesCrypt.Encrypt(String.valueOf(packet.getId()), Const.PACKET_KEY));
-            json.put("punts", String.valueOf(packet.getTotalPunts()));
+            
+//            lotteryService.addDrawableMoney(packet_userno, "1", "1101", "增加可提现余额测试（1分）");
+            String ret = commonService.presentDividend(packet_userno, point, "1101", "20141001渠道红包充值");
+            
             rd.setErrorCode(ErrorCode.OK.value);
-            rd.setValue(json);
+            rd.setValue(ret);
         } catch (WeixinException e) {
             rd.setErrorCode(e.getErrorCode().value);
             rd.setValue(e.getErrorCode().memo);
@@ -180,6 +180,39 @@ public class PacketActivityController {
 
         return JsonMapper.toJsonP(callback, rd);
     }
+
+//    @RequestMapping(value = "/createSysTestPacket", method = RequestMethod.GET)
+//    @ResponseBody
+//    public String createSysTestPacket(@RequestParam(value = "parts", required = true) String parts,
+//            @RequestParam(value = "callBackMethod", required = true) String callback) {
+//
+//        ResponseData rd = new ResponseData();
+//        if (StringUtil.isEmpty(parts)) {
+//            rd.setErrorCode("10001");
+//            rd.setValue("参数不能为空");
+//            return JsonMapper.toJsonP(callback, rd);
+//        }
+//
+//        try {
+//            Packet packet = packetActivityService.doCreatePacket("", Integer.parseInt(parts), Integer.parseInt(parts),
+//                    "", Integer.parseInt(ErrorCode.PACKET_STATUS.value), ErrorCode.PACKET_STATUS.memo);
+//            Map<String, String> json = new HashMap<String, String>();
+//            json.put("userno", packet.getPacketUserno());
+//            json.put("packet_id", ToolsAesCrypt.Encrypt(String.valueOf(packet.getId()), Const.PACKET_KEY));
+//            json.put("punts", String.valueOf(packet.getTotalPunts()));
+//            rd.setErrorCode(ErrorCode.OK.value);
+//            rd.setValue(json);
+//        } catch (WeixinException e) {
+//            rd.setErrorCode(e.getErrorCode().value);
+//            rd.setValue(e.getErrorCode().memo);
+//        } catch (Exception e) {
+//            logger.error("createPacket error", e);
+//            rd.setErrorCode(ErrorCode.ERROR.value);
+//            rd.setValue(ErrorCode.ERROR.memo);
+//        }
+//
+//        return JsonMapper.toJsonP(callback, rd);
+//    }
 
     @RequestMapping(value = "/getAward", method = RequestMethod.GET)
     @ResponseBody
@@ -210,6 +243,8 @@ public class PacketActivityController {
 
         return JsonMapper.toJsonP(callback, rd);
     }
+    
+
 
     @RequestMapping(value = "/createPacket", method = RequestMethod.GET)
     @ResponseBody
@@ -368,7 +403,8 @@ public class PacketActivityController {
             if (StringUtil.isEmpty(packet_id))
                 throw new WeixinException(ErrorCode.ERROR);
 
-            Map<Integer, Object> status = packetActivityService.getPacketStatus(award_userno, packet_id.trim());
+            
+            Map<Integer, Object> status = packetActivityService.getNewPacketStatus(award_userno, packet_id.trim());
 
             for (Entry<Integer, Object> entry : status.entrySet()) {
                 Map<String, Object> msg = new HashMap<String, Object>();
@@ -399,7 +435,7 @@ public class PacketActivityController {
                 rd.setValue(1);
                 rd.setErrorCode(String.valueOf(1));
             } else if (ErrorCode.PACKET_STATUS_GETED.value.equals(e.getErrorCode().value)) {
-                Map<Integer, Object> status = packetActivityService.getPacketStatus(award_userno, packet_id.trim());
+                Map<Integer, Object> status = packetActivityService.getNewPacketStatus(award_userno, packet_id.trim());
                 for (Entry<Integer, Object> entry : status.entrySet()) {
                     Map<String, Object> msg = new HashMap<String, Object>();
                     int k = entry.getKey();
@@ -437,6 +473,44 @@ public class PacketActivityController {
             }
 
             Map<String, String> map = packetActivityService.doGetPacketStus(award_userno, packet_id);
+
+            rd.setErrorCode(ErrorCode.OK.value);
+
+            rd.setValue(map);
+
+        } catch (WeixinException e) {
+            logger.error("getPacketStatus error1", e);
+            rd.setErrorCode(e.getErrorCode().value);
+            rd.setValue(e.getMessage());
+        } catch (Exception e) {
+            logger.error("getPacketStatus error2", e);
+            
+            rd.setErrorCode(ErrorCode.PACKET_STATUS_GETED.value);
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("ret_msg", "红包已抢");
+            rd.setValue(map);
+//            rd.setErrorCode(ErrorCode.ERROR.value);
+//            rd.setValue(e.getMessage());
+        }
+        return JsonMapper.toJsonP(callback, rd);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @RequestMapping(value = "/getNewPacketStatus", method = RequestMethod.GET)
+    @ResponseBody
+    public String getNewPacketStatus(@RequestParam(value = "award_userno", required = false) String award_userno,
+            @RequestParam(value = "packet_id", required = false) String packet_id,
+            @RequestParam(value = "callBackMethod", required = false) String callback) {
+        logger.info("getPacketStatus award_userno:{} packet_id：{} ", award_userno, packet_id);
+        ResponseData rd = new ResponseData();
+        try {
+            if (StringUtils.isEmpty(award_userno) || StringUtils.isEmpty(packet_id)) {
+                rd.setErrorCode("10001");
+                rd.setValue("参数错误the argument orderid or userno is require.");
+                return JsonMapper.toJsonP(callback, rd);
+            }
+
+            Map<String, String> map = packetActivityService.doNewGetPacketStus(award_userno, packet_id);
 
             rd.setErrorCode(ErrorCode.OK.value);
 
@@ -870,6 +944,7 @@ public class PacketActivityController {
         try {
             packet_id = ToolsAesCrypt.Decrypt(packet_id, Const.PACKET_KEY); // 解密
             rd.setValue(packetActivityService.doGetMyPuntList(award_userno, packet_id.trim(), page_index));
+            logger.info("award_userno:{},{},{}",award_userno, packet_id.trim(), page_index);
             rd.setErrorCode(ErrorCode.OK.value);
         } catch (WeixinException e) {
             rd.setErrorCode(e.getErrorCode().value);
@@ -1154,5 +1229,61 @@ public class PacketActivityController {
         }
         return JsonMapper.toJsonP(callback, rd);
     }
+    
+    
+
+    @RequestMapping(value = "/rycct", method = RequestMethod.GET)
+    @ResponseBody
+    public String rycct(@RequestParam(value = "date", required = true) String date,
+            @RequestParam(value = "callBackMethod", required = false) String callback) {
+
+        ResponseData rd = new ResponseData();
+        try {
+           
+            long ret = packetActivityService.countList(date);
+
+            rd.setErrorCode(ErrorCode.OK.value);
+            rd.setValue(ret);
+
+        } catch (WeixinException e) {
+            logger.error("findReturnPacketList error", e);
+            rd.setErrorCode(e.getErrorCode().value);
+            rd.setValue(e.getMessage());
+        } catch (Exception e) {
+            logger.error("findReturnPacketList error", e);
+            rd.setErrorCode(ErrorCode.ERROR.value);
+            rd.setValue(e.getMessage());
+        }
+        
+        return JsonMapper.toJsonP(callback, rd);
+    }
+    
+    @RequestMapping(value = "/redo", method = RequestMethod.GET)
+    @ResponseBody
+    public String redo(
+            @RequestParam(value = "callBackMethod", required = false) String callback) {
+
+        ResponseData rd = new ResponseData();
+        try {
+           
+            packetActivityService.redoUpdatePrizeAmt();
+
+            rd.setErrorCode(ErrorCode.OK.value);
+            rd.setValue("OK");
+
+        } catch (WeixinException e) {
+            logger.error("findReturnPacketList error", e);
+            rd.setErrorCode(e.getErrorCode().value);
+            rd.setValue(e.getMessage());
+        } catch (Exception e) {
+            logger.error("findReturnPacketList error", e);
+            rd.setErrorCode(ErrorCode.ERROR.value);
+            rd.setValue(e.getMessage());
+        }
+        
+        return JsonMapper.toJsonP(callback, rd);
+    }
+    
+    
 
 }

@@ -205,6 +205,27 @@ public class LotteryService {
             throw new WeixinException(ErrorCode.DEDUCT_AMT_FAIL);
         }
     }
+    
+    public void deductAmtCash(String userno, String amt, String bankid, String flowno, String memo) {
+        String json = null;
+        try {
+            String url = lotterycoreurl + "/taccounts/deductAmt";
+            json = Request
+                    .Post(url)
+                    .bodyForm(
+                            Form.form().add("userno", userno).add("amt", amt).add("bankid", bankid)
+                                    .add("flowno", flowno).add("memo", memo).add("draw","4").build(), Charset.forName("UTF-8"))
+                    .execute().returnContent().asString();
+        } catch (Exception e) {
+            logger.error("扣款异常", e);
+            throw new WeixinException(ErrorCode.ERROR);
+        }
+        ResponseData responseData = JsonMapper.fromJson(json, ResponseData.class);
+        if (!"0".equals(responseData.getErrorCode())) {
+            logger.info("扣款失败:errorCode=" + responseData.getErrorCode());
+            throw new WeixinException(ErrorCode.DEDUCT_AMT_FAIL);
+        }
+    }
 
     private String randomPwd(int length) {
         String base = "ABCDEFGHIJKLMNPQRSTUVWXYZ0123456789";
