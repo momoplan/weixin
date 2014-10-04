@@ -1258,31 +1258,31 @@ public class PacketActivityController {
         return JsonMapper.toJsonP(callback, rd);
     }
     
-    @RequestMapping(value = "/redo", method = RequestMethod.GET)
-    @ResponseBody
-    public String redo(
-            @RequestParam(value = "callBackMethod", required = false) String callback) {
-
-        ResponseData rd = new ResponseData();
-        try {
-           
-            packetActivityService.redoUpdatePrizeAmt();
-
-            rd.setErrorCode(ErrorCode.OK.value);
-            rd.setValue("OK");
-
-        } catch (WeixinException e) {
-            logger.error("findReturnPacketList error", e);
-            rd.setErrorCode(e.getErrorCode().value);
-            rd.setValue(e.getMessage());
-        } catch (Exception e) {
-            logger.error("findReturnPacketList error", e);
-            rd.setErrorCode(ErrorCode.ERROR.value);
-            rd.setValue(e.getMessage());
-        }
-        
-        return JsonMapper.toJsonP(callback, rd);
-    }
+//    @RequestMapping(value = "/redoupate", method = RequestMethod.GET)
+//    @ResponseBody
+//    public String redoupate(
+//            @RequestParam(value = "callBackMethod", required = false) String callback) {
+//
+//        ResponseData rd = new ResponseData();
+//        try {
+//           
+//            packetActivityService.redoUpdatePrizeAmt();
+//
+//            rd.setErrorCode(ErrorCode.OK.value);
+//            rd.setValue("OK");
+//
+//        } catch (WeixinException e) {
+//            logger.error("findReturnPacketList error", e);
+//            rd.setErrorCode(e.getErrorCode().value);
+//            rd.setValue(e.getMessage());
+//        } catch (Exception e) {
+//            logger.error("findReturnPacketList error", e);
+//            rd.setErrorCode(ErrorCode.ERROR.value);
+//            rd.setValue(e.getMessage());
+//        }
+//        
+//        return JsonMapper.toJsonP(callback, rd);
+//    }
     
     
 

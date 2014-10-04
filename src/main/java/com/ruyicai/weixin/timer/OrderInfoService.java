@@ -117,11 +117,11 @@ public class OrderInfoService {
             }
             
 
-            if (BigDecimal.ZERO.compareTo(prizeAmt) < 0) {
-                // 发送中奖信息
-                PuntPacket puntPacket = PuntPacket.findPuntPacket(puntList.getPuntId());
-                packetActivityService.sendBetInfo(puntPacket.getGetUserno(), String.valueOf(prizeAmt.intValue() / 100));
-            }
+//            if (BigDecimal.ZERO.compareTo(prizeAmt) < 0) {
+//                // 发送中奖信息
+//                PuntPacket puntPacket = PuntPacket.findPuntPacket(puntList.getPuntId());
+//                packetActivityService.sendBetInfo(puntPacket.getGetUserno(), String.valueOf(prizeAmt.intValue() / 100));
+//            }
         } catch (WeixinException we) {
             logger.info(we.getErrorCode().value);
         } catch (Exception e) {
