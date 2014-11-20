@@ -40,6 +40,9 @@ privileged aspect PuntList_Roo_DbManaged {
     @Column(name = "status")
     private Integer PuntList.status;
     
+    @Column(name = "get_percent")
+    private Integer PuntList.getPercent;
+    
     public Integer PuntList.getPuntId() {
         return puntId;
     }
@@ -102,6 +105,14 @@ privileged aspect PuntList_Roo_DbManaged {
     
     public void PuntList.setStatus(Integer status) {
         this.status = status;
+    }
+    
+    public Integer PuntList.getGetPercent() {
+        return getPercent;
+    }
+    
+    public void PuntList.setGetPercent(Integer getPercent) {
+        this.getPercent = getPercent;
     }
     
 }

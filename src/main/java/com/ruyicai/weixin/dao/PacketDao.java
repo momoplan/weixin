@@ -10,6 +10,7 @@ import javax.persistence.TypedQuery;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ruyicai.weixin.consts.Const;
 import com.ruyicai.weixin.domain.Packet;
 
 @Component
@@ -28,7 +29,6 @@ public class PacketDao {
         packet.setRealParts(parts);
         packet.setGreetings(greetings);
         packet.setCreatetime(Calendar.getInstance());
-
         packet.persist();
         return packet;
     }
@@ -59,6 +59,21 @@ public class PacketDao {
         return q.getResultList();
     }
 
+//    public List<Packet> findPacketListByAwardUserno(String userno) {
+//        // TypedQuery<Packet> q =
+//        // entityManager.createQuery("select o from Packet o where o.awardUserno = ? order by o.id desc",
+//        // Packet.class)
+//        // .setParameter(1, userno);
+//        //
+//        // return q.getResultList();
+//
+//        String sql = "select * from packet  where award_userno = '" + userno + "' AND status = 1000";
+//        @SuppressWarnings("unchecked")
+//        List<Packet> q = entityManager.createNativeQuery(sql, Packet.class).getResultList();
+//
+//        return q;
+//    }
+    
     public List<Packet> findPacketListByAwardUserno(String userno) {
         // TypedQuery<Packet> q =
         // entityManager.createQuery("select o from Packet o where o.awardUserno = ? order by o.id desc",
@@ -67,17 +82,19 @@ public class PacketDao {
         //
         // return q.getResultList();
 
-        String sql = "select * from packet  where award_userno = '" + userno + "' AND status = 1000";
+        String sql = "select * from packet  where award_userno = '" + userno + "' AND status = 1000 AND total_punts = 20 AND real_parts = 20";
         @SuppressWarnings("unchecked")
         List<Packet> q = entityManager.createNativeQuery(sql, Packet.class).getResultList();
 
         return q;
-
     }
+    
+
     
     public List<Packet> findGetPacketByAwardUserno(String userno) {
 
-        String sql = "SELECT a.* FROM packet a  inner join punt_packet b on a.id = b.packet_id where (a.status = 1000 or a.greetings like '%20141001activity%') and b.get_userno = '"+userno+"'";
+//        String sql = "SELECT a.* FROM packet a  inner join punt_packet b on a.id = b.packet_id where ((a.status = 1000 and a.total_punts <> 3 AND a.real_parts <> 3) or a.greetings like '%20141001activity%') and b.get_userno = '"+userno+"'";
+        String sql = "SELECT a.* FROM packet a  inner join punt_packet b on a.id = b.packet_id where (a.status = 1000  or a.greetings like '%20141001activity%') and b.get_userno = '"+userno+"'";
         @SuppressWarnings("unchecked")
         List<Packet> q = entityManager.createNativeQuery(sql, Packet.class).getResultList();
 
@@ -107,7 +124,7 @@ public class PacketDao {
 
         @SuppressWarnings("unchecked")
         List<Packet> q = entityManager.createNativeQuery(
-                "select * from packet  where packet_userno = '" + userno + "' order by id desc LIMIT " + pageIndex
+                "select * from packet  where packet_userno = '" + userno + "'  or award_userno='"+userno+"' order by id desc LIMIT " + pageIndex
                         + ",30", Packet.class).getResultList();
 
         return q;
@@ -124,7 +141,7 @@ public class PacketDao {
     public List<Packet> findReturnPacketList() {
         @SuppressWarnings("unchecked")
         List<Packet> q = entityManager.createNativeQuery(
-                "SELECT * FROM packet where createtime <= date_sub(NOW(), interval 15 day) and return_punts is null",
+                "SELECT * FROM packet where createtime <= date_sub(NOW(), interval 15 day) and return_punts is null AND packet_userno <> '"+Const.SYS_USERNO+"'",
                 Packet.class).getResultList();
         return q;
     }

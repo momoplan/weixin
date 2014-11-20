@@ -40,10 +40,9 @@ public class OrderInfoService {
 
     @Autowired
     PuntPacketDao puntPacketDao;
-    
+
     @Autowired
     LotteryService lotteryService;
-
 
     public void process() {
         logger.info("===========定时更新投注订单中奖金额开始===========");
@@ -92,36 +91,53 @@ public class OrderInfoService {
 
             if (puntList.getStatus() == 1000) {
                 List<PuntPacket> puntPacket = puntPacketDao.findUsersByUsernoByPage(puntList.getId());
-                if(puntPacket.size() > 0)
-                {
-                    
-                    String packet_userno = puntPacket.get(0).getAwardUserno();
-                   
-                    String given_userno = puntPacket.get(0).getGetUserno();
-                    
-                    if(null != packet_userno)
-                    {
+                if (puntPacket.size() > 0) {
 
-                    String ret = lotteryService.addDrawableMoney(given_userno, String.valueOf(prizeAmt.intValue()/2), "1101", "20141001活动中奖分配");
-                    logger.info("20141001活动中奖分配1{},{},ret:{}",given_userno, String.valueOf(prizeAmt.intValue()/2),ret);
-                     ret = lotteryService.addDrawableMoney(packet_userno, String.valueOf(prizeAmt.intValue()/2), "1101", "20141001活动中奖分配");
-                    logger.info("20141001活动中奖分配2{},{},{},ret:{}",packet_userno,ret, String.valueOf(prizeAmt.intValue()/2),ret);
-                    }
-                    else
-                    {
-                        String ret = lotteryService.addDrawableMoney(given_userno, String.valueOf(prizeAmt.intValue()), "1101", "20141001活动中奖分配");
-                        logger.info("20141001活动中奖分配3{},{},ret:{}",given_userno, String.valueOf(prizeAmt.intValue()),ret);
-      
+                    String packet_userno = puntPacket.get(0).getAwardUserno();
+
+                    String given_userno = puntPacket.get(0).getGetUserno();
+
+                    if (null != packet_userno) {
+
+                        List<PuntPacket> lstPuntPacketPerson = puntPacketDao.findGetPersons(puntPacket.get(0)
+                                .getPacketId().toString());
+                        int getPersons = lstPuntPacketPerson.size();
+                        float given = (float) 0.5;
+
+                        if (getPersons < 40) {
+                            given += 0.01 * getPersons;
+                        } else
+                            given = (float) 0.9;
+
+                        String ret = lotteryService.addDrawableMoney(packet_userno,
+                                String.valueOf((int) (prizeAmt.intValue() * given)), "1101", "20141001活动中奖分配");
+                        logger.info("20141001活动中奖分配1{},{},ret:{}", packet_userno,
+                                String.valueOf((int) (prizeAmt.intValue() * given)), ret);                                             
+
+                        ret = lotteryService.addDrawableMoney(given_userno,
+                                String.valueOf((int) (prizeAmt.intValue() * (1 - given))), "1101", "20141001活动中奖分配");
+                        logger.info("20141001活动中奖分配2{},{},{},ret:{}", given_userno, ret,
+                                String.valueOf((int) (prizeAmt.intValue() * (1 - given))), ret);
+                        puntList.setGetPercent((int)(given*100));
+                        puntList.merge();
+
+                    } else {
+                        String ret = lotteryService.addDrawableMoney(given_userno, String.valueOf(prizeAmt.intValue()),
+                                "1101", "20141001活动中奖分配");
+                        logger.info("20141001活动中奖分配3{},{},ret:{}", given_userno, String.valueOf(prizeAmt.intValue()),
+                                ret);
+
                     }
                 }
             }
-            
 
-//            if (BigDecimal.ZERO.compareTo(prizeAmt) < 0) {
-//                // 发送中奖信息
-//                PuntPacket puntPacket = PuntPacket.findPuntPacket(puntList.getPuntId());
-//                packetActivityService.sendBetInfo(puntPacket.getGetUserno(), String.valueOf(prizeAmt.intValue() / 100));
-//            }
+            // if (BigDecimal.ZERO.compareTo(prizeAmt) < 0) {
+            // // 发送中奖信息
+            // PuntPacket puntPacket =
+            // PuntPacket.findPuntPacket(puntList.getPuntId());
+            // packetActivityService.sendBetInfo(puntPacket.getGetUserno(),
+            // String.valueOf(prizeAmt.intValue() / 100));
+            // }
         } catch (WeixinException we) {
             logger.info(we.getErrorCode().value);
         } catch (Exception e) {

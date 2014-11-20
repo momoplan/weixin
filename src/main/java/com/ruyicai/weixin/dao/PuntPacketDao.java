@@ -73,13 +73,7 @@ public class PuntPacketDao {
         List<PuntPacket> q = entityManager.createNativeQuery(sql, PuntPacket.class).getResultList();
 
         return q;
-    }
-    
-
-    
-    
-    
-    
+    }    
 
     public List<PuntPacket> findPuntPacketGrabedList(int packetId, int page_index, int pageCount) {
 
@@ -203,6 +197,13 @@ public class PuntPacketDao {
     @SuppressWarnings("unchecked")
     public List<PuntPacket> findSinglePuntPart(String packet_id) {
         String sql = "SELECT * FROM punt_packet WHERE get_userno IS NULL AND packet_id = ? limit 1";
+        return entityManager.createNativeQuery(sql, PuntPacket.class).setParameter(1, packet_id).getResultList();
+    }
+    
+    
+    @SuppressWarnings("unchecked")
+    public List<PuntPacket> findGetPersons(String packet_id) {
+        String sql = "SELECT * FROM punt_packet WHERE get_userno IS NOT NULL AND packet_id = ?";
         return entityManager.createNativeQuery(sql, PuntPacket.class).setParameter(1, packet_id).getResultList();
     }
 }

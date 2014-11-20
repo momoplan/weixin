@@ -21,5 +21,4 @@ public class Const {
 	public static int Env_BetMoeny = 0;
 	
 	public static String SYS_USERNO = "03134453";
-
 }
