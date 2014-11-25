@@ -60,8 +60,8 @@ public class EventHandler implements IMsgHandler {
             List<Article> list = new ArrayList<Article>();
             Article a = new Article();
              a.setTitle("欢迎关注如意彩官方微信");
-            a.setDescription("主人，我已在您微信通讯录；搜  “如意彩” 随时找我！\r\n\r\n将彩票红包分享给好友或朋友圈，TA中奖，你分钱！");
-             a.setPicUrl("http://www.ruyicai.com/uploadimg/cck.jpg");
+            a.setDescription("主人，我已在您微信通讯录；搜  “如意彩” 随时找我！\r\n\r\n将彩票红包分享给好友或朋友圈，TA中奖，你分钱！【马上分享】");
+             a.setPicUrl("http://www.ruyicai.com/uploadimg/1121.jpg");
             a.setUrl("https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6919f6fac2525c5f&redirect_uri=http://wx.ruyicai.com/huodong/redbag-101/index.html?packet_id=8c1aba71e36ad2ce21414862750783bd&response_type=code&scope=snsapi_base&state=1#wechat_redirect");
             list.add(a);
             rnm.setArticles(list);

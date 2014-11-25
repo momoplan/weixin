@@ -593,8 +593,8 @@
 				<lotteryurl>http://202.43.152.173:8080/lottery</lotteryurl>
 				<lotterycoreurl>http://202.43.152.173:8080/lottery</lotterycoreurl>
 				<lotserverurl>http://202.43.152.173:9088/lotserver</lotserverurl>
-				<memcache.client.ip>192.168.0.92:12000</memcache.client.ip>
-				<jms.new-issue.brokerURL>tcp://192.168.0.92:61616</jms.new-issue.brokerURL>
+				<memcache.client.ip>202.43.152.164:12000</memcache.client.ip>
+				<jms.new-issue.brokerURL>tcp://202.43.152.164:61616</jms.new-issue.brokerURL>
 				<imageMagickPath>E:\ImageMagick-6.8.7-Q8</imageMagickPath>
 				<imageLocation>E:\image</imageLocation>
 				<companyuser>00001838</companyuser>
