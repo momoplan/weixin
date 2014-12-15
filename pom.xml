@@ -9,7 +9,7 @@
 	<name>weixin</name>
 	<properties>
 		<aspectj.version>1.7.2</aspectj.version>
-		<camel.version>2.12.2</camel.version>
+		<camel.version>2.8.1</camel.version>
 		<java.version>6</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<roo.version>1.2.4.RELEASE</roo.version>
@@ -44,7 +44,7 @@
 			<artifactId>jaxb-impl</artifactId>
 			<version>2.0.5</version>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>net.sf</groupId>
 			<artifactId>json</artifactId>
 			<version>2.3</version>
@@ -55,13 +55,13 @@
 			<artifactId>xercesImpl</artifactId>
 			<version>2.11.0</version>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.5</version>
 			<type>jar</type>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
@@ -330,10 +330,10 @@
 			<version>1.2.1</version>
 		</dependency>
 		<dependency>
-           <groupId>org.apache.commons</groupId>
-           <artifactId>commons-io</artifactId>
-           <version>1.3.2</version>
-       </dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.3.2</version>
+		</dependency>
 		<dependency>
 			<groupId>javax.servlet.jsp.jstl</groupId>
 			<artifactId>jstl-api</artifactId>
@@ -349,6 +349,41 @@
 			<artifactId>el-api</artifactId>
 			<version>2.2</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-cas-client</artifactId>
+			<version>3.0.5.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-core</artifactId>
+			<version>5.5.0</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-pool</artifactId>
+			<version>5.5.0</version>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
@@ -397,6 +432,17 @@
 			<artifactId>xmemcached</artifactId>
 			<version>1.3.5</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.xbean</groupId>
+			<artifactId>xbean-spring</artifactId>
+			<version>3.6</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>weixin</finalName>
@@ -429,7 +475,8 @@
 				<version>1.4</version>
 				<!-- NB: do not use 1.3 or 1.3.x due to MASPECTJ-90 issue -->
 				<dependencies>
-					<!-- NB: You must use Maven 2.0.9 or above or these are ignored (see MNG-2972) -->
+					<!-- NB: You must use Maven 2.0.9 or above or these are ignored (see 
+						MNG-2972) -->
 					<dependency>
 						<groupId>org.aspectj</groupId>
 						<artifactId>aspectjrt</artifactId>
@@ -460,9 +507,10 @@
 					</aspectLibraries>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
-					<!-- Aspects in src/main/java and src/main/aspects are added as default in the compile goal. Aspects in src/test/java 
-						and src/test/aspects are added as default in the test-compile goal. Aspects in src/main/java are added in the test-compile 
-						goal if weaveWithAspectsInMainSourceFolder is set to true -->
+					<!-- Aspects in src/main/java and src/main/aspects are added as default 
+						in the compile goal. Aspects in src/test/java and src/test/aspects are added 
+						as default in the test-compile goal. Aspects in src/main/java are added in 
+						the test-compile goal if weaveWithAspectsInMainSourceFolder is set to true -->
 					<weaveWithAspectsInMainSourceFolder>false</weaveWithAspectsInMainSourceFolder>
 				</configuration>
 			</plugin>
@@ -578,26 +626,30 @@
 				<imageMagickPath>C:\Tools\ImageMagick-6.8.7-Q8</imageMagickPath>
 				<imageLocation>C:\image</imageLocation>
 				<companyuser>00001838,00001837</companyuser>
+				<jms.brokerURL>tcp://202.43.152.173:61616</jms.brokerURL>
+				<jms.lottery.brokerURL>tcp://202.43.152.164:61616</jms.lottery.brokerURL>
 			</properties>
 		</profile>
 		<profile>
 			<id>prelaunch</id>
 			<properties>
-				<database.url>jdbc:mysql://202.43.152.164:13306/weixin?characterEncoding=utf8</database.url>
+				<database.url>jdbc:mysql://192.168.0.92:3306/weixin?characterEncoding=utf8</database.url>
 				<database.driverClassName>com.mysql.jdbc.Driver</database.driverClassName>
 				<database.username>jrtConsole</database.username>
 				<database.password>jrtConsole</database.password>
 				<database.pool.maxActive>50</database.pool.maxActive>
 				<database.pool.maxIdle>50</database.pool.maxIdle>
 				<weixinName>sunyang</weixinName>
-				<lotteryurl>http://202.43.152.173:8080/lottery</lotteryurl>
-				<lotterycoreurl>http://202.43.152.173:8080/lottery</lotterycoreurl>
-				<lotserverurl>http://202.43.152.173:9088/lotserver</lotserverurl>
-				<memcache.client.ip>202.43.152.164:12000</memcache.client.ip>
-				<jms.new-issue.brokerURL>tcp://202.43.152.164:61616</jms.new-issue.brokerURL>
+				<lotteryurl>http://192.168.0.42:8080/lottery</lotteryurl>
+				<lotterycoreurl>http://192.168.0.42:8080/lottery</lotterycoreurl>
+				<lotserverurl>http://192.168.0.42:9088/lotserver</lotserverurl>
+				<memcache.client.ip>192.168.0.92:12000</memcache.client.ip>
+				<jms.new-issue.brokerURL>tcp://192.168.0.92:61616</jms.new-issue.brokerURL>
 				<imageMagickPath>E:\ImageMagick-6.8.7-Q8</imageMagickPath>
 				<imageLocation>E:\image</imageLocation>
 				<companyuser>00001838</companyuser>
+				<jms.brokerURL>tcp://192.168.0.42:61616</jms.brokerURL>
+				<jms.lottery.brokerURL>tcp://192.168.0.92:61616</jms.lottery.brokerURL>
 			</properties>
 		</profile>
 		<profile>
@@ -618,6 +670,8 @@
 				<imageMagickPath></imageMagickPath>
 				<imageLocation>/home/appusr/images_weixin</imageLocation>
 				<companyuser>03134453</companyuser>
+				<jms.brokerURL>failover://(tcp://192.168.99.16:61616,tcp://192.168.99.17:61616)?randomize=false</jms.brokerURL>
+				<jms.lottery.brokerURL>failover://(tcp://192.168.99.30:61616,tcp://192.168.99.31:61616)?randomize=false</jms.lottery.brokerURL>				
 			</properties>
 		</profile>
 	</profiles>

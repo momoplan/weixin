@@ -1,3 +1,4 @@
+
 package com.ruyicai.weixin.service;
 
 import java.math.BigDecimal;
@@ -818,32 +819,23 @@ public class PacketActivityService {
             iMap.put("packetid", ToolsAesCrypt.Encrypt(packet_id, Const.PACKET_KEY));
             pack_id = packet_id;
         }
-        
-        
-        try
-        {
-        Packet packet_new = Packet.findPacket(Integer.parseInt(pack_id));
-        
-        String strUserNo = "";
-        if(null != packet_new.getAwardUserno())
-            strUserNo = packet_new.getAwardUserno();
-        else
-            strUserNo = packet_new.getPacketUserno();
-        
-        CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(strUserNo,
-                Const.WX_PACKET_ACTIVITY);
 
-        
-        iMap.put("nickname", userInfo.getNickname());
-        }catch(Exception ex)
-        {
-            logger.info("获取红包用户昵称",ex.getMessage());
+        try {
+            Packet packet_new = Packet.findPacket(Integer.parseInt(pack_id));
+
+            String strUserNo = "";
+            if (null != packet_new.getAwardUserno())
+                strUserNo = packet_new.getAwardUserno();
+            else
+                strUserNo = packet_new.getPacketUserno();
+
+            CaseLotUserinfo userInfo = caseLotActivityService.caseLotchances(strUserNo, Const.WX_PACKET_ACTIVITY);
+
+            iMap.put("nickname", userInfo.getNickname());
+        } catch (Exception ex) {
+            logger.info("获取红包用户昵称", ex.getMessage());
             iMap.put("nickname", "err");
         }
-        
-            
-            
-        
 
         iMap.put("openid", openid);
         iMap.put("ret_msg", "红包可抢");
@@ -2803,9 +2795,8 @@ public class PacketActivityService {
         List<Map<String, String>> lstPunt = new ArrayList<Map<String, String>>();
 
         try {
-            logger.info("STEP1");
+
             List<PuntList> lst = puntListDao.findPuntListByUserno(getUserno);
-            logger.info("STEP2");
 
             int puntSize = lst.size();
 
@@ -2841,16 +2832,17 @@ public class PacketActivityService {
                             int percent = 0;
                             if (null == pList.getGetPercent())
                                 percent = 100;
-                            else if(pList.getGetPercent() == 0)
+                            else if (pList.getGetPercent() == 0)
                                 percent = 50;
                             else
                                 percent = pList.getGetPercent();
 
-                            prize = String.valueOf((float) pList.getOrderprizeamt() * ((float)percent / (float)100)/100);
-                            if(prize.equals("0.0"))
+                            prize = String.valueOf((float) pList.getOrderprizeamt() * ((float) percent / (float) 100)
+                                    / 100);
+                            if (prize.equals("0.0"))
                                 prize = "0";
 
-                            total_getMoney += (float) pList.getOrderprizeamt() * ((float)percent / (float)100)/100;
+                            total_getMoney += (float) pList.getOrderprizeamt() * ((float) percent / (float) 100) / 100;
 
                             total_prize = String.valueOf(pList.getOrderprizeamt() / 100);
                         } else {

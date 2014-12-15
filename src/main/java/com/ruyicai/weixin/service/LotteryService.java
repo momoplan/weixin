@@ -30,15 +30,15 @@ public class LotteryService {
     private static Map<String, String> map = new HashMap<String, String>();
 
     static {
-        map.put("F47104", "双色球");
-        map.put("F47103", "3D");
+        map.put("F47104", "双色球");//
+        map.put("F47103", "3D");//
         map.put("F47102", "七乐彩");
         map.put("F47107", "内蒙快三");
         map.put("F47108", "吉林快三");
-        map.put("T01001", "超级大乐透");
+        map.put("T01001", "超级大乐透");//
         map.put("T01002", "排列三");
         map.put("T01011", "排列五");
-        map.put("T01007", "时时彩");
+        map.put("T01007", "时时彩");//
         map.put("T01008", "单场");
         map.put("T01009", "七星彩");
         map.put("T01010", "多乐彩");
@@ -51,7 +51,7 @@ public class LotteryService {
         map.put("T01014", "广东十一选五");
         map.put("T01015", "广东快乐十分");
         map.put("T01016", "重庆11选5");
-        map.put("J00001", "竞彩足球胜平负");
+        map.put("J00001", "竞彩足球胜平负");//
         map.put("J00002", "竞彩足球比分");
         map.put("J00003", "竞彩足球总进球");
         map.put("J00004", "竞彩足球半场胜负平");
@@ -137,6 +137,25 @@ public class LotteryService {
             }
         } catch (Exception e) {
             logger.error("查询大客户异常 openid:" + openid + " type:" + type, e);
+        }
+        return null;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public Map<String, Object> findBetInfoByTransactionID(String transactionid) {
+        String url = lotteryurl + "/select/getTorder?orderid=" + transactionid;
+        try {
+            String json = Request.Get(url).execute().returnContent().asString();
+            Map<String, Object> map = JsonMapper.fromJson(json, HashMap.class);
+            String errorCode = (String) map.get("errorCode");
+            if ("0".equals(errorCode)) {
+                Map<String, Object> tbiguserinfo = (Map<String, Object>) map.get("value");
+                return tbiguserinfo;
+            } else {
+                logger.error("查询订单信息异常 transactionid:" + transactionid + " errorCode:" + errorCode);
+            }
+        } catch (Exception e) {
+            logger.error("查询订单信息异常 transactionid:" + transactionid , e);
         }
         return null;
     }

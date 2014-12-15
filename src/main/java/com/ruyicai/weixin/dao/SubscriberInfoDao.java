@@ -2,45 +2,15 @@ package com.ruyicai.weixin.dao;
 
 import java.util.List;
 
-import javax.persistence.ColumnResult;
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityResult;
-import javax.persistence.NamedNativeQueries;
-import javax.persistence.NamedNativeQuery;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.SqlResultSetMapping;
 
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ruyicai.weixin.domain.SubscriberInfo;
 
-// @SqlResultSetMapping(name="srsm2",   
-//      entities={@EntityResult(entityClass=SubscriberInfo.class)},   
-//          columns={@ColumnResult(name="lot_type"),@ColumnResult(name="count_user")}   
-// )
-
-
-
-
-@NamedNativeQuery(
-        name = "ReturnOrderListWithFullScalarType",
-        query = "SELECT lot_type,count(*) as sub_type FROM subscriber_info group by lot_type", resultSetMapping = "ReturnOrderListWithFullScalarType"
-        )
-
-
-
-
-@SqlResultSetMapping(
-        name = "ReturnOrderListWithFullScalarType",
-        entities = {},
-        columns ={
-                @ColumnResult(name = "lot_type"),
-                @ColumnResult(name = "sub_type")
-        }
-        )
 
 @Component
 public class SubscriberInfoDao {
@@ -88,11 +58,27 @@ public class SubscriberInfoDao {
                 "SELECT * FROM Subscriber_Info where  userno = '" + userno + "' AND lot_type='"+lot_type+"'", SubscriberInfo.class).getResultList();
         return q;
     }
+    
+    @Transactional
+    public List<SubscriberInfo> findSubscriberByUserno(String userno,String lot_type) {
+        @SuppressWarnings("unchecked")
+        List<SubscriberInfo> q = entityManager.createNativeQuery(
+                "SELECT * FROM Subscriber_Info where  userno = '" + userno + "' AND lot_type='"+lot_type+"' AND sub_status =1", SubscriberInfo.class).getResultList();
+        return q;
+    }
+    
+    @Transactional
+    public List<SubscriberInfo> findSubscriberInfoByLottype(String lot_type,String sub_type) {
+        @SuppressWarnings("unchecked")
+        List<SubscriberInfo> q = entityManager.createNativeQuery(
+                "SELECT * FROM Subscriber_Info where  lot_type = '" + lot_type + "' AND sub_status = 1", SubscriberInfo.class).getResultList();
+        return q;
+    }
 
     @Transactional
     public List findLotSubUsers() {
         @SuppressWarnings("unchecked")
-        String sql = "SELECT lot_type,count(*) as count_user FROM `subscriber_info` group by lot_type";
+        String sql = "SELECT lot_type,count(*) as count_user FROM `subscriber_info` WHERE sub_status = 1 group by lot_type";
 
         // Query q = entityManager.createNativeQuery(sql, "srsm2");
         Query q = entityManager.createNativeQuery(sql);

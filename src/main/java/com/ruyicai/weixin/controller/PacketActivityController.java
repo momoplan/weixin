@@ -575,9 +575,9 @@ public class PacketActivityController {
             rd.setValue(map);
 
         } catch (WeixinException e) {
-            logger.error("getMyPacketStatus error1", e);
+//            logger.error("getMyPacketStatus error1", e);
             rd.setErrorCode(e.getErrorCode().value);
-            rd.setValue(e.getMessage());
+            rd.setValue(e.getErrorCode().memo);
         } catch (Exception e) {
             logger.error("getMyPacketStatus error2", e);
             rd.setErrorCode(ErrorCode.PACKET_STATUS_GETED.value);

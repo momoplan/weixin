@@ -15,7 +15,7 @@ import com.ruyicai.weixin.consts.SubaccountType;
 @RooToString
 public class Torder {
 
-	private String id;
+	private String id;//订单号
 
 	private String batchcode;
 
