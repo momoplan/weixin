@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:camel="http://camel.apache.org/schema/spring" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/beans
+		  http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+	
+
+	<!-- ***************************lottery jms config*************************** -->
+	<amq:connectionFactory id="jmsLotteryConnectionFactory"
+		brokerURL="${jms.lottery.brokerURL}" />
+		
+	<bean id="pooledLotteryConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+		<property name="maxConnections" value="8" />
+		<property name="maximumActive" value="500" />
+		<property name="connectionFactory" ref="jmsLotteryConnectionFactory" />
+	</bean>
+	
+	<camel:camelContext id="lotteryCamelContext" >
+	</camel:camelContext>
+	
+	<bean id="jmsLotteryCfg" class="org.apache.camel.component.jms.JmsConfiguration">
+		<property name="connectionFactory" ref="pooledLotteryConnectionFactory"></property>
+	</bean>
+	
+	<bean id="jmsLottery" class="org.apache.camel.component.jms.JmsComponent">
+		<constructor-arg type="org.apache.camel.component.jms.JmsConfiguration" ref="jmsLotteryCfg"></constructor-arg>
+		<property name="connectionFactory" ref="pooledLotteryConnectionFactory"></property>
+		<property name="transacted" value="true"></property>
+	</bean>
+
+</beans>
