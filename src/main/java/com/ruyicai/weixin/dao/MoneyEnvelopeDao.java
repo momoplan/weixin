@@ -1,5 +1,6 @@
 package com.ruyicai.weixin.dao;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ruyicai.weixin.domain.MoneyEnvelope;
+import com.ruyicai.weixin.domain.Packet;
 import com.ruyicai.weixin.domain.SubscriberInfo;
 
 
@@ -20,17 +22,27 @@ public class MoneyEnvelopeDao {
     private EntityManager entityManager;
 
     @Transactional
-    public MoneyEnvelope createMoneyEnvelope(String userno, int parts,int money, String exire_date, String channelName) {
+    public MoneyEnvelope createMoneyEnvelope(String userno, int parts,int money, int expire_date, Calendar packet_exr_start_date,Calendar packet_exr_end_date) {
         MoneyEnvelope moneyEnvelope = new MoneyEnvelope();
         moneyEnvelope.setUserno(userno);
         moneyEnvelope.setMoney(money);
-        moneyEnvelope.setChannelName(channelName);
+        moneyEnvelope.setPacketExrStartDate(packet_exr_start_date);
+        moneyEnvelope.setPacketExrEndDate(packet_exr_end_date);
+        moneyEnvelope.setExireDate(expire_date);
+        Calendar cal = Calendar.getInstance();
+        moneyEnvelope.setCreatetime(cal);
         moneyEnvelope.setParts(parts);    
         moneyEnvelope.persist();
         return moneyEnvelope;
     }
     
-   
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public List<MoneyEnvelope> findOneNotAawardPart(String packet_id) {
+        String sql = "select * from money_envelope p where p.id = ? for update";
+        return entityManager.createNativeQuery(sql, MoneyEnvelope.class).setParameter(1, packet_id).getResultList();
+    }
+    
 
     @Transactional
     public List<SubscriberInfo> findSubscriberInfoByUserno(String userno) {

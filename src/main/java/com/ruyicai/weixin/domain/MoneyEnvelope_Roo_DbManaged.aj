@@ -22,9 +22,7 @@ privileged aspect MoneyEnvelope_Roo_DbManaged {
     private Integer MoneyEnvelope.parts;
     
     @Column(name = "exire_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(style = "MM")
-    private Calendar MoneyEnvelope.exireDate;
+    private Integer MoneyEnvelope.exireDate;
     
     @Column(name = "got_parts")
     private Integer MoneyEnvelope.gotParts;
@@ -34,6 +32,21 @@ privileged aspect MoneyEnvelope_Roo_DbManaged {
     
     @Column(name = "channel_name", length = 255)
     private String MoneyEnvelope.channelName;
+    
+    @Column(name = "packet_exr_end_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(style = "MM")
+    private Calendar MoneyEnvelope.packetExrEndDate;
+    
+    @Column(name = "packet_exr_start_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(style = "MM")
+    private Calendar MoneyEnvelope.packetExrStartDate;
+    
+    @Column(name = "createtime")
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(style = "MM")
+    private Calendar MoneyEnvelope.createtime;
     
     public String MoneyEnvelope.getUserno() {
         return userno;
@@ -59,11 +72,11 @@ privileged aspect MoneyEnvelope_Roo_DbManaged {
         this.parts = parts;
     }
     
-    public Calendar MoneyEnvelope.getExireDate() {
+    public Integer MoneyEnvelope.getExireDate() {
         return exireDate;
     }
     
-    public void MoneyEnvelope.setExireDate(Calendar exireDate) {
+    public void MoneyEnvelope.setExireDate(Integer exireDate) {
         this.exireDate = exireDate;
     }
     
@@ -89,6 +102,30 @@ privileged aspect MoneyEnvelope_Roo_DbManaged {
     
     public void MoneyEnvelope.setChannelName(String channelName) {
         this.channelName = channelName;
+    }
+    
+    public Calendar MoneyEnvelope.getPacketExrEndDate() {
+        return packetExrEndDate;
+    }
+    
+    public void MoneyEnvelope.setPacketExrEndDate(Calendar packetExrEndDate) {
+        this.packetExrEndDate = packetExrEndDate;
+    }
+    
+    public Calendar MoneyEnvelope.getPacketExrStartDate() {
+        return packetExrStartDate;
+    }
+    
+    public void MoneyEnvelope.setPacketExrStartDate(Calendar packetExrStartDate) {
+        this.packetExrStartDate = packetExrStartDate;
+    }
+    
+    public Calendar MoneyEnvelope.getCreatetime() {
+        return createtime;
+    }
+    
+    public void MoneyEnvelope.setCreatetime(Calendar createtime) {
+        this.createtime = createtime;
     }
     
 }

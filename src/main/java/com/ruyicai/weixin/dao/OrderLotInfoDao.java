@@ -48,10 +48,10 @@ public class OrderLotInfoDao {
     }
     
     @Transactional
-    public List<OrderLotInfo> findSubscriberInfoByTransactionID(String userno,String transid,String lotno) {
+    public List<OrderLotInfo> findSubscriberInfoByTransactionID(String userno,String transid) {
         @SuppressWarnings("unchecked")
         List<OrderLotInfo> q = entityManager.createNativeQuery(
-                "SELECT * FROM order_lot_info where  userno = '" + userno + "' AND transaction_id='"+transid+"' AND lotno = '"+ lotno+"'", OrderLotInfo.class).getResultList();
+                "SELECT * FROM order_lot_info where  userno = '" + userno + "' AND transaction_id='"+transid+"'", OrderLotInfo.class).getResultList();
         return q;
     }
     

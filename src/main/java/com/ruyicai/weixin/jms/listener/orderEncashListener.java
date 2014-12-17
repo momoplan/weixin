@@ -129,14 +129,17 @@ public class orderEncashListener {
             else if (lotno.startsWith("J000"))//
             {
                 // 这个彩种的订阅用户
-                List<SubscriberInfo> lstSubscriber = subscriberInfoDao.findSubscriberByUserno(userno, lotno);
+                List<SubscriberInfo> lstSubscriber = subscriberInfoDao.findSubscriberByUserno(userno, "J00000");
+                System.out.println("lstSubscriber.size():"+lstSubscriber.size());
 
                 if (lstSubscriber.size() > 0) {
                     List<OrderLotInfo> lstSublot = orderLotInfoDao.findSubscriberInfoByTransactionID(userno,
-                            order.getId(), lotno);
+                            order.getId());
+                    System.out.println("lstSublot.size():"+lstSublot.size());
                     if (lstSublot.size() > 0)
                         subscribeLotService.sendBetInfo(userno,
-                                String.valueOf(order.getOrderprizeamt().intValue() / 100), "竞彩足球", url);
+                                String.valueOf(order.getOrderprizeamt().floatValue() / 100), "竞彩足球", url);
+                    System.out.println("subscribeLotService.sendBetInfo");
                 }
             }
 

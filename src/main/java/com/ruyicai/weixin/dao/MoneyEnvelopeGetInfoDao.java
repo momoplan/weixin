@@ -1,5 +1,6 @@
 package com.ruyicai.weixin.dao;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ruyicai.weixin.domain.MoneyEnvelope;
 import com.ruyicai.weixin.domain.MoneyEnvelopeGetInfo;
+import com.ruyicai.weixin.domain.PuntPacket;
 import com.ruyicai.weixin.domain.SubscriberInfo;
 
 
@@ -21,21 +23,95 @@ public class MoneyEnvelopeGetInfoDao {
     private EntityManager entityManager;
 
     @Transactional
-    public MoneyEnvelopeGetInfo createMoneyEnvelope(String get_userno, int packet_id,int get_money) {
+    public MoneyEnvelopeGetInfo createMoneyEnvelopeGetInfo(String get_userno, int packet_id,int get_money) {
         MoneyEnvelopeGetInfo moneyEnvelope = new MoneyEnvelopeGetInfo();
+       
         moneyEnvelope.setGetUserno(get_userno);
         moneyEnvelope.setMoney(get_money);
-        moneyEnvelope.setEnvelopeId(packet_id);      
+        moneyEnvelope.setEnvelopeId(packet_id); 
+        Calendar cal = Calendar.getInstance();
+        moneyEnvelope.setCreatetime(cal);
+       
         moneyEnvelope.persist();
         return moneyEnvelope;
     }
     
     @Transactional
-    public List<SubscriberInfo> findSubscriberInfoByUserno(String userno) {
+    public MoneyEnvelopeGetInfo createMoneyEnvelopeGetInfo(int packet_id,int get_money,int expire_days) {
+        MoneyEnvelopeGetInfo moneyEnvelope = new MoneyEnvelopeGetInfo();
+        moneyEnvelope.setMoney(get_money);
+        moneyEnvelope.setEnvelopeId(packet_id); 
+        moneyEnvelope.setExpireDays(expire_days);
+        moneyEnvelope.setExpireStatus(0);
+        Calendar cal = Calendar.getInstance();
+        moneyEnvelope.setCreatetime(cal);
+        moneyEnvelope.persist();
+        return moneyEnvelope;
+    }
+    
+    
+    @Transactional
+    public List<MoneyEnvelopeGetInfo> findLeftMoney(String packet_id) {
         @SuppressWarnings("unchecked")
-        List<SubscriberInfo> q = entityManager.createNativeQuery(
-                "SELECT * FROM Subscriber_Info where  userno = '" + userno + "'", SubscriberInfo.class).getResultList();
+        List<MoneyEnvelopeGetInfo> q = entityManager.createNativeQuery(
+                "SELECT * FROM money_envelope_get_Info where  get_userno is null and envelope_id = " + packet_id , MoneyEnvelopeGetInfo.class).getResultList();
         return q;
+    }
+    
+    
+    @Transactional
+    public List<MoneyEnvelopeGetInfo> findUserMoney(String userno) {
+        @SuppressWarnings("unchecked")
+        List<MoneyEnvelopeGetInfo> q = entityManager.createNativeQuery(
+                "SELECT * FROM `money_envelope_get_info` where expire_status = 0 AND DATE_ADD(get_time,  INTERVAL 1 DAY) >= NOW() and get_userno = '"+userno+"' ", MoneyEnvelopeGetInfo.class).getResultList();
+        return q;
+    }
+    
+    @Transactional
+    public int DeductUserMoney(String getinfo_ids) {
+       String sql = "UPDATE money_envelope_get_info SET  expire_status = 1 WHERE id IN ("+getinfo_ids+")";       
+       return entityManager.createNativeQuery(sql).executeUpdate();   
+    }
+    
+    
+    
+    
+    @SuppressWarnings("unchecked")
+    public List<MoneyEnvelopeGetInfo> findByGetUserno(String getUserno, String packet_id) {
+        String sql = "SELECT * FROM money_envelope_get_info WHERE get_userno = ? AND envelope_id = ?";
+        return entityManager.createNativeQuery(sql, MoneyEnvelopeGetInfo.class).setParameter(1, getUserno)
+                .setParameter(2, packet_id).getResultList();
+    }
+    
+//    @Transactional
+//    public List<SubscriberInfo> findSubscriberInfoByUserno(String userno) {
+//        @SuppressWarnings("unchecked")
+//        List<SubscriberInfo> q = entityManager.createNativeQuery(
+//                "SELECT * FROM Subscriber_Info where  userno = '" + userno + "'", SubscriberInfo.class).getResultList();
+//        return q;
+//    }
+    
+    
+    @SuppressWarnings("unchecked")
+    public List<MoneyEnvelopeGetInfo> findSinglePuntPart(String packet_id) {
+        String sql = "SELECT * FROM money_envelope_get_info WHERE get_userno IS NULL AND envelope_id = ? limit 1";
+        return entityManager.createNativeQuery(sql, MoneyEnvelopeGetInfo.class).setParameter(1, packet_id).getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<MoneyEnvelopeGetInfo> findMoneyEnveList(String packet_id) {
+        String sql = " SELECT a.money,b.nickname,b.headimgurl,FROM_UNIXTIME(UNIX_TIMESTAMP(a.get_time),'%Y-%m-%d %H:%m:%s') FROM money_envelope_get_info a LEFT  JOIN case_lot_userinfo b on a.get_userno = b.userno WHERE get_userno IS NOT NULL AND envelope_id = ? ";
+//        return entityManager.createNativeQuery(sql, MoneyEnvelopeGetInfo.class).setParameter(1, packet_id).getResultList();
+        
+        
+  
+        // Query q = entityManager.createNativeQuery(sql, "srsm2");
+        Query q = entityManager.createNativeQuery(sql).setParameter(1, packet_id);
+
+        @SuppressWarnings("rawtypes")
+        List lst = q.getResultList();
+        
+        return lst;
     }
     
     @Transactional
