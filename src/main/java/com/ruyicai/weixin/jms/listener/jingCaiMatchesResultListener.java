@@ -44,7 +44,7 @@ public class jingCaiMatchesResultListener {
 
     public void process(@Header("EVENT") String event) {
         try {
-            logger.info("竞彩赛果更新jms start event={}", event);
+           // logger.info("竞彩赛果更新jms start event={}", event);
             // UpdateCacheThread ut = new UpdateCacheThread("event");
             new Thread(new UpdateCacheThread(event)).start();
         } catch (Exception e) {
@@ -85,7 +85,7 @@ public class jingCaiMatchesResultListener {
                 logger.info("jingCaiType:" + jingCaiType);
 
                 valueObject = getJingcaimatches("J00001", day, weekId, teamId);
-                System.out.println("valueObject:" + valueObject);
+               // System.out.println("valueObject:" + valueObject);
                 JSONObject jbValue = JSONObject.fromObject(valueObject);
 
                 if (jbValue.get("errorCode").equals("0")) {
@@ -95,9 +95,9 @@ public class jingCaiMatchesResultListener {
                     JSONObject jso_result = JSONObject.fromObject(jso.get("result"));
                     JSONObject jso_matches = JSONObject.fromObject(jso.get("matches"));
                     String teamshortname = jso_matches.get("team").toString();
-                    System.out.println(teamshortname);
+                  //  System.out.println(teamshortname);
                     String result = jso_result.get("result").toString();
-                    System.out.println(result);
+                   // System.out.println(result);
 
                     String strMatchID = day + "|" + weekId + "|" + teamId;
                     List<OrderLotInfo> lotInfo = orderLotInfoDao.findSubscriberInfoByBetcode(strMatchID);
@@ -120,7 +120,7 @@ public class jingCaiMatchesResultListener {
                                 continue;
                             else
                                 list.add(userno);
-                            System.out.println("userno:" + userno);
+                           // System.out.println("userno:" + userno);
                             // 优化
                             lstSubscriberInfo = subscriberInfoDao.findSubscriberByUserno(userno, "J00000");
 
@@ -129,20 +129,20 @@ public class jingCaiMatchesResultListener {
                                 subscribeLotService.sendOpenInfo(userno, day + weekId + teamId, teamshortname + "  "
                                         + result, "竞彩足球", "http://wx.ruyicai.com/html/lottery/jczqlot.html", lotInfo
                                         .get(i).getAmt(), date);
-                                System.out.println("lotInfo.get(0).getUserno()" + userno + ",teamshortname+result="
-                                        + teamshortname + result);
+//                                System.out.println("lotInfo.get(0).getUserno()" + userno + ",teamshortname+result="
+//                                        + teamshortname + result);
 
                             }
 
-                            System.out.println("发送消息userno:" + userno + ":" + day + weekId + teamId + ":"
-                                   + teamshortname + result);
+//                            System.out.println("发送消息userno:" + userno + ":" + day + weekId + teamId + ":"
+//                                   + teamshortname + result);
 
                         }
                     }
                 }
 
-                logger.info("valueObject:" + valueObject);
-                System.out.println(valueObject);
+//                logger.info("valueObject:" + valueObject);
+//                System.out.println(valueObject);
             }
         }
     }

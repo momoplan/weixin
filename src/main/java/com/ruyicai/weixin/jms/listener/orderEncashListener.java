@@ -45,8 +45,8 @@ public class orderEncashListener {
 
     public void process(@Body String orderJson) {
 
-         logger.info("中奖派奖通知,orderJson:" + orderJson);
-         System.out.println("中奖派奖通知,orderJson:" + orderJson);
+//         logger.info("中奖派奖通知,orderJson:" + orderJson);
+//         System.out.println("中奖派奖通知,orderJson:" + orderJson);
         if (null == orderJson)
             return;
 
