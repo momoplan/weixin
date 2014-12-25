@@ -2,6 +2,7 @@ package com.ruyicai.weixin.controller;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import com.ruyicai.weixin.dto.lottery.ResponseData;
 import com.ruyicai.weixin.exception.ErrorCode;
 import com.ruyicai.weixin.exception.WeixinException;
 import com.ruyicai.weixin.service.CaseLotActivityService;
+import com.ruyicai.weixin.service.CommonService;
 import com.ruyicai.weixin.service.MoneyEnvelopeService;
 import com.ruyicai.weixin.service.SubscribeLotService;
 import com.ruyicai.weixin.util.HongBaoAlgorithm;
@@ -53,6 +55,9 @@ public class MoneyEnvelopeController {
     private MoneyEnvelopeDao moneyEnvelopeDao;
 
     private Logger logger = LoggerFactory.getLogger(MoneyEnvelopeController.class);
+
+    @Autowired
+    CommonService commonService;
 
     @Autowired
     SubscribeLotService subscribeLotService;
@@ -147,7 +152,7 @@ public class MoneyEnvelopeController {
         // return JsonMapper.toJson(rd);
         return JsonMapper.toJsonP(callback, rd);
     }
-    
+
     // 抢红包
     @RequestMapping(value = "/getMoneyStatus", method = RequestMethod.GET)
     @ResponseBody
@@ -169,7 +174,6 @@ public class MoneyEnvelopeController {
             // exire_date, channelName);
             // iMap.put("moneyEnvelope", subscriberInfo);
 
-           
             iMap.put("getMoenyStatus", moneyEnvelopeService.getPuntPacketStatus(userno, packet_id));
 
             rd.setValue(iMap);
@@ -215,18 +219,40 @@ public class MoneyEnvelopeController {
         // return JsonMapper.toJson(rd);
         return JsonMapper.toJsonP(callback, rd);
     }
-    
-    
+
     @RequestMapping(value = "/getUserMoenyList", method = RequestMethod.GET)
     @ResponseBody
-    public String getUserMoenyList(@RequestParam(value = "userno", required = true) String userno) {
-       
+    public String getUserMoenyList(@RequestParam(value = "userno", required = true) String userno,
+            @RequestParam(value = "callBackMethod", required = false) String callback) {
+
         ResponseData rd = new ResponseData();
         try {
             rd.setErrorCode(ErrorCode.OK.value);
             Map<String, Object> iMap = new HashMap<String, Object>();
 
-            iMap.put("UserMoenyList",  moneyEnvelopeGetInfoDao.findUserMoney(userno));
+            List<MoneyEnvelopeGetInfo> lstMoneyEnvelopeGetInfo = moneyEnvelopeGetInfoDao.findUserMoney(userno);
+
+            java.text.DateFormat format_open = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+            List<Map<String, Object>> iList = new ArrayList<Map<String, Object>>();
+
+            String date = "";
+
+            MoneyEnvelopeGetInfo moneyEnvelopeGetInfo = null;
+
+            for (int i = 0; i < lstMoneyEnvelopeGetInfo.size(); i++) {
+                moneyEnvelopeGetInfo = lstMoneyEnvelopeGetInfo.get(i);
+                Map<String, Object> iMapList = new HashMap<String, Object>();
+                iMapList.put("id", moneyEnvelopeGetInfo.getId());
+                iMapList.put("money", moneyEnvelopeGetInfo.getMoney());
+
+                date = format_open.format(moneyEnvelopeGetInfo.getCreatetime().getTime());
+                iMapList.put("expire_date", date);
+                iList.add(iMapList);
+
+            }
+
+            iMap.put("UserMoenyList", iList);
 
             rd.setValue(iMap);
         } catch (WeixinException e) {
@@ -240,7 +266,7 @@ public class MoneyEnvelopeController {
         }
 
         // return JsonMapper.toJson(rd);
-        return JsonMapper.toJson(rd);
+        return JsonMapper.toJsonP(callback, rd);
     }
 
     // 抢发模板消息
@@ -308,24 +334,39 @@ public class MoneyEnvelopeController {
         else
             return JsonMapper.toJsonP(callback, rd);
     }
-    
+
     // 抢发模板消息
-    @RequestMapping(value = "/deductUserMoney", method = RequestMethod.POST)
+    @RequestMapping(value = "/deductUserMoney", method = RequestMethod.GET)
     @ResponseBody
-    public String deductUserMoney(@RequestParam(value = "ids", required = true) String ids) {
+    public String deductUserMoney(@RequestParam(value = "ids", required = true) String ids,
+
+    @RequestParam(value = "get_userno", required = false) String get_userno,
+            @RequestParam(value = "total_use_money", required = false) String total_use_money,
+            @RequestParam(value = "callBackMethod", required = false) String callback) {
 
         ResponseData rd = new ResponseData();
+
         try {
 
             rd.setErrorCode(ErrorCode.OK.value);
 
             Map<String, Object> iMap = new HashMap<String, Object>();
-            moneyEnvelopeGetInfoDao.DeductUserMoney(ids);
-
-            iMap.put("deduct_result",moneyEnvelopeGetInfoDao.DeductUserMoney(ids));
-            // subscribeLotService.sendTemplateMsg(json));
-
-            rd.setValue(iMap);
+            int result = moneyEnvelopeGetInfoDao.DeductUserMoney(ids);
+            if (result > 0) {
+                logger.info("total_use_money:" + total_use_money + ",get_userno:" + get_userno);
+                String ret = commonService.presentDividend(get_userno, total_use_money, "11011", "客户端分享赠送彩金");
+                logger.info("客户端分享赠送彩金返回" + ret + ",total_use_money:" + total_use_money + ",get_userno:" + get_userno);
+                iMap.put("deduct_result", result);
+                // subscribeLotService.sendTemplateMsg(json));
+                rd.setValue(iMap);
+            }
+            else
+            {
+                rd.setErrorCode(ErrorCode.DEDUCT_AMT_FAIL.value);
+                rd.setValue(ErrorCode.DEDUCT_AMT_FAIL.memo);
+            }
+                
+          
         } catch (WeixinException e) {
             logger.error("findReturnPacketList error", e);
             rd.setErrorCode(e.getErrorCode().value);
@@ -336,9 +377,8 @@ public class MoneyEnvelopeController {
             rd.setValue(e.getMessage());
         }
 
-         
-        return JsonMapper.toJson(rd);
-        
+        return JsonMapper.toJsonP(callback, rd);
+
     }
 
     // 抢发模板消息
