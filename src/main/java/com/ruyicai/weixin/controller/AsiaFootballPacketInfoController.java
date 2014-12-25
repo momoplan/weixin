@@ -71,7 +71,7 @@ public class AsiaFootballPacketInfoController {
 
         ResponseData rd = new ResponseData();
         try {http://www.ruyicai.com/weixin/service
-            rd.setErrorCode(ErrorCode.OK.value);
+            rd.setErrorCode(ErrorCode.OK.value); 
 
             Map<String, Object> iMap = new HashMap<String, Object>();
             String ret = "";
