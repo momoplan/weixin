@@ -78,7 +78,7 @@ public class MoneyEnvelopeController {
     CaseLotActivityService caseLotActivityService;
 
     // 创建红包
-    @RequestMapping(value = "/createMoneyEnvelope", method = RequestMethod.POST)
+    @RequestMapping(value = "/createMoneyEnvelope", method = RequestMethod.GET)
     @ResponseBody
     public String createMoneyEnvelope(@RequestParam(value = "userno", required = true) String userno,
             @RequestParam(value = "parts", required = false) int parts,
