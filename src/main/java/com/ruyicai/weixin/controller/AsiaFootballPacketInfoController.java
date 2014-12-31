@@ -97,7 +97,7 @@ public class AsiaFootballPacketInfoController {
                 if (!packet_userno.equals("0")) {
                     Long lngCount = asiaFootballPacketInfoDao.getTotalGetUsers(packet_userno);
 
-                    if (lngCount == 10 || lngCount == 30) {
+                    if (lngCount == 10 || lngCount == 20 || lngCount == 30 || lngCount == 40 || lngCount == 50) {
                         AsiaFootballPacketInfo AsiaPacketInfo = asiaFootballPacketInfoDao
                                 .getAsiaFootballPacketInfoByGetUserno(packet_userno).get(0);
                         AsiaPacketInfo.setAwardMoney(AsiaPacketInfo.getAwardMoney() + 100);
