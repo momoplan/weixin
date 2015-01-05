@@ -106,8 +106,27 @@ public class AsiaFootballPacketInfoController {
                         ret = commonService.presentDividend(packet_userno, "100", "11012", "亚洲杯客户端分享微信赠送彩金100");
                         logger.info("客户端分享赠送彩金返回" + ret + ",total_use_money:100,get_userno:"
                                 + AsiaPacketInfo.getPacketUserno() + ",id:" + AsiaPacketInfo.getId());
-
                     }
+                }
+                else
+                {
+                    Long lngCount = asiaFootballPacketInfoDao.getTotalGetUsers(packet_userno);
+                    if(lngCount == 1)
+                    {
+                        lstAsiaPacketInfo = asiaFootballPacketInfoDao
+                                .getAsiaFootballPacketInfoByGetUserno(packet_userno);
+                        if (lstAsiaPacketInfo.size() == 0) {
+                             asiaFootballPacketInfo = asiaFootballPacketInfoDao.createMoneyEnvelope(packet_userno,
+                                    money, "1");
+                            logger.info("total_use_money:200,get_userno:" + packet_userno+ ",packet_userno:0" + packet_userno);
+                            try {
+                                ret = commonService.presentDividend(packet_userno, "200", "11012", "亚洲杯客户端分享微信赠送彩金(追加)");
+                                logger.info("客户端分享赠送彩金返回" + ret + ",total_use_money:200,get_userno:" + packet_userno);
+                            } catch (Exception ex) {
+                                logger.info(ex.getMessage());
+                            }
+                        }
+                    } 
                 }
                 rd.setValue(asiaFootballPacketInfo);
             } else
