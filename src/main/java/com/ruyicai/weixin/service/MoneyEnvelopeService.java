@@ -48,10 +48,12 @@ public class MoneyEnvelopeService {
     public String doCreatePacket(String packetUserno, int parts, int money, int expire_date,
             String packet_exr_start_date, String packet_exr_end_date) throws ParseException {
         // 判断用户是否存在
-//        CaseLotUserinfo caseLotUserinfo = caseLotActivityService.caseLotchances(packetUserno, Const.WX_PACKET_ACTIVITY);
-//
-//        if (caseLotUserinfo == null)
-//            return "";
+        // CaseLotUserinfo caseLotUserinfo =
+        // caseLotActivityService.caseLotchances(packetUserno,
+        // Const.WX_PACKET_ACTIVITY);
+        //
+        // if (caseLotUserinfo == null)
+        // return "";
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date date = sdf.parse(packet_exr_start_date);
@@ -137,7 +139,7 @@ public class MoneyEnvelopeService {
         if (caseLotUserinfo == null)
             throw new WeixinException(ErrorCode.CASELOTUSERINFO_NOT_EXISTS);
 
-        List<MoneyEnvelopeGetInfo> lstPuntPacket = moneyEnvelopeGetInfoDao.findByGetUserno(award_userno, packet_id);
+        List<MoneyEnvelopeGetInfo> lstPuntPacket = moneyEnvelopeGetInfoDao.findByGetUserno(award_userno);
         if (lstPuntPacket != null && lstPuntPacket.size() > 0) {
             iMap.put("getinfo", lstPuntPacket.get(0));
             iMap.put("status", "1");
@@ -145,16 +147,24 @@ public class MoneyEnvelopeService {
 
         } else {
 
-            List<MoneyEnvelopeGetInfo> puntPacketList = moneyEnvelopeGetInfoDao.findSinglePuntPart(packet_id);
-            if (puntPacketList == null || puntPacketList.size() == 0) {
-                logger.info("红包不存在1 award_userno:{} packet_id:{}", award_userno, packet_id);
+            List<MoneyEnvelope> puntPacketExpire = moneyEnvelopeGetInfoDao.findEnvelopeExpired(packet_id);
 
-                iMap.put("status", "3");
-                iMap.put("memo", "已抢完");
+            if (puntPacketExpire.size() == 0) {
+                iMap.put("status", "2");
+                iMap.put("memo", "已过期");
             } else {
 
-                iMap.put("status", "0");
-                iMap.put("memo", "可抢");
+                List<MoneyEnvelopeGetInfo> puntPacketList = moneyEnvelopeGetInfoDao.findSinglePuntPart(packet_id);
+                if (puntPacketList == null || puntPacketList.size() == 0) {
+                    logger.info("红包不存在1 award_userno:{} packet_id:{}", award_userno, packet_id);
+
+                    iMap.put("status", "3");
+                    iMap.put("memo", "已抢完");
+                } else {
+
+                    iMap.put("status", "0");
+                    iMap.put("memo", "可抢");
+                }
             }
         }
 

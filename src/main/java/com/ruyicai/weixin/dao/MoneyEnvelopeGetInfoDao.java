@@ -68,6 +68,14 @@ public class MoneyEnvelopeGetInfoDao {
     }
     
     @Transactional
+    public List<MoneyEnvelope> findEnvelopeExpired(String packet_id) {
+        @SuppressWarnings("unchecked")
+        List<MoneyEnvelope> q = entityManager.createNativeQuery(
+                "SELECT * FROM `money_envelope` where  packet_exr_end_date >= NOW() and id = "+packet_id, MoneyEnvelope.class).getResultList();
+        return q;
+    }
+    
+    @Transactional
     public int DeductUserMoney(String getinfo_ids) {
        String sql = "UPDATE money_envelope_get_info SET  expire_status = 1 WHERE id IN ("+getinfo_ids+") AND expire_status = 0";       
        return entityManager.createNativeQuery(sql).executeUpdate();   
@@ -78,6 +86,13 @@ public class MoneyEnvelopeGetInfoDao {
         String sql = "SELECT * FROM money_envelope_get_info WHERE get_userno = ? AND envelope_id = ?";
         return entityManager.createNativeQuery(sql, MoneyEnvelopeGetInfo.class).setParameter(1, getUserno)
                 .setParameter(2, packet_id).getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<MoneyEnvelopeGetInfo> findByGetUserno(String getUserno) {
+        String sql = "SELECT * FROM money_envelope_get_info WHERE get_userno = ? ";
+        return entityManager.createNativeQuery(sql, MoneyEnvelopeGetInfo.class).setParameter(1, getUserno)
+                .getResultList();
     }
     
 //    @Transactional
@@ -97,7 +112,7 @@ public class MoneyEnvelopeGetInfoDao {
     
     @SuppressWarnings("unchecked")
     public List<MoneyEnvelopeGetInfo> findMoneyEnveList(String packet_id) {
-        String sql = " SELECT a.money,b.nickname,b.headimgurl,FROM_UNIXTIME(UNIX_TIMESTAMP(a.get_time),'%Y-%m-%d %H:%m:%s') FROM money_envelope_get_info a LEFT  JOIN case_lot_userinfo b on a.get_userno = b.userno WHERE get_userno IS NOT NULL AND envelope_id = ? ";
+        String sql = " SELECT a.money,b.nickname,b.headimgurl,FROM_UNIXTIME(UNIX_TIMESTAMP(a.get_time),'%Y-%m-%d %H:%m:%s') FROM money_envelope_get_info a LEFT  JOIN case_lot_userinfo b on a.get_userno = b.userno WHERE get_userno IS NOT NULL AND orderid = 'HM00002' AND envelope_id = ? ";
 //        return entityManager.createNativeQuery(sql, MoneyEnvelopeGetInfo.class).setParameter(1, packet_id).getResultList();  
         // Query q = entityManager.createNativeQuery(sql, "srsm2");
         Query q = entityManager.createNativeQuery(sql).setParameter(1, packet_id);
