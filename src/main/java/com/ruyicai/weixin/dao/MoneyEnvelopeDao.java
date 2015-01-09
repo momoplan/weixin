@@ -59,6 +59,13 @@ public class MoneyEnvelopeDao {
         return entityManager.createNativeQuery(sql, MoneyEnvelope.class).setParameter(1, packet_id).getResultList();
     }
     
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public List<MoneyEnvelope> findEnvelopByPacketID(String packet_id) {
+        String sql = "select * from money_envelope p where p.id = ?";
+        return entityManager.createNativeQuery(sql, MoneyEnvelope.class).setParameter(1, packet_id).getResultList();
+    }
+    
 
     @Transactional
     public List<SubscriberInfo> findSubscriberInfoByUserno(String userno) {

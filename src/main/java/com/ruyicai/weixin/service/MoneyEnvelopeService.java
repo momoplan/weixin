@@ -133,13 +133,26 @@ public class MoneyEnvelopeService {
      * @return
      */
     @Transactional
-    public Map getPuntPacketStatus(String award_userno, String packet_id,String action_id) {
+    public Map getPuntPacketStatus(String award_userno, String packet_id) {
         Map<String, Object> iMap = new HashMap<String, Object>();
-
+        String action_id = "";
         CaseLotUserinfo caseLotUserinfo = caseLotActivityService.caseLotchances(award_userno, Const.WX_PACKET_ACTIVITY);
 
         if (caseLotUserinfo == null)
             throw new WeixinException(ErrorCode.CASELOTUSERINFO_NOT_EXISTS);
+        
+        List<MoneyEnvelope> puntPacketActionID = moneyEnvelopeDao.findEnvelopByPacketID(packet_id);
+        if(puntPacketActionID.size() == 1)
+        {
+            MoneyEnvelope  PacketActionID = puntPacketActionID.get(0);
+            action_id = PacketActionID.getChannelName();
+        }
+        else
+        {
+            throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);
+        }
+
+         
 
         List<MoneyEnvelopeGetInfo> lstPuntPacket = moneyEnvelopeGetInfoDao.findByGetUsernoAndActionID(award_userno,action_id);
         if (lstPuntPacket != null && lstPuntPacket.size() > 0) {

@@ -159,7 +159,7 @@ public class MoneyEnvelopeController {
     @ResponseBody
     public String getMoneyStatus(@RequestParam(value = "userno", required = true) String userno,
             @RequestParam(value = "packet_id", required = true) String packet_id,
-            @RequestParam(value = "action_id", required = true) String action_id,
+//            @RequestParam(value = "action_id", required = true) String action_id,
             @RequestParam(value = "callBackMethod", required = false) String callback) {
 
         packet_id = ToolsAesCrypt.Decrypt(packet_id, Const.PACKET_KEY);
@@ -176,7 +176,7 @@ public class MoneyEnvelopeController {
             // exire_date, channelName);
             // iMap.put("moneyEnvelope", subscriberInfo);
 
-            iMap.put("getMoenyStatus", moneyEnvelopeService.getPuntPacketStatus(userno, packet_id,action_id));
+            iMap.put("getMoenyStatus", moneyEnvelopeService.getPuntPacketStatus(userno, packet_id));
 
             rd.setValue(iMap);
         } catch (WeixinException e) {
