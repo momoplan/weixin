@@ -45,7 +45,7 @@ public class MoneyEnvelopeService {
      * 
      * @throws ParseException
      */
-    public String doCreatePacket(String packetUserno, int parts, int money, int expire_date,
+    public String doCreatePacket(String actionID,String packetUserno, int parts, int money, int expire_date,
             String packet_exr_start_date, String packet_exr_end_date) throws ParseException {
         // 判断用户是否存在
         // CaseLotUserinfo caseLotUserinfo =
@@ -64,10 +64,12 @@ public class MoneyEnvelopeService {
         Calendar calendar_end = Calendar.getInstance();
         calendar_end.setTime(date);
 
-        MoneyEnvelope subscriberInfo = moneyEnvelopeDao.createMoneyEnvelope(packetUserno, parts, money, expire_date,
+        MoneyEnvelope subscriberInfo = moneyEnvelopeDao.createMoneyEnvelope(actionID,packetUserno, parts, money, expire_date,
                 calendar, calendar_end);
 
-        long[] eachMoeny = HongBaoAlgorithm.generate(money, parts, money / 2, money / 8);
+        long[] eachMoeny = HongBaoAlgorithm.generate(money, parts, money / 2, money / parts/2);
+        
+//        long[] result = HongBaoAlgorithm.generate(800, part, money/2, money/part/2);
         int packetId = subscriberInfo.getId();
 
         for (int i = 0; i < eachMoeny.length; i++) {
@@ -131,7 +133,7 @@ public class MoneyEnvelopeService {
      * @return
      */
     @Transactional
-    public Map getPuntPacketStatus(String award_userno, String packet_id) {
+    public Map getPuntPacketStatus(String award_userno, String packet_id,String action_id) {
         Map<String, Object> iMap = new HashMap<String, Object>();
 
         CaseLotUserinfo caseLotUserinfo = caseLotActivityService.caseLotchances(award_userno, Const.WX_PACKET_ACTIVITY);
@@ -139,7 +141,7 @@ public class MoneyEnvelopeService {
         if (caseLotUserinfo == null)
             throw new WeixinException(ErrorCode.CASELOTUSERINFO_NOT_EXISTS);
 
-        List<MoneyEnvelopeGetInfo> lstPuntPacket = moneyEnvelopeGetInfoDao.findByGetUserno(award_userno);
+        List<MoneyEnvelopeGetInfo> lstPuntPacket = moneyEnvelopeGetInfoDao.findByGetUsernoAndActionID(award_userno,action_id);
         if (lstPuntPacket != null && lstPuntPacket.size() > 0) {
             iMap.put("getinfo", lstPuntPacket.get(0));
             iMap.put("status", "1");

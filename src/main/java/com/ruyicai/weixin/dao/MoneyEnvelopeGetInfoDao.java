@@ -89,6 +89,13 @@ public class MoneyEnvelopeGetInfoDao {
     }
     
     @SuppressWarnings("unchecked")
+    public List<MoneyEnvelopeGetInfo> findByGetUsernoAndActionID(String getUserno,String action_id) {
+        String sql = "SELECT a.* FROM money_envelope_get_info a INNER JOIN money_envelope b ON a.envelope_id = b.id WHERE a.get_userno = ? AND b.channel_name = ?";
+        return entityManager.createNativeQuery(sql, MoneyEnvelopeGetInfo.class).setParameter(1, getUserno)
+                .setParameter(2, action_id).getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
     public List<MoneyEnvelopeGetInfo> findByGetUserno(String getUserno) {
         String sql = "SELECT * FROM money_envelope_get_info WHERE get_userno = ? ";
         return entityManager.createNativeQuery(sql, MoneyEnvelopeGetInfo.class).setParameter(1, getUserno)

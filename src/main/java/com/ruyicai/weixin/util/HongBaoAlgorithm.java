@@ -9,10 +9,23 @@ public class HongBaoAlgorithm {
     }
 
     public static void main(String[] args) {
-        long max = 200;
-        long min = 6;
+//        long max = 831;
+//        long min = 13;
+//
+//        long[] result = HongBaoAlgorithm.generate(800, 5, max, min);
+//
+//        for (int i = 0; i < result.length; i++) {
+//            System.out.println("" + i + "  " + result[i]);
+//        }
+        
+      
+        
+         int money = 831;
+         int part = 13;
 
-        long[] result = HongBaoAlgorithm.generate(800, 5, max, min);
+        long[] result = HongBaoAlgorithm.generate(money, part, money/2, money/part/2);
+        
+        
 
         for (int i = 0; i < result.length; i++) {
             System.out.println("" + i + "  " + result[i]);

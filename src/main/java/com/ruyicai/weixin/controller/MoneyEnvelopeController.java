@@ -85,7 +85,8 @@ public class MoneyEnvelopeController {
             @RequestParam(value = "money", required = true) int money,
             @RequestParam(value = "packet_exr_end_date", required = true) String packet_exr_end_date,
             @RequestParam(value = "packet_exr_start_date", required = true) String packet_exr_start_date,
-            @RequestParam(value = "expire_date", required = true) int expire_date) {
+            @RequestParam(value = "expire_date", required = true) int expire_date,            
+            @RequestParam(value = "action_id", required = false) String channel_name) {
 
         ResponseData rd = new ResponseData();
         try {
@@ -94,7 +95,7 @@ public class MoneyEnvelopeController {
 
             Map<String, Object> iMap = new HashMap<String, Object>();
 
-            String pid = moneyEnvelopeService.doCreatePacket(userno, parts, money, expire_date, packet_exr_start_date,
+            String pid = moneyEnvelopeService.doCreatePacket(channel_name,userno, parts, money, expire_date, packet_exr_start_date,
                     packet_exr_end_date);
             if (StringUtil.isEmpty(pid))
                 throw new WeixinException(ErrorCode.CASELOTUSERINFO_NOT_EXISTS);
@@ -158,6 +159,7 @@ public class MoneyEnvelopeController {
     @ResponseBody
     public String getMoneyStatus(@RequestParam(value = "userno", required = true) String userno,
             @RequestParam(value = "packet_id", required = true) String packet_id,
+            @RequestParam(value = "action_id", required = true) String action_id,
             @RequestParam(value = "callBackMethod", required = false) String callback) {
 
         packet_id = ToolsAesCrypt.Decrypt(packet_id, Const.PACKET_KEY);
@@ -174,7 +176,7 @@ public class MoneyEnvelopeController {
             // exire_date, channelName);
             // iMap.put("moneyEnvelope", subscriberInfo);
 
-            iMap.put("getMoenyStatus", moneyEnvelopeService.getPuntPacketStatus(userno, packet_id));
+            iMap.put("getMoenyStatus", moneyEnvelopeService.getPuntPacketStatus(userno, packet_id,action_id));
 
             rd.setValue(iMap);
         } catch (WeixinException e) {

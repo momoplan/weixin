@@ -36,6 +36,22 @@ public class MoneyEnvelopeDao {
         return moneyEnvelope;
     }
     
+    @Transactional
+    public MoneyEnvelope createMoneyEnvelope(String actionID,String userno, int parts,int money, int expire_date, Calendar packet_exr_start_date,Calendar packet_exr_end_date) {
+        MoneyEnvelope moneyEnvelope = new MoneyEnvelope();
+        moneyEnvelope.setUserno(userno);
+        moneyEnvelope.setChannelName(actionID);
+        moneyEnvelope.setMoney(money);
+        moneyEnvelope.setPacketExrStartDate(packet_exr_start_date);
+        moneyEnvelope.setPacketExrEndDate(packet_exr_end_date);
+        moneyEnvelope.setExireDate(expire_date);
+        Calendar cal = Calendar.getInstance();
+        moneyEnvelope.setCreatetime(cal);
+        moneyEnvelope.setParts(parts);    
+        moneyEnvelope.persist();
+        return moneyEnvelope;
+    }
+    
     @SuppressWarnings("unchecked")
     @Transactional
     public List<MoneyEnvelope> findOneNotAawardPart(String packet_id) {
