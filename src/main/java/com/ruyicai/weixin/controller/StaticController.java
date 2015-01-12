@@ -2,20 +2,25 @@ package com.ruyicai.weixin.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ruyicai.advert.util.HttpUtil;
 import com.ruyicai.weixin.dao.SubscriberDao;
 import com.ruyicai.weixin.domain.CaseLotUserinfo;
 import com.ruyicai.weixin.domain.Subscriber;
@@ -29,6 +34,8 @@ import com.ruyicai.weixin.service.SubscriberService;
 import com.ruyicai.weixin.service.WeixinService;
 import com.ruyicai.weixin.service.WinInfoImageService;
 import com.ruyicai.weixin.util.JsonMapper;
+import com.ruyicai.weixin.util.Sha1Util;
+import com.ruyicai.weixin.util.StringUtil;
 
 @RequestMapping(value = "/static")
 @Controller
@@ -223,6 +230,67 @@ public class StaticController {
 
             rd.setErrorCode(ErrorCode.OK.value);
             rd.setValue(subscriber);
+
+        } catch (Exception e) {
+            logger.error("findUserinfoByCode error", e);
+            rd.setErrorCode(ErrorCode.ERROR.value);
+            rd.setValue(e.getMessage());
+        }
+        return JsonMapper.toJsonP(callback, rd);
+    }
+    
+ 
+    @RequestMapping(value = "/findJsSign", method = RequestMethod.GET)
+    @ResponseBody
+    public String findJsSign(@RequestParam(value = "url", required = true) String url,
+            @RequestParam(value = "noncestr", required = false) String noncestr,
+            @RequestParam(value = "timestamp", required = false) String timestamp,
+            @RequestParam(value = "jsapi_ticket", required = false) String jsapi_ticket,
+            @RequestParam(value = "callBackMethod") String callback) {
+        
+        logger.info("/static/findJsSign url:{}", url);
+        String baseurl = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token="+weixinService.getAccessToken()+"&type=jsapi";
+        
+        String result = "";
+        if(StringUtil.isEmpty(jsapi_ticket))
+        {
+            result = HttpUtil.sendRequestByGet(baseurl, true);
+            try {
+                JSONObject js = new JSONObject(result);
+                result = (String)js.get("ticket");
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            
+        }
+        else
+            result = jsapi_ticket;
+        ResponseData rd = new ResponseData();
+        try {
+            SortedMap<String,String> signParams = new TreeMap<String, String>();   ;  
+            signParams.put("jsapi_ticket", result);
+            logger.info("jsapi_ticket:{}",result);
+            
+            if(StringUtil.isEmpty(noncestr))
+             noncestr = Sha1Util.getNonceStr();
+            signParams.put("noncestr", noncestr);           
+            logger.info("noncestr:{}",noncestr);
+            
+            if(StringUtil.isEmpty(timestamp))
+             timestamp = Sha1Util.getTimeStamp();
+            signParams.put("timestamp", timestamp);
+            logger.info("timestamp:{}",timestamp);
+
+            
+            signParams.put("url", url);
+            logger.info("url:{}",url);
+            String sign = Sha1Util.createSHA1Sign(signParams);
+            logger.info("sign:{}",sign);
+            System.out.println("sign:"+sign);
+
+            rd.setErrorCode(ErrorCode.OK.value);
+            rd.setValue(sign);
 
         } catch (Exception e) {
             logger.error("findUserinfoByCode error", e);
