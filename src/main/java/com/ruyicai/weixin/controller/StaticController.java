@@ -8,7 +8,7 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.StringUtils; 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ruyicai.advert.util.HttpUtil;
+import com.ruyicai.weixin.consts.Const;
 import com.ruyicai.weixin.dao.SubscriberDao;
 import com.ruyicai.weixin.domain.CaseLotUserinfo;
 import com.ruyicai.weixin.domain.Subscriber;
@@ -288,10 +289,15 @@ public class StaticController {
             String sign = Sha1Util.createSHA1Sign(signParams);
             logger.info("sign:{}",sign);
             System.out.println("sign:"+sign);
+            
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("appid",Const.APPID);
+            map.put("noncestr", noncestr);
+            map.put("timestamp", timestamp);
+            map.put("sign", sign);  
 
-            rd.setErrorCode(ErrorCode.OK.value);
-            rd.setValue(sign);
-
+            rd.setErrorCode(ErrorCode.OK.value);                   
+            rd.setValue(map);
         } catch (Exception e) {
             logger.error("findUserinfoByCode error", e);
             rd.setErrorCode(ErrorCode.ERROR.value);

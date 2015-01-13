@@ -21,4 +21,6 @@ public class Const {
 	public static int Env_BetMoeny = 0;
 	
 	public static String SYS_USERNO = "03134453";
+	
+	public static String APPID = "wx6919f6fac2525c5f";
 }
