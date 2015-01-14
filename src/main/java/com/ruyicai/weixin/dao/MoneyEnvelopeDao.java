@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ruyicai.weixin.domain.MoneyEnvelope;
 import com.ruyicai.weixin.domain.Packet;
 import com.ruyicai.weixin.domain.SubscriberInfo;
+import com.ruyicai.weixin.util.StringUtil;
 
 
 @Component
@@ -29,6 +30,7 @@ public class MoneyEnvelopeDao {
         moneyEnvelope.setPacketExrStartDate(packet_exr_start_date);
         moneyEnvelope.setPacketExrEndDate(packet_exr_end_date);
         moneyEnvelope.setExireDate(expire_date);
+        moneyEnvelope.setActionStatus(0);
         Calendar cal = Calendar.getInstance();
         moneyEnvelope.setCreatetime(cal);
         moneyEnvelope.setParts(parts);    
@@ -42,6 +44,7 @@ public class MoneyEnvelopeDao {
         moneyEnvelope.setUserno(userno);
         moneyEnvelope.setChannelName(actionID);
         moneyEnvelope.setMoney(money);
+        moneyEnvelope.setActionStatus(0);
         moneyEnvelope.setPacketExrStartDate(packet_exr_start_date);
         moneyEnvelope.setPacketExrEndDate(packet_exr_end_date);
         moneyEnvelope.setExireDate(expire_date);
@@ -50,6 +53,23 @@ public class MoneyEnvelopeDao {
         moneyEnvelope.setParts(parts);    
         moneyEnvelope.persist();
         return moneyEnvelope;
+    }
+    
+    @Transactional
+    public int updateMoneyEnvelope(String action_status, String action_id,String packet_exr_end_date,String packet_exr_start_date) {
+        String sql_sub = "";
+        if (!StringUtil.isEmpty(action_status))
+            sql_sub += "  action_status = "+action_status+",";
+        if (!StringUtil.isEmpty(packet_exr_start_date))
+            sql_sub += "  packet_exr_start_date = '"+packet_exr_start_date+"',";
+        if (!StringUtil.isEmpty(packet_exr_end_date))
+            sql_sub += "  packet_exr_end_date = '"+packet_exr_end_date+"',";
+        
+        sql_sub = sql_sub.substring(0, sql_sub.length()-1);
+            
+       String sql = "UPDATE money_envelope SET "+sql_sub+" WHERE channel_name = '"+action_id+"'";  
+       System.out.println("sql:"+sql);
+       return entityManager.createNativeQuery(sql).executeUpdate();   
     }
     
     @SuppressWarnings("unchecked")

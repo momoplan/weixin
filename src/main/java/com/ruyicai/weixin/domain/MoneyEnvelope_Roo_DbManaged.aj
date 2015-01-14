@@ -8,6 +8,7 @@ import java.util.Calendar;
 import javax.persistence.Column;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 privileged aspect MoneyEnvelope_Roo_DbManaged {
@@ -44,9 +45,13 @@ privileged aspect MoneyEnvelope_Roo_DbManaged {
     private Calendar MoneyEnvelope.packetExrStartDate;
     
     @Column(name = "createtime")
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "MM")
     private Calendar MoneyEnvelope.createtime;
+    
+    @Column(name = "action_status")
+    private Integer MoneyEnvelope.actionStatus;
     
     public String MoneyEnvelope.getUserno() {
         return userno;
@@ -126,6 +131,14 @@ privileged aspect MoneyEnvelope_Roo_DbManaged {
     
     public void MoneyEnvelope.setCreatetime(Calendar createtime) {
         this.createtime = createtime;
+    }
+    
+    public Integer MoneyEnvelope.getActionStatus() {
+        return actionStatus;
+    }
+    
+    public void MoneyEnvelope.setActionStatus(Integer actionStatus) {
+        this.actionStatus = actionStatus;
     }
     
 }

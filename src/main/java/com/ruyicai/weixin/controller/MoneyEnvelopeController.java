@@ -331,7 +331,7 @@ public class MoneyEnvelopeController {
             rd.setValue(e.getMessage());
         }
 
-        if (callback.equals(""))
+        if (StringUtil.isEmpty(callback))
             return JsonMapper.toJson(rd);
         else
             return JsonMapper.toJsonP(callback, rd);
@@ -524,4 +524,35 @@ public class MoneyEnvelopeController {
         return JsonMapper.toJson(rd);
 
     }
+    
+    // 更新紅包信息
+    @RequestMapping(value = "/updatePacketInfo")
+    @ResponseBody
+    public String updatePacketInfo(@RequestParam(value = "action_id", required = true) String action_id,
+            @RequestParam(value = "action_status", required = false) String action_status,
+            @RequestParam(value = "packet_exr_start_date", required = false) String packet_exr_start_date,
+            @RequestParam(value = "packet_exr_end_date", required = false) String packet_exr_end_date,
+            @RequestParam(value = "callBackMethod", required = false) String callback) {
+
+        ResponseData rd = new ResponseData();
+        try {          
+            int ret = moneyEnvelopeDao.updateMoneyEnvelope(action_status, action_id, packet_exr_end_date, packet_exr_start_date);
+            rd.setErrorCode(ErrorCode.OK.value);
+            rd.setValue(ret);
+        } catch (WeixinException e) {
+            logger.error("updatePacketInfo error", e);
+            rd.setErrorCode(e.getErrorCode().value);
+            rd.setValue(e.getMessage());
+        } catch (Exception e) {
+            logger.error("updatePacketInfo error", e);
+            rd.setErrorCode(ErrorCode.ERROR.value);
+            rd.setValue(e.getMessage());
+        }
+
+        if (StringUtil.isEmpty(callback))
+            return JsonMapper.toJson(rd);
+        else
+            return JsonMapper.toJsonP(callback, rd);
+    }
+
 }
