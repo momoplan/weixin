@@ -20,8 +20,8 @@ public class HongBaoAlgorithm {
         
       
         
-         int money = 831;
-         int part = 13;
+         int money = 741;
+         int part = 11;
 
         long[] result = HongBaoAlgorithm.generate(money, part, money/2, money/part/2);
         

@@ -30,7 +30,7 @@ public class MoneyEnvelopeDao {
         moneyEnvelope.setPacketExrStartDate(packet_exr_start_date);
         moneyEnvelope.setPacketExrEndDate(packet_exr_end_date);
         moneyEnvelope.setExireDate(expire_date);
-        moneyEnvelope.setActionStatus(0);
+        moneyEnvelope.setActionStatus(1);
         Calendar cal = Calendar.getInstance();
         moneyEnvelope.setCreatetime(cal);
         moneyEnvelope.setParts(parts);    
@@ -44,7 +44,7 @@ public class MoneyEnvelopeDao {
         moneyEnvelope.setUserno(userno);
         moneyEnvelope.setChannelName(actionID);
         moneyEnvelope.setMoney(money);
-        moneyEnvelope.setActionStatus(0);
+        moneyEnvelope.setActionStatus(1);
         moneyEnvelope.setPacketExrStartDate(packet_exr_start_date);
         moneyEnvelope.setPacketExrEndDate(packet_exr_end_date);
         moneyEnvelope.setExireDate(expire_date);

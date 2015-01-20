@@ -55,7 +55,7 @@ public class MoneyEnvelopeService {
         // if (caseLotUserinfo == null)
         // return "";
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = sdf.parse(packet_exr_start_date);
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -142,11 +142,22 @@ public class MoneyEnvelopeService {
             throw new WeixinException(ErrorCode.CASELOTUSERINFO_NOT_EXISTS);
         
         List<MoneyEnvelope> puntPacketActionID = moneyEnvelopeDao.findEnvelopByPacketID(packet_id);
+        
         if(puntPacketActionID.size() == 1)
         {
             MoneyEnvelope  PacketActionID = puntPacketActionID.get(0);
             action_id = PacketActionID.getChannelName();
+           
+            
+            if(PacketActionID.getActionStatus() == 0)
+            {
+                iMap.put("status", "605");
+                iMap.put("memo", "活动关闭");
+                return iMap;
+            }
         }
+                        
+       
         else
         {
             throw new WeixinException(ErrorCode.DATA_NOT_EXISTS);

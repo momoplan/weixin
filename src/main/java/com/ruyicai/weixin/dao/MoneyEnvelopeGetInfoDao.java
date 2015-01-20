@@ -119,7 +119,7 @@ public class MoneyEnvelopeGetInfoDao {
     
     @SuppressWarnings("unchecked")
     public List<MoneyEnvelopeGetInfo> findMoneyEnveList(String packet_id) {
-        String sql = " SELECT a.money,b.nickname,b.headimgurl,FROM_UNIXTIME(UNIX_TIMESTAMP(a.get_time),'%Y-%m-%d %H:%m:%s') FROM money_envelope_get_info a LEFT  JOIN case_lot_userinfo b on a.get_userno = b.userno WHERE get_userno IS NOT NULL AND orderid = 'HM00002' AND envelope_id = ? ";
+        String sql = " SELECT a.money,b.nickname,b.headimgurl,FROM_UNIXTIME(UNIX_TIMESTAMP(a.get_time),'%Y-%m-%d %H:%i:%s') FROM money_envelope_get_info a LEFT  JOIN case_lot_userinfo b on a.get_userno = b.userno WHERE get_userno IS NOT NULL AND orderid = 'HM00002' AND envelope_id = ? ";
 //        return entityManager.createNativeQuery(sql, MoneyEnvelopeGetInfo.class).setParameter(1, packet_id).getResultList();  
         // Query q = entityManager.createNativeQuery(sql, "srsm2");
         Query q = entityManager.createNativeQuery(sql).setParameter(1, packet_id);

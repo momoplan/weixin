@@ -78,7 +78,7 @@ public class MoneyEnvelopeController {
     CaseLotActivityService caseLotActivityService;
 
     // 创建红包
-    @RequestMapping(value = "/createMoneyEnvelope", method = RequestMethod.GET)
+    @RequestMapping(value = "/createMoneyEnvelope", method = RequestMethod.POST)
     @ResponseBody
     public String createMoneyEnvelope(@RequestParam(value = "userno", required = true) String userno,
             @RequestParam(value = "parts", required = false) int parts,
@@ -121,10 +121,18 @@ public class MoneyEnvelopeController {
     public String getMoneyfromEnvelope(@RequestParam(value = "userno", required = true) String userno,
             @RequestParam(value = "packet_id", required = true) String packet_id,
             @RequestParam(value = "callBackMethod", required = false) String callback) {
-
+        
         packet_id = ToolsAesCrypt.Decrypt(packet_id, Const.PACKET_KEY);
-
+        
+        Map<String, Object> iMap_status =  moneyEnvelopeService.getPuntPacketStatus(userno, packet_id);
         ResponseData rd = new ResponseData();
+        if(!iMap_status.get("status").equals("0"))
+        {
+            rd.setValue(iMap_status);
+            rd.setErrorCode(ErrorCode.PACKET_EXPIRED.value);
+            return JsonMapper.toJsonP(callback, rd);          
+        }
+      
         try {
 
             rd.setErrorCode(ErrorCode.OK.value);
@@ -171,20 +179,21 @@ public class MoneyEnvelopeController {
 
             Map<String, Object> iMap = new HashMap<String, Object>();
 
-            // MoneyEnvelope subscriberInfo =
-            // moneyEnvelopeDao.createMoneyEnvelope(userno, parts, money,
-            // exire_date, channelName);
-            // iMap.put("moneyEnvelope", subscriberInfo);
+           
 
-            iMap.put("getMoenyStatus", moneyEnvelopeService.getPuntPacketStatus(userno, packet_id));
+            Map<String, Object> iMap_status = new HashMap<String, Object>();
+            iMap_status = moneyEnvelopeService.getPuntPacketStatus(userno, packet_id);
+            if(iMap_status.get("status").equals("605"))
+                rd.setErrorCode(ErrorCode.ACTION_EXPIRED.value);
+            iMap.put("getMoenyStatus", iMap_status);
 
             rd.setValue(iMap);
         } catch (WeixinException e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("getMoneyStatus error", e);
             rd.setErrorCode(e.getErrorCode().value);
             rd.setValue(e.getMessage());
         } catch (Exception e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("getMoneyStatus error", e);
             rd.setErrorCode(ErrorCode.ERROR.value);
             rd.setValue(e.getMessage());
         }
