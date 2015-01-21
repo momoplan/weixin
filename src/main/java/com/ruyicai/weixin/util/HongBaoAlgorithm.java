@@ -21,10 +21,24 @@ public class HongBaoAlgorithm {
       
         
          int money = 741;
-         int part = 11;
+         int part = 2;
 
-        long[] result = HongBaoAlgorithm.generate(money, part, money/2, money/part/2);
-        
+        long[] result = null;
+//        if(part>2)
+        result =  HongBaoAlgorithm.generate(money, part, money/2, money/part/2);
+//        else if(part == 2)
+//        {
+//            result = new long[2];
+//            result[0]  =  (long)random.nextInt(money);
+//            result[1] = money -result[0] ;
+//             
+//        }
+//        else
+//        {
+//            result = new long[1];
+//           
+//            result[0] = money  ;
+//        }
         
 
         for (int i = 0; i < result.length; i++) {
@@ -59,6 +73,21 @@ public class HongBaoAlgorithm {
      */
     public static long[] generate(long total, int count, long max, long min) {
         long[] result = new long[count];
+        
+         if(count == 2)
+        {
+            
+            result[0]  =   random.nextInt((int)total);
+            result[1] = total -result[0] ;
+            
+        }
+        else if(count == 1)
+        {           
+            result[0] = total;
+           
+        }
+        else
+        {
 
         long average = total / count;
 
@@ -106,6 +135,7 @@ public class HongBaoAlgorithm {
                     total++;
                 }
             }
+        }
         }
         return result;
     }

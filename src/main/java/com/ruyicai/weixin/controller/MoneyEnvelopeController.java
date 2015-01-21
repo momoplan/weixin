@@ -103,11 +103,11 @@ public class MoneyEnvelopeController {
 
             rd.setValue(iMap);
         } catch (WeixinException e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("createMoneyEnvelope error", e);
             rd.setErrorCode(e.getErrorCode().value);
             rd.setValue(e.getMessage());
         } catch (Exception e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("createMoneyEnvelope error", e);
             rd.setErrorCode(ErrorCode.ERROR.value);
             rd.setValue(e.getMessage());
         }
@@ -149,11 +149,11 @@ public class MoneyEnvelopeController {
 
             rd.setValue(iMap);
         } catch (WeixinException e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("getMoneyfromEnvelope error", e);
             rd.setErrorCode(e.getErrorCode().value);
             rd.setValue(e.getMessage());
         } catch (Exception e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("getMoneyfromEnvelope error", e);
             rd.setErrorCode(ErrorCode.ERROR.value);
             rd.setValue(e.getMessage());
         }
@@ -218,11 +218,11 @@ public class MoneyEnvelopeController {
 
             rd.setValue(iMap);
         } catch (WeixinException e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("getMoneyEnvelopeList error", e);
             rd.setErrorCode(e.getErrorCode().value);
             rd.setValue(e.getMessage());
         } catch (Exception e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("getMoneyEnvelopeList error", e);
             rd.setErrorCode(ErrorCode.ERROR.value);
             rd.setValue(e.getMessage());
         }
@@ -267,11 +267,11 @@ public class MoneyEnvelopeController {
 
             rd.setValue(iMap);
         } catch (WeixinException e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("getUserMoenyList error", e);
             rd.setErrorCode(e.getErrorCode().value);
             rd.setValue(e.getMessage());
         } catch (Exception e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("getUserMoenyList error", e);
             rd.setErrorCode(ErrorCode.ERROR.value);
             rd.setValue(e.getMessage());
         }
@@ -300,11 +300,11 @@ public class MoneyEnvelopeController {
 
             rd.setValue(iMap);
         } catch (WeixinException e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("sendMsg error", e);
             rd.setErrorCode(e.getErrorCode().value);
             rd.setValue(e.getMessage());
         } catch (Exception e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("sendMsg error", e);
             rd.setErrorCode(ErrorCode.ERROR.value);
             rd.setValue(e.getMessage());
         }
@@ -331,11 +331,11 @@ public class MoneyEnvelopeController {
 
             rd.setValue(iMap);
         } catch (WeixinException e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("getMoney error", e);
             rd.setErrorCode(e.getErrorCode().value);
             rd.setValue(e.getMessage());
         } catch (Exception e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("getMoney error", e);
             rd.setErrorCode(ErrorCode.ERROR.value);
             rd.setValue(e.getMessage());
         }
@@ -379,11 +379,11 @@ public class MoneyEnvelopeController {
                 
           
         } catch (WeixinException e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("deductUserMoney error", e);
             rd.setErrorCode(e.getErrorCode().value);
             rd.setValue(e.getMessage());
         } catch (Exception e) {
-            logger.error("findReturnPacketList error", e);
+            logger.error("deductUserMoney error", e);
             rd.setErrorCode(ErrorCode.ERROR.value);
             rd.setValue(e.getMessage());
         }
