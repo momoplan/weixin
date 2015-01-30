@@ -120,6 +120,7 @@ public class WinInfoImageService {
 					} else {
 						throw new IllegalArgumentException("The argument lotno is illegal.");
 					}
+					
 					fileService.downloadFile(dest, request, response);
 				}
 			} else {
