@@ -85,6 +85,7 @@ public class NumActionController {
     public String createNumAction(@RequestParam(value = "userno", required = true) String userno,
             @RequestParam(value = "batchcode", required = false) String batchcode,
             @RequestParam(value = "betcode", required = true) String betcode,
+            @RequestParam(value = "lottype", required = true) String lottype,
             @RequestParam(value = "callBackMethod", required = false) String callback) {
 
         ResponseData rd = new ResponseData();
@@ -94,7 +95,7 @@ public class NumActionController {
 
             Map<String, Object> iMap = new HashMap<String, Object>();
             
-            NumAction numAction = numActionDao.createNumAction(userno, batchcode, betcode);
+            NumAction numAction = numActionDao.createNumAction(userno, batchcode, betcode,lottype);
             rd.setValue(numAction);
         } catch (WeixinException e) {
             logger.error("createNumAction error", e);
@@ -106,7 +107,8 @@ public class NumActionController {
             rd.setValue(e.getMessage());
         }
 
-        return JsonMapper.toJson(rd);
+        return JsonMapper.toJsonP(callback, rd);
+       // return JsonMapper.toJson(rd);
     }
     
     // 参与详情
@@ -120,9 +122,6 @@ public class NumActionController {
             rd.setErrorCode(ErrorCode.OK.value);
             
             List<NumAction> lstNumAction = numActionDao.findNumActionByUserno(userno);
-
-             
-
             rd.setValue(lstNumAction);
         } catch (WeixinException e) {
             logger.error("getNumActionList error", e);
@@ -137,6 +136,40 @@ public class NumActionController {
         // return JsonMapper.toJson(rd);
         return JsonMapper.toJsonP(callback, rd);
     }
+    
+    @RequestMapping(value = "/getHaveBet", method = RequestMethod.GET)
+    @ResponseBody
+    public String getHaveBet(@RequestParam(value = "userno", required = true) String userno,
+            @RequestParam(value = "batchcode", required = false) String batchcode,
+            @RequestParam(value = "lottype", required = true) String lottype,
+            @RequestParam(value = "callBackMethod", required = false) String callback) {
+        
+        ResponseData rd = new ResponseData();
+        try {
+            rd.setErrorCode(ErrorCode.OK.value);
+            
+            List<NumAction> lstNumAction = numActionDao.findHaveBet(userno, batchcode, lottype);
+            
+            Map<String, Object> iMap = new HashMap<String, Object>();
+            iMap.put("size", lstNumAction.size());
+            iMap.put("betinfo", lstNumAction);
+            
+            rd.setValue(iMap);
+        } catch (WeixinException e) {
+            logger.error("getNumActionList error", e);
+            rd.setErrorCode(e.getErrorCode().value);
+            rd.setValue(e.getMessage());
+        } catch (Exception e) {
+            logger.error("getNumActionList error", e);
+            rd.setErrorCode(ErrorCode.ERROR.value);
+            rd.setValue(e.getMessage());
+        }
+
+        // return JsonMapper.toJson(rd);
+        return JsonMapper.toJsonP(callback, rd);
+    }
+    
+    
 
     // 抢红包
     @RequestMapping(value = "/getMoneyfromEnvelope", method = RequestMethod.GET)

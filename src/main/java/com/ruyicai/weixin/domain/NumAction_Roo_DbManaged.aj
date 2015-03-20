@@ -13,11 +13,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 privileged aspect NumAction_Roo_DbManaged {
     
-    @Column(name = "userno", length = 255)
+    @Column(name = "userno", length = 8, unique = true)
     @NotNull
     private String NumAction.userno;
     
-    @Column(name = "batchcode", length = 255)
+    @Column(name = "batchcode", length = 50, unique = true)
     @NotNull
     private String NumAction.batchcode;
     
@@ -31,6 +31,9 @@ privileged aspect NumAction_Roo_DbManaged {
     
     @Column(name = "betcode", length = 255)
     private String NumAction.betcode;
+    
+    @Column(name = "lottype", length = 50)
+    private String NumAction.lottype;
     
     public String NumAction.getUserno() {
         return userno;
@@ -70,6 +73,14 @@ privileged aspect NumAction_Roo_DbManaged {
     
     public void NumAction.setBetcode(String betcode) {
         this.betcode = betcode;
+    }
+    
+    public String NumAction.getLottype() {
+        return lottype;
+    }
+    
+    public void NumAction.setLottype(String lottype) {
+        this.lottype = lottype;
     }
     
 }

@@ -24,11 +24,12 @@ public class NumActionDao {
     private EntityManager entityManager;
 
     @Transactional
-    public NumAction createNumAction(String userno, String  batchcode,String  betcode) {
+    public NumAction createNumAction(String userno, String  batchcode,String  betcode,String lottype) {
         NumAction numAction = new NumAction();
         numAction.setUserno(userno);    
         numAction.setBatchcode(batchcode);
         numAction.setAward("0");
+        numAction.setLottype(lottype);
         numAction.setBetcode(betcode);
         Calendar cal = Calendar.getInstance();
         numAction.setCreatetime(cal);        
@@ -42,6 +43,13 @@ public class NumActionDao {
         List<NumAction> q = entityManager.createNativeQuery(
                 "SELECT * FROM num_action where  userno = '" + userno + "'", NumAction.class).getResultList();
         return q;
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Transactional
+    public List<NumAction> findHaveBet(String userno,String batchcode,String lottype) {
+        String sql = "select * from num_action p where p.userno = ? and p.batchcode = ? and p.lottype = ?";
+        return entityManager.createNativeQuery(sql, NumAction.class).setParameter(1, userno).setParameter(2, batchcode).setParameter(3, lottype).getResultList();
     }
     
     @Transactional
