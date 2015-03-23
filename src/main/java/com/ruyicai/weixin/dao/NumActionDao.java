@@ -45,6 +45,14 @@ public class NumActionDao {
         return q;
     }
     
+    @Transactional
+    public List<NumAction> findNumActionByBatchcode(String batchcode,String lottype) {
+        @SuppressWarnings("unchecked")
+        List<NumAction> q = entityManager.createNativeQuery(
+                "SELECT * FROM num_action where  userno = '" + batchcode + "' and award = '0' and lottype = '"+lottype+"'", NumAction.class).getResultList();
+        return q;
+    }
+    
     @SuppressWarnings("unchecked")
     @Transactional
     public List<NumAction> findHaveBet(String userno,String batchcode,String lottype) {

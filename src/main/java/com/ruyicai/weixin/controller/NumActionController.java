@@ -170,6 +170,38 @@ public class NumActionController {
     }
     
     
+    @RequestMapping(value = "/getLotProgressive", method = RequestMethod.GET)
+    @ResponseBody
+    public String getLotProgressive(
+            @RequestParam(value = "lottype", required = true) String lottype,
+            @RequestParam(value = "callBackMethod", required = false) String callback) {
+        
+        ResponseData rd = new ResponseData();
+        try {
+            rd.setErrorCode(ErrorCode.OK.value);
+            
+           // List<NumAction> lstNumAction = numActionDao.findHaveBet(userno, batchcode, lottype);
+            
+            Map<String, Object> iMap = new HashMap<String, Object>();
+            iMap.put("lottype", lottype);
+            iMap.put("progressive", 100);
+            
+            rd.setValue(iMap);
+        } catch (WeixinException e) {
+            logger.error("getNumActionList error", e);
+            rd.setErrorCode(e.getErrorCode().value);
+            rd.setValue(e.getMessage());
+        } catch (Exception e) {
+            logger.error("getNumActionList error", e);
+            rd.setErrorCode(ErrorCode.ERROR.value);
+            rd.setValue(e.getMessage());
+        }
+
+        // return JsonMapper.toJson(rd);
+        return JsonMapper.toJsonP(callback, rd);
+    }
+    
+    
 
     // 抢红包
     @RequestMapping(value = "/getMoneyfromEnvelope", method = RequestMethod.GET)

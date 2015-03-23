@@ -1,6 +1,7 @@
 package com.ruyicai.weixin.timer;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import com.ruyicai.weixin.dao.NumActionDao;
 import com.ruyicai.weixin.dao.PuntListDao;
 import com.ruyicai.weixin.dao.PuntPacketDao;
+import com.ruyicai.weixin.domain.NumAction;
 import com.ruyicai.weixin.domain.PuntList;
 import com.ruyicai.weixin.domain.PuntPacket;
 import com.ruyicai.weixin.exception.WeixinException;
@@ -34,6 +37,9 @@ public class OrderInfoService {
 
     @Autowired
     PacketActivityService packetActivityService;
+    
+    @Autowired
+    private NumActionDao numActionDao;
 
     @Autowired
     PuntListDao puntListDao;
@@ -74,6 +80,52 @@ public class OrderInfoService {
         }
 
         logger.info("===========定时更新投注订单中奖金额结束===========");
+        
+        
+        Calendar cal = Calendar.getInstance();
+        int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+        String lottype = "";
+        
+        if(w == 0 || w== 2||w==4)
+        {
+            lottype ="F47104";
+        }
+        else if(w == 1 || w== 3||w==6)
+        {
+            lottype ="T01001";
+        }
+      
+      
+        JSONObject preOrderInfo = commonService.getPreBatchInfo(lottype);
+        String batchCode = "";   
+        String winCode = "";   
+         
+        batchCode = preOrderInfo.getString("batchCode");
+        winCode = preOrderInfo.getString("winCode");
+        String betcode = "";
+        
+        
+        List<NumAction> lstNumAction = numActionDao.findNumActionByBatchcode(batchCode,lottype);
+        
+        for (NumAction numAction : lstNumAction) {
+        
+            betcode = numAction.getBetcode();
+           
+            
+            getAward(lottype,betcode,winCode);
+            
+            
+        }
+ 
+    }
+    
+    private int getAward(String lottype,String betcode,String winCode)
+    {
+        if(lottype.equals("F47104"))
+        {
+            String[] nums = new String[6];
+        }
+        return 0;
     }
 
     /**
