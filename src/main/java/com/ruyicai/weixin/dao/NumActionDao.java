@@ -37,6 +37,17 @@ public class NumActionDao {
         return numAction;
     }
     
+ 
+    
+    @Transactional
+    public int updateAward(int id ,int award){
+        
+            
+       String sql = "UPDATE num_action SET award = '"+award+"' WHERE action_id = "+id;  
+       System.out.println("sql:"+sql);
+       return entityManager.createNativeQuery(sql).executeUpdate();   
+    }
+    
     @Transactional
     public List<NumAction> findNumActionByUserno(String userno) {
         @SuppressWarnings("unchecked")

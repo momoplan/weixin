@@ -1,6 +1,7 @@
 package com.ruyicai.weixin.timer;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -95,37 +96,76 @@ public class OrderInfoService {
             lottype ="T01001";
         }
       
-      
+        logger.debug("lottype:"+lottype);
+        logger.debug("w:"+w);
+        
         JSONObject preOrderInfo = commonService.getPreBatchInfo(lottype);
         String batchCode = "";   
         String winCode = "";   
          
         batchCode = preOrderInfo.getString("batchCode");
+        logger.debug("batchCode:"+batchCode);
         winCode = preOrderInfo.getString("winCode");
+        logger.debug("winCode:"+winCode);
         String betcode = "";
         
         
         List<NumAction> lstNumAction = numActionDao.findNumActionByBatchcode(batchCode,lottype);
         
-        for (NumAction numAction : lstNumAction) {
-        
-            betcode = numAction.getBetcode();
-           
-            
-            getAward(lottype,betcode,winCode);
-            
-            
+        for (NumAction numAction : lstNumAction) {       
+            betcode = numAction.getBetcode();       
+            logger.debug("betcode:"+betcode);
+            int award = getAward(lottype,betcode,winCode);
+            numAction.setAward(String.valueOf(award));
+            numAction.merge();
+            logger.debug("update:"+numAction.getActionId()+":"+numAction.getAward());
         }
  
     }
     
     private int getAward(String lottype,String betcode,String winCode)
     {
+        int award = 1;
         if(lottype.equals("F47104"))
         {
-            String[] nums = new String[6];
+         // 中奖号码
+            StringBuffer xjh = new StringBuffer(winCode);
+            for (int i = 0; i < xjh.length() - 8; i = i + 2) {
+                xjh.insert((i + 1) * 2 - (i / 2), ',');
+            }
+
+            String red = xjh.substring(0, 17);
+            String blue = xjh.substring(18, 20);
+            String zjh = betcode;
+            zjh = zjh.replaceAll("~", "");
+           
+            List<String> list = new ArrayList<String>();
+            int redAdd = 0;
+            int blueAdd = 0;
+            
+            for (int i = 0; i < zjh.length() - 4; i = i + 2) {
+                if (red.indexOf(zjh.substring(i, i + 2)) > -1) {
+                    redAdd++;
+                }
+
+            }
+
+            if (redAdd >= 1) {
+                award = 2;
+                for (int i = 14; i < zjh.length(); i = i + 2) {
+                    System.out.println(zjh.substring(i, i + 2));
+
+                    if (blue.indexOf(zjh.substring(i, i + 2)) > -1) {
+                        blueAdd++;
+                    }
+                }
+
+                if (blueAdd == 1) {
+                    award = 3;
+                }
+            }
         }
-        return 0;
+        return award;
     }
 
     /**
