@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import com.ruyicai.weixin.dao.NumActionDao;
+import com.ruyicai.weixin.dao.PrizePoolDao;
 import com.ruyicai.weixin.dao.PuntListDao;
 import com.ruyicai.weixin.dao.PuntPacketDao;
 import com.ruyicai.weixin.domain.NumAction;
@@ -41,6 +42,10 @@ public class OrderInfoService {
     
     @Autowired
     private NumActionDao numActionDao;
+    
+    @Autowired
+    private PrizePoolDao prizePoolDao;
+
 
     @Autowired
     PuntListDao puntListDao;
@@ -52,6 +57,57 @@ public class OrderInfoService {
     LotteryService lotteryService;
 
     public void process() {
+        try
+        {
+        Calendar cal = Calendar.getInstance();
+        int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+        String lottype = "";
+        
+        if(w == 0 || w== 2||w==4)
+        {
+            lottype ="F47104";
+        }
+        else if(w == 1 || w== 3||w==6)
+        {
+            lottype ="T01001";
+        }
+      
+        logger.info("lottype:"+lottype);
+        logger.info("w:"+w);
+        
+        JSONObject preOrderInfo = commonService.getPreBatchInfo(lottype);
+        String batchCode = "";   
+        String winCode = "";   
+         
+        batchCode = preOrderInfo.getString("batchCode");
+        logger.info("batchCode:"+batchCode);
+        winCode = preOrderInfo.getString("winCode");
+        logger.info("winCode:"+winCode);
+        String betcode = "";
+        
+        
+        List<NumAction> lstNumAction = numActionDao.findNumActionByBatchcode(batchCode,lottype);
+        
+        for (NumAction numAction : lstNumAction) {       
+            betcode = numAction.getBetcode();       
+            logger.info("betcode:"+betcode);
+            int award = getAward(lottype,betcode,winCode);
+            numAction.setAward(String.valueOf(award));
+            numAction.setWincode(winCode);
+            numAction.merge();
+            logger.info("update:"+numAction.getActionId()+":"+numAction.getAward());
+        }
+        
+        prizePoolDao.createPrizePool(lottype, batchCode, 100, 0);
+        
+        
+        }
+        catch(Exception ex)
+        {
+            logger.info(ex.getMessage());
+        }
+        
+        
         logger.info("===========定时更新投注订单中奖金额开始===========");
         String opentime = DateUtil.format("yyyy-MM-dd", new Date());
         List<PuntList> puntList = puntListDao.findPuntListNotPrized(opentime);
@@ -59,7 +115,7 @@ public class OrderInfoService {
             logger.info("无投注订单可更新");
             return;
         }
-
+  
         StringBuilder orderids = new StringBuilder();
         int count = 0;
         for (PuntList punt : puntList) {
@@ -81,46 +137,6 @@ public class OrderInfoService {
         }
 
         logger.info("===========定时更新投注订单中奖金额结束===========");
-        
-        
-        Calendar cal = Calendar.getInstance();
-        int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
-        String lottype = "";
-        
-        if(w == 0 || w== 2||w==4)
-        {
-            lottype ="F47104";
-        }
-        else if(w == 1 || w== 3||w==6)
-        {
-            lottype ="T01001";
-        }
-      
-        logger.debug("lottype:"+lottype);
-        logger.debug("w:"+w);
-        
-        JSONObject preOrderInfo = commonService.getPreBatchInfo(lottype);
-        String batchCode = "";   
-        String winCode = "";   
-         
-        batchCode = preOrderInfo.getString("batchCode");
-        logger.debug("batchCode:"+batchCode);
-        winCode = preOrderInfo.getString("winCode");
-        logger.debug("winCode:"+winCode);
-        String betcode = "";
-        
-        
-        List<NumAction> lstNumAction = numActionDao.findNumActionByBatchcode(batchCode,lottype);
-        
-        for (NumAction numAction : lstNumAction) {       
-            betcode = numAction.getBetcode();       
-            logger.debug("betcode:"+betcode);
-            int award = getAward(lottype,betcode,winCode);
-            numAction.setAward(String.valueOf(award));
-            numAction.merge();
-            logger.debug("update:"+numAction.getActionId()+":"+numAction.getAward());
-        }
- 
     }
     
     private int getAward(String lottype,String betcode,String winCode)
@@ -150,7 +166,7 @@ public class OrderInfoService {
 
             }
 
-            if (redAdd >= 1) {
+            if (redAdd >= 6) {
                 award = 2;
                 for (int i = 14; i < zjh.length(); i = i + 2) {
                     System.out.println(zjh.substring(i, i + 2));
@@ -164,6 +180,54 @@ public class OrderInfoService {
                     award = 3;
                 }
             }
+        }
+        else
+        {
+            StringBuffer xjh = new StringBuffer(winCode);
+            
+            
+            String red = xjh.substring(0, 14);
+            String blue = xjh.substring(15, 20);
+            
+             System.out.println(red);
+             System.out.println(blue);
+//            String zjh = "01020304050611~1116";
+            
+            String zjh = betcode;
+            zjh = zjh.replaceAll("~", "");
+             
+            List<String> list = new ArrayList<String>();
+            int redAdd = 0;
+            int blueAdd = 0;
+            
+            for (int i = 0; i < zjh.length() - 6; i = i + 2) {
+                if (red.indexOf(zjh.substring(i, i + 2)) > -1) {
+                    redAdd++;
+                }
+
+            }
+
+            if (redAdd >= 5) {
+                
+                for (int i = 12; i < zjh.length(); i = i + 2) {
+                    System.out.println(zjh.substring(i, i + 2));
+
+                    if (blue.indexOf(zjh.substring(i, i + 2)) > -1) {
+                        blueAdd++;
+                    }
+                }
+
+                if (blueAdd == 2) {
+                    award = 3;
+                }
+                else if(blueAdd == 1)
+                {
+                    award = 2;
+                }
+            }
+
+            System.out.println("redadd:" + redAdd);
+            System.out.println("blueAdd:" + blueAdd);
         }
         return award;
     }

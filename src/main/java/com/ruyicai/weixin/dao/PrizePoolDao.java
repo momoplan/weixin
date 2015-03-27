@@ -10,36 +10,46 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ruyicai.weixin.domain.NumAction;
+import com.ruyicai.weixin.domain.PrizePool;
 
 
 @Component
-public class NumActionDao {
+public class PrizePoolDao {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Transactional
-    public NumAction createNumAction(String userno, String  batchcode,String  betcode,String lottype) {
-        NumAction numAction = new NumAction();
-        numAction.setUserno(userno);    
-        numAction.setBatchcode(batchcode);
-        numAction.setAward("0");
-        numAction.setLottype(lottype);
-        numAction.setBetcode(betcode);
-        
+    public PrizePool createPrizePool(String lotno , String  batchcode,int prize,int status) {
+        PrizePool prizePool = new PrizePool();
+        prizePool.setLotno(lotno);
+        prizePool.setBatchcode(batchcode);
+        prizePool.setPrize(prize);
+        prizePool.setStatus(status);       
         Calendar cal = Calendar.getInstance();
-        numAction.setCreatetime(cal);        
-        numAction.persist();
-        return numAction;
+        prizePool.setCreatetime(cal);        
+        prizePool.persist();
+        return prizePool;
     }
     
+    
+    @Transactional
+    public String getTotalPrize(String lotno) {
+        String sql = "SELECT SUM(PRIZE) FROM prize_pool  where lotno = '"+lotno+"' and status = 0";
+        return entityManager.createNativeQuery(sql).getSingleResult().toString();
+       
+      
+//       return  entityManager.createQuery(sql, Long.class).setParameter("lotno", lotno).getSingleResult().intValue();
+//        return entityManager.createNativeQuery("SELECT SUM(Prize) FROM PrizePool o WHERE lotno = ? AND status = ?", Long.class).setParameter(1, lotno).setParameter(2, 0).getSingleResult();
+
+    }
  
     
     @Transactional
-    public int updateAward(int id ,int award,String wincode){
+    public int updateAward(int id ,int award){
         
             
-       String sql = "UPDATE num_action SET award = '"+award+"' WHERE action_id = "+id+" AND wincode = '" +wincode+"'";  
+       String sql = "UPDATE num_action SET award = '"+award+"' WHERE action_id = "+id;  
        System.out.println("sql:"+sql);
        return entityManager.createNativeQuery(sql).executeUpdate();   
     }

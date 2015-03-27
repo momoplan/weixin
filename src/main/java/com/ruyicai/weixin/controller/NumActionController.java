@@ -28,6 +28,7 @@ import com.ruyicai.weixin.dao.MoneyEnvelopeDao;
 import com.ruyicai.weixin.dao.MoneyEnvelopeGetInfoDao;
 import com.ruyicai.weixin.dao.NumActionDao;
 import com.ruyicai.weixin.dao.OrderLotInfoDao;
+import com.ruyicai.weixin.dao.PrizePoolDao;
 import com.ruyicai.weixin.dao.SubscriberInfoDao;
 import com.ruyicai.weixin.domain.CaseLotUserinfo;
 import com.ruyicai.weixin.domain.MoneyEnvelope;
@@ -60,6 +61,9 @@ public class NumActionController {
 
     @Autowired
     CommonService commonService;
+    
+    @Autowired
+    private PrizePoolDao prizePoolDao;
 
     @Autowired
     SubscribeLotService subscribeLotService;
@@ -182,9 +186,46 @@ public class NumActionController {
             
            // List<NumAction> lstNumAction = numActionDao.findHaveBet(userno, batchcode, lottype);
             
+             
+            
             Map<String, Object> iMap = new HashMap<String, Object>();
             iMap.put("lottype", lottype);
-            iMap.put("progressive", 100);
+            iMap.put("progressive",  100);
+//            iMap.put("progressive",  prizePoolDao.getTotalPrize(lottype).intValue());
+            
+            rd.setValue(iMap);
+        } catch (WeixinException e) {
+            logger.error("getNumActionList error", e);
+            rd.setErrorCode(e.getErrorCode().value);
+            rd.setValue(e.getMessage());
+        } catch (Exception e) {
+            logger.error("getNumActionList error", e);
+            rd.setErrorCode(ErrorCode.ERROR.value);
+            rd.setValue(e.getMessage());
+        }
+
+        // return JsonMapper.toJson(rd);
+        return JsonMapper.toJsonP(callback, rd);
+    }
+    
+    @RequestMapping(value = "/getLotProgressive1", method = RequestMethod.GET)
+    @ResponseBody
+    public String getLotProgressive1(
+            @RequestParam(value = "lottype", required = true) String lottype,
+            @RequestParam(value = "callBackMethod", required = false) String callback) {
+        
+        ResponseData rd = new ResponseData();
+        try {
+            rd.setErrorCode(ErrorCode.OK.value);
+            
+           
+            
+             
+            
+            Map<String, Object> iMap = new HashMap<String, Object>();
+            iMap.put("lottype", lottype);
+          
+            iMap.put("progressive",  prizePoolDao.getTotalPrize(lottype));
             
             rd.setValue(iMap);
         } catch (WeixinException e) {

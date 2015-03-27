@@ -35,6 +35,9 @@ privileged aspect NumAction_Roo_DbManaged {
     @Column(name = "lottype", length = 50)
     private String NumAction.lottype;
     
+    @Column(name = "wincode", length = 30)
+    private String NumAction.wincode;
+    
     public String NumAction.getUserno() {
         return userno;
     }
@@ -81,6 +84,14 @@ privileged aspect NumAction_Roo_DbManaged {
     
     public void NumAction.setLottype(String lottype) {
         this.lottype = lottype;
+    }
+    
+    public String NumAction.getWincode() {
+        return wincode;
+    }
+    
+    public void NumAction.setWincode(String wincode) {
+        this.wincode = wincode;
     }
     
 }
