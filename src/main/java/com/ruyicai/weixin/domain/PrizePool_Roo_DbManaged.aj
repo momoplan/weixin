@@ -29,6 +29,9 @@ privileged aspect PrizePool_Roo_DbManaged {
     @Column(name = "status")
     private Integer PrizePool.status;
     
+    @Column(name = "award_batchcode", length = 20)
+    private String PrizePool.awardBatchcode;
+    
     public String PrizePool.getLotno() {
         return lotno;
     }
@@ -67,6 +70,14 @@ privileged aspect PrizePool_Roo_DbManaged {
     
     public void PrizePool.setStatus(Integer status) {
         this.status = status;
+    }
+    
+    public String PrizePool.getAwardBatchcode() {
+        return awardBatchcode;
+    }
+    
+    public void PrizePool.setAwardBatchcode(String awardBatchcode) {
+        this.awardBatchcode = awardBatchcode;
     }
     
 }

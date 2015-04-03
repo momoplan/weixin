@@ -88,15 +88,27 @@ public class OrderInfoService {
         
         List<NumAction> lstNumAction = numActionDao.findNumActionByBatchcode(batchCode,lottype);
         
+        boolean blnGetSecondAward = false;
+        
+        
         for (NumAction numAction : lstNumAction) {       
             betcode = numAction.getBetcode();       
             logger.info("betcode:"+betcode);
             int award = getAward(lottype,betcode,winCode);
+            if(award == 2)
+                blnGetSecondAward = true;
             numAction.setAward(String.valueOf(award));
             numAction.setWincode(winCode);
             numAction.merge();
             logger.info("update:"+numAction.getActionId()+":"+numAction.getAward());
         }
+        
+        if(blnGetSecondAward)
+        {
+            numActionDao.updatePrize(lottype, batchCode);
+            logger.info("lottype:batchCode:"+lottype+":"+batchCode);
+        }
+            
         
         prizePoolDao.createPrizePool(lottype, batchCode, 100, 0);
         

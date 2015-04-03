@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ruyicai.weixin.domain.NumAction;
+import com.ruyicai.weixin.util.StringUtil;
 
 
 @Component
@@ -31,6 +32,15 @@ public class NumActionDao {
         numAction.setCreatetime(cal);        
         numAction.persist();
         return numAction;
+    }
+    
+    @Transactional
+    public int updatePrize(String  lotno,String award_batchcode){
+        
+            
+       String sql = "UPDATE prize_pool SET status = 1,award_batchcode = '"+award_batchcode+"' WHERE lotno = '"+lotno+"' and status = 0";  
+       System.out.println("sql:"+sql);
+       return entityManager.createNativeQuery(sql).executeUpdate();   
     }
     
  

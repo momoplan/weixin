@@ -174,9 +174,9 @@ public class NumActionController {
     }
     
     
-    @RequestMapping(value = "/getLotProgressive", method = RequestMethod.GET)
+    @RequestMapping(value = "/getLotProgressive2", method = RequestMethod.GET)
     @ResponseBody
-    public String getLotProgressive(
+    public String getLotProgressive2(
             @RequestParam(value = "lottype", required = true) String lottype,
             @RequestParam(value = "callBackMethod", required = false) String callback) {
         
@@ -208,9 +208,9 @@ public class NumActionController {
         return JsonMapper.toJsonP(callback, rd);
     }
     
-    @RequestMapping(value = "/getLotProgressive1", method = RequestMethod.GET)
+    @RequestMapping(value = "/getLotProgressive", method = RequestMethod.GET)
     @ResponseBody
-    public String getLotProgressive1(
+    public String getLotProgressive(
             @RequestParam(value = "lottype", required = true) String lottype,
             @RequestParam(value = "callBackMethod", required = false) String callback) {
         
